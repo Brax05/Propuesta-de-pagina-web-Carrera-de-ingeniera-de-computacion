@@ -17,8 +17,6 @@ Este proyecto utiliza una arquitectura moderna y desacoplada, aprovechando los s
     * Se utiliza para construir el **Frontend** (componentes de React con TypeScript).
     * Provee el **Backend** (API Routes) que se ejecutan como Serverless Functions (Node.js con TypeScript) en Vercel.
 
-* **Estilos (Opcional):** [Bootstrap](https://getbootstrap.com/)
-    * Se puede integrar con Next.js para una UI responsiva .
 
 * **Base de Datos y Servicios:** [Supabase](https://supabase.com/)
     * Utilizado como la base de datos principal **PostgreSQL**.
