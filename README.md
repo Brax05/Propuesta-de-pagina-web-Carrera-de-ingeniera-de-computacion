@@ -9,7 +9,7 @@ El backend se implementa como **API Routes (Serverless Functions)** que corren s
 
 ---
 
-## 🚀 Stack Tecnológico
+##  Stack Tecnológico
 
 Este proyecto utiliza una arquitectura moderna y desacoplada, aprovechando los siguientes servicios y frameworks:
 
@@ -18,7 +18,7 @@ Este proyecto utiliza una arquitectura moderna y desacoplada, aprovechando los s
     * Provee el **Backend** (API Routes) que se ejecutan como Serverless Functions (Node.js con TypeScript) en Vercel.
 
 * **Estilos (Opcional):** [Bootstrap](https://getbootstrap.com/)
-    * Se puede integrar con Next.js para una UI responsiva (por ejemplo, usando `react-bootstrap`).
+    * Se puede integrar con Next.js para una UI responsiva .
 
 * **Base de Datos y Servicios:** [Supabase](https://supabase.com/)
     * Utilizado como la base de datos principal **PostgreSQL**.
@@ -40,7 +40,7 @@ Este proyecto utiliza una arquitectura moderna y desacoplada, aprovechando los s
     ```
 
 2.  **Instalar dependencias (Node.js):**
-    * (Se asume que tienes [Node.js](https://nodejs.org/) y npm instalados)
+    * (Se tiene que realizar la intalacion de  [Node.js](https://nodejs.org/) )
     ```bash
     # Instala los paquetes de node
     npm install
