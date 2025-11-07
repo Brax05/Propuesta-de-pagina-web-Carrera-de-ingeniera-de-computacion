@@ -1,0 +1,31 @@
+/* App.css */
+.navbar {
+  background-color: #003f5c; /* Color similar al fondo del navbar */
+}
+
+.navbar-brand {
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+.nav-link {
+  color: #454545 !important; /* Asegura que los enlaces sean blancos */
+}
+
+.nav-link:hover {
+  color: #000000 !important; /* Un color amarillo para hover en los enlaces */
+}
+
+.navbar-toggler-icon {
+  background-color: #4a4a4a; /* Cambio de color para el ícono del toggle */
+}
+/* Sombra para el navbar completo */
+.navbar {
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15); /* Efecto de sombra que da la sensación de elevación */
+  transition: box-shadow 0.3s ease-in-out;  /* Transición suave para el cambio de sombra */
+}
+
+/* Efecto más pronunciado de sombra cuando el mouse pasa sobre el navbar */
+.navbar:hover {
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2); /* Sombra más fuerte en hover */
+}
