@@ -1,38 +1,88 @@
-Propuesta de pagina web Carrera de ingeniera de computacion
+# Propuesta de Página Web — Carrera de Ingeniería en Computación
 
-Proyecto web con arquitectura moderna basada en TypeScript. Frontend en TypeScript, utilizando **Vite (React)** desplegado en **Vercel**. **Supabase** provee la persistencia de datos (PostgreSQL), almacenamiento de archivos (Storage), gestión de usuarios (Auth) y puede manejar la lógica de backend (por ejemplo, con Supabase Functions).
-[404 Solutions]
+Proyecto web con arquitectura moderna basada en **TypeScript**. El **Frontend** está desarrollado con **Vite (React)** y desplegado en **Vercel**. **Supabase** se utiliza como backend completo para base de datos, almacenamiento de archivos, autenticación y lógica adicional mediante funciones.
 
-Stack Tecnológico
+---
 
-Este proyecto utiliza una arquitectura moderna y desacoplada, aprovechando los siguientes servicios y frameworks:
-Framework (Frontend): **Vite** (React + TypeScript)
-Se utiliza para construir el Frontend (componentes de React con TypeScript) y se despliega en Vercel.
-Base de Datos y Servicios: **Supabase**
-Utilizado como la base de datos principal PostgreSQL.
-Maneja el almacenamiento multimedia (storage) para archivos, imágenes y videos.
-Gestiona la autenticación y usuarios (Auth).
-Despliegue:
-Vercel: Despliegue y hosting del proyecto frontend (Vite).
-Supabase: Hosting de la base de datos, storage y servicios de autenticación.
-Primeros Pasos (Configuración)
+##  Stack Tecnológico
 
-Clonar el repositorio:
-git clone [URL_DEL_REPOSITORIO]cd [NOMBRE_DEL_PROYECTO]
+### **Frontend — Vite (React + TypeScript)**
 
-Instalar dependencias (Node.js):
-(Se tiene que realizar la intalacion de Node.js )
-# Instala los paquetes de node
+* Construcción rápida y modular del Frontend.
+* Desplegado automáticamente en **Vercel**.
+
+### **Backend / Servicios — Supabase**
+
+* **Base de Datos:** PostgreSQL administrado.
+* **Storage:** Almacenamiento de imágenes, videos y otros archivos.
+* **Auth:** Gestión de usuarios, sesiones y seguridad.
+* **Funciones:** Posibilidad de agregar lógica backend con Supabase Functions.
+
+---
+
+##  Configuración del Proyecto
+
+### 1. **Clonar el repositorio**
+
+```bash
+git clone [URL_DEL_REPOSITORIO]
+cd [NOMBRE_DEL_PROYECTO]
+```
+
+### 2. **Instalar dependencias**
+
+Asegúrate de tener **Node.js** instalado.
+
+```bash
 npm install
+```
 
-Configurar Variables de Entorno:
-Crear un archivo `.env.local` en la raíz del proyecto.
-Añade tus claves de Supabase (URL y Anon Key) obtenidas de tu panel de Supabase.
-# Claves públicas para el cliente de Supabase en el frontend
+### 3. **Configurar variables de entorno**
+
+Crea un archivo **`.env.local`** en la raíz del proyecto.
+
+Agrega tus claves públicas de Supabase:
+
+```bash
 VITE_SUPABASE_URL=YOUR_SUPABASE_URL
 VITE_SUPABASE_PUBLISHABLE_KEY=YOUR_SUPABASE_PUBLISHABLE_KEY
+```
 
-Despliegue
+Estas claves se obtienen desde el panel de Supabase.
 
-Vercel: El proyecto se despliega automáticamente conectando este repositorio de Git a Vercel. Vercel detectará que es un proyecto **Vite** y desplegará el frontend de forma optimizada.
-Supabase: La base de datos, almacenamiento y autenticación ya están "desplegados" y gestionados por la plataforma de Supabase.
+---
+
+##  Despliegue
+
+### **Frontend — Vercel**
+
+* Se despliega automáticamente al conectar el repositorio.
+* Vercel detecta el proyecto **Vite** y realiza una compilación optimizada.
+
+### **Backend — Supabase**
+
+* La base de datos y servicios ya quedan activos desde Supabase.
+* No requiere configuración adicional más allá de las variables de entorno.
+
+---
+
+## 👥 Colaboradores
+
+**Líder:** Sady Guzman
+
+**Arquitecto de Software:** Nicolas Malebran
+
+**Diseñadora UI/UX:** Amaranta V.
+
+* **Tester/QA:** Miguel C.
+
+**SysAdmin y DevOps:** Brandon M.
+
+* **DB:** Josue B., Cristobal A.
+
+**Líder de Desarrollo:** Matias Fierro
+
+* **Frontend:** Joselyn M.
+* **Backend:** Benjamin U., Emilio M.
+
+Proyecto desarrollado por **404 Solutions****.
