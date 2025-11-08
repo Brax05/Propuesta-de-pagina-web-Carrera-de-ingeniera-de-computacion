@@ -66,7 +66,7 @@ Estas claves se obtienen desde el panel de Supabase.
 
 ---
 
-## 👥 Colaboradores
+##  Colaboradores
 
 **Líder:** Sady Guzman
 
