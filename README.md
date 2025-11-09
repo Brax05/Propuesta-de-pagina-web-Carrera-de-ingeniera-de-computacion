@@ -1,88 +1,75 @@
-# Propuesta de Página Web — Carrera de Ingeniería en Computación
+# React + TypeScript + Vite
 
-Proyecto web con arquitectura moderna basada en **TypeScript**. El **Frontend** está desarrollado con **Vite (React)** y desplegado en **Vercel**. **Supabase** se utiliza como backend completo para base de datos, almacenamiento de archivos, autenticación y lógica adicional mediante funciones.
+This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
----
+Currently, two official plugins are available:
 
-##  Stack Tecnológico
+- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
+- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
 
-### **Frontend — Vite (React + TypeScript)**
+## React Compiler
 
-* Construcción rápida y modular del Frontend.
-* Desplegado automáticamente en **Vercel**.
+The React Compiler is enabled on this template. See [this documentation](https://react.dev/learn/react-compiler) for more information.
 
-### **Backend / Servicios — Supabase**
+Note: This will impact Vite dev & build performances.
 
-* **Base de Datos:** PostgreSQL administrado.
-* **Storage:** Almacenamiento de imágenes, videos y otros archivos.
-* **Auth:** Gestión de usuarios, sesiones y seguridad.
-* **Funciones:** Posibilidad de agregar lógica backend con Supabase Functions.
+## Expanding the ESLint configuration
 
----
+If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
 
-##  Configuración del Proyecto
+```js
+export default defineConfig([
+  globalIgnores(['dist']),
+  {
+    files: ['**/*.{ts,tsx}'],
+    extends: [
+      // Other configs...
 
-### 1. **Clonar el repositorio**
+      // Remove tseslint.configs.recommended and replace with this
+      tseslint.configs.recommendedTypeChecked,
+      // Alternatively, use this for stricter rules
+      tseslint.configs.strictTypeChecked,
+      // Optionally, add this for stylistic rules
+      tseslint.configs.stylisticTypeChecked,
 
-```bash
-git clone [URL_DEL_REPOSITORIO]
-cd [NOMBRE_DEL_PROYECTO]
+      // Other configs...
+    ],
+    languageOptions: {
+      parserOptions: {
+        project: ['./tsconfig.node.json', './tsconfig.app.json'],
+        tsconfigRootDir: import.meta.dirname,
+      },
+      // other options...
+    },
+  },
+])
 ```
 
-### 2. **Instalar dependencias**
+You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
 
-Asegúrate de tener **Node.js** instalado.
+```js
+// eslint.config.js
+import reactX from 'eslint-plugin-react-x'
+import reactDom from 'eslint-plugin-react-dom'
 
-```bash
-npm install
+export default defineConfig([
+  globalIgnores(['dist']),
+  {
+    files: ['**/*.{ts,tsx}'],
+    extends: [
+      // Other configs...
+      // Enable lint rules for React
+      reactX.configs['recommended-typescript'],
+      // Enable lint rules for React DOM
+      reactDom.configs.recommended,
+    ],
+    languageOptions: {
+      parserOptions: {
+        project: ['./tsconfig.node.json', './tsconfig.app.json'],
+        tsconfigRootDir: import.meta.dirname,
+      },
+      // other options...
+    },
+  },
+])
 ```
-
-### 3. **Configurar variables de entorno**
-
-Crea un archivo **`.env.local`** en la raíz del proyecto.
-
-Agrega tus claves públicas de Supabase:
-
-```bash
-VITE_SUPABASE_URL=YOUR_SUPABASE_URL
-VITE_SUPABASE_PUBLISHABLE_KEY=YOUR_SUPABASE_PUBLISHABLE_KEY
-```
-
-Estas claves se obtienen desde el panel de Supabase.
-
----
-
-##  Despliegue
-
-### **Frontend — Vercel**
-
-* Se despliega automáticamente al conectar el repositorio.
-* Vercel detecta el proyecto **Vite** y realiza una compilación optimizada.
-
-### **Backend — Supabase**
-
-* La base de datos y servicios ya quedan activos desde Supabase.
-* No requiere configuración adicional más allá de las variables de entorno.
-
----
-
-##  Colaboradores
-
-**Líder:** Sady Guzman
-
-**Arquitecto de Software:** Nicolas Malebran
-
-**Diseñadora UI/UX:** Amaranta V.
-
-* **Tester/QA:** Miguel C.
-
-**SysAdmin y DevOps:** Brandon M.
-
-* **DB:** Josue B., Cristobal A.
-
-**Líder de Desarrollo:** Matias Fierro
-
-* **Frontend:** Joselyn M.
-* **Backend:** Benjamin U., Emilio M.
-
-Proyecto desarrollado por **404 Solutions****.
