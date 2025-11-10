@@ -2,7 +2,7 @@ import React from 'react';
 //import { Container, Row, Col, Card } from 'react-bootstrap';
 import NavbarPage from '../components/Navbarpage';
 
-const Noticias: React.FC = () => {
+const Egresados: React.FC = () => {
   return (
     <div>
       <NavbarPage /> 
@@ -12,4 +12,4 @@ const Noticias: React.FC = () => {
   );
 };
 
-export default Noticias;
+export default Egresados;
