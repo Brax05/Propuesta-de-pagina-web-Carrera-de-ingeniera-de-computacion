@@ -2,7 +2,6 @@ import React from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'; 
 import HomePage from './pages/HomePage';
-import Docentes from './pages/Docentes';
 import PlanEstudios from './pages/PlanEstudios';
 import Noticias from './pages/Noticias';
 import Egresados from './pages/Egresados';
@@ -16,7 +15,6 @@ const App: React.FC = () => {
     <Router>
       <Routes>
         <Route path="/" element={<HomePage />} />
-        <Route path="/academicos" element={<Docentes />} />
         <Route path="/plan-estudios" element={<PlanEstudios />} />
         <Route path="/noticias" element={<Noticias />} />
         <Route path="/egresados" element={<Egresados />} />
