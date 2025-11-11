@@ -8,6 +8,7 @@ import Noticias from './pages/Noticias';
 import Egresados from './pages/Egresados';
 import Contacto from './pages/Contacto';
 import Login from './pages/Login';
+import Registro from './pages/Registro';
 import './App.css';
 
 const App: React.FC = () => {
@@ -21,6 +22,7 @@ const App: React.FC = () => {
         <Route path="/egresados" element={<Egresados />} />
         <Route path="/contacto" element={<Contacto />} />
         <Route path="/login" element={<Login />} />
+        <Route path="/registro" element={<Registro />} />
       </Routes>
     </Router>
   );
