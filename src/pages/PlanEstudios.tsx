@@ -1,11 +1,12 @@
+import { useState } from 'react';
 import Navbar from '@/components/Navbarpage';
 import Footer from '@/components/Footerpage';
 
 export default function StudyPlan() {
   const semestres = [
     { numero: 1, curso: [ 'Introducción al Cálculo', 'Introducción al Álgebra', 'Introducción a la Ingeniería Civil en Computación e Informática', 'Taller de Estrategias de Aprendizaje para Ingeniería' ] },
-    { numero: 2, curso: [ 'Cálculo diferencial e Integral', 'Álgebra Lineal', 'Física Newtoniana', 'Programación Estructurada', 'Taller de Habilidades Comunicativas para Ingeniería' ] },
-    { numero: 3, curso: [ 'Cálculo y Variables Varias', 'Ecuaciones Diferenciales', 'Electromagnetismo', 'Programación Orientada a Objetos', 'Inglés para Ingeniería I' ] },
+    { numero: 2, curso: [ 'Cálculo Diferencial e Integral', 'Álgebra Lineal', 'Física Newtoniana', 'Programación Estructurada', 'Taller de Habilidades Comunicativas para Ingeniería' ] },
+    { numero: 3, curso: [ 'Cálculo en Varias Variables', 'Ecuaciones Diferenciales', 'Electromagnetismo', 'Programación Orientada a Objetos', 'Inglés para Ingeniería I' ] },
     { numero: 4, curso: [ 'Métodos Numéricos para Ingeniería', 'Probabilidad y Estadística', 'Óptica y Ondas', 'Bases de Datos', 'Desafío de Proyecto de Ingeniería I', 'Inglés para Ingeniería II' ] },
     { numero: 5, curso: [ 'Diseño y Análisis de Algoritmos', 'Fundamentos de Economía', 'Investigación de Operaciones', 'Paradigmas y Lenguajes de Programación', 'Arquitectura de Computadores', 'Inglés para Ingeniería III', 'Ampliando la mirada en Derechos Humanos, Violencia y Discriminación de Género, Interculturalidad y Ciudadanía' ] },
     { numero: 6, curso: [ 'Inteligencia Artificial', 'Teoría de la Computación', 'Electrónica Aplicada', 'Tópicos Avanzados de Bases de Datos', 'Sistemas Operativos' ] },
@@ -15,7 +16,52 @@ export default function StudyPlan() {
     { numero: 10, curso: [ 'Taller de Desarrollo III', 'Electivo de Formación Profesional III', 'Electivo de Formación Profesional IV' ] }
   ];
 
+  //lista de prerequisitos
+  const prereqs: { [k: string]: string[] } = {
+    'Cálculo Diferencial e Integral': ['Introducción al Cálculo'],
+    'Álgebra Lineal': ['Introducción al Álgebra'],
+    'Física Newtoniana': ['Introducción al Cálculo'],
+    'Programación Estructurada': ['Introducción a la Ingeniería Civil en Computación e Informática'],
+    'Taller de Habilidades Comunicativas para Ingeniería': ['Taller de Estrategias de Aprendizaje para Ingeniería'],
+    'Cálculo en Varias Variables': ['Cálculo Diferencial e Integral'],
+    'Ecuaciones Diferenciales': ['Cálculo Diferencial e Integral', 'Álgebra Lineal'],
+    'Electromagnetismo': ['Física Newtoniana'],
+    'Programación Orientada a Objetos': ['Programación Estructurada'],
+    'Métodos Numéricos para Ingeniería': ['Ecuaciones Diferenciales'],
+    'Óptica y Ondas': ['Electromagnetismo'],
+    'Bases de Datos': ['Programación Orientada a Objetos'],
+    'Desafío de Proyecto de Ingeniería I': ['Cálculo en Varias Variables', 'Ecuaciones Diferenciales', 'Electromagnetismo', 'Programación Orientada a Objetos', 'Inglés para Ingeniería I'],
+    'Inglés para Ingeniería II': ['Inglés para Ingeniería I'],
+    'Diseño y Análisis de Algoritmos': ['Métodos Numéricos para Ingeniería'],
+    'Paradigmas y Lenguajes de Programación': ['Bases de Datos'],
+    'Inglés para Ingeniería III': ['Inglés para Ingeniería II'],
+    'Inteligencia Artificial': ['Probabilidad y Estadística'],
+    'Teoría de la Computación': ['Diseño y Análisis de Algoritmos'],
+    'Electrónica Aplicada': ['Arquitectura de Computadores'],
+    'Tópicos Avanzados de Bases de Datos': ['Paradigmas y Lenguajes de Programación'],
+    'Sistemas Operativos': ['Arquitectura de Computadores'],
+    'Aprendizaje Automático': ['Inteligencia Artificial'],
+    'Internet de las Cosas': ['Electrónica Aplicada'],
+    'Ingeniería de Software': ['Tópicos Avanzados de Bases de Datos'],
+    'Preparación y Evaluación de Proyectos': ['Fundamentos de Economía'],
+    'Redes y Sistemas Distribuidos': ['Sistemas Operativos'],
+    'Sistemas Inteligentes': ['Aprendizaje Automático'],
+    'Innovación y Emprendimiento Informático': ['Preparación y Evaluación de Proyectos'],
+    'Taller de Desarrollo I': ['Ingeniería de Software'],
+    'Desafío de Proyecto de Ingeniería II': ['Aprendizaje Automático', 'Internet de las Cosas', 'Ingeniería de Software', 'Preparación y Evaluación de Proyectos', 'Redes y Sistemas Distribuidos'],
+    'Sistemas de Información': ['Ingeniería de Software'],
+    'Gestión de Proyectos Informáticos': ['Preparación y Evaluación de Proyectos'],
+    'Informática y Sociedad': ['Sistemas Inteligentes', 'Innovación y Emprendimiento Informático', 'Taller de Desarrollo I', 'Desafío de Proyecto de Ingeniería II', 'Sistemas de Información', 'Gestión de Proyectos Informáticos'],
+    'Taller de Desarrollo II': ['Taller de Desarrollo I'],
+    'Taller de Desarrollo III': ['Taller de Desarrollo II']
+  };
+
   const maxCursos = Math.max(...semestres.map(s => s.curso.length));
+  const [hoveredCourse, setHoveredCourse] = useState<string | null>(null);
+
+  // Siempre devuelve un string[]
+  const highlightedPrereqs: string[] = hoveredCourse && prereqs[hoveredCourse] ? prereqs[hoveredCourse] : [];
+
 
   return (
     <div className="min-h-screen flex flex-col bg-white">
@@ -54,7 +100,7 @@ export default function StudyPlan() {
               </div>
             </div>
           </div>
-          
+
           <div className="w-max mx-auto grid grid-cols-1 lg:grid-cols-10 gap-4 mb-8">
             {semestres.map((sem, idx) => (
               <div key={idx} className="w-[175px]">
@@ -62,18 +108,27 @@ export default function StudyPlan() {
                   {sem.numero}° Semestre
                 </div>
                 <div className="space-y-2">
-                  {sem.curso.map((course, idx2) => (
-                    <div
-                      key={idx2}
-                      className={`p-2 rounded text-xs text-gray-800 text-center font-medium ${
-                        course.startsWith("Ampliando la mirada")
-                          ? "bg-blue-200"
-                          : "bg-gray-200"
-                      }`}
-                    >
-                      {course}
-                    </div>
-                  ))}
+                  {sem.curso.map((course, idx2) => {
+                    const isPrereq = highlightedPrereqs.includes(course);
+                    return (
+                      <div
+                        key={idx2}
+                        onMouseEnter={() => setHoveredCourse(course)}
+                        onMouseLeave={() => setHoveredCourse(null)}
+                        className={`p-2 rounded text-xs text-gray-800 text-center font-medium transition-colors duration-100 ${
+                          course.startsWith("Ampliando la mirada")
+                            ? "bg-blue-200"
+                            : isPrereq
+                              ? "bg-yellow-200"
+                              : "bg-gray-200"
+                        } ${
+                          hoveredCourse === course ? 'ring-2 ring-blue-400' : ''
+                        }`}
+                      >
+                        {course}
+                      </div>
+                    );
+                  })}
                   {Array.from({length: maxCursos - sem.curso.length}).map((_, i) => (
                     <div key={`vacio-${i}`} className="p-2 rounded invisible text-xs">-</div>
                   ))}
