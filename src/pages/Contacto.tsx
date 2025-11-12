@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import Navbar from '@/components/Navbarpage';
 import Footer from '@/components/Footerpage';
-import { Mail, Phone, MapPin } from 'lucide-react';
+import { Mail, MapPin } from 'lucide-react'; // agregar Phone
 
 export default function Contact() {
   const [formData, setFormData] = useState({
