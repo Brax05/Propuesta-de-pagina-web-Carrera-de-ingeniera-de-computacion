@@ -1,7 +1,9 @@
+
+//import { Mail,Phone, MapPin } from 'lucide-react';  // Corregido: Se eliminó 'Phone' porque no se estaba usando.
 import { useState } from 'react';
-import Navbar from '@/components/Navbarpage';
+import Navbar from '@/components/Navbarpage'; 
 import Footer from '@/components/Footerpage';
-import { Mail, Phone, MapPin } from 'lucide-react';
+import { Mail, MapPin } from 'lucide-react'; 
 
 export default function Contact() {
   const [formData, setFormData] = useState({
@@ -17,7 +19,7 @@ export default function Contact() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    alert(`Gracias ${formData.name}, tu mensaje ha sido enviado.`);
+    console.log(`Formulario enviado: ${JSON.stringify(formData)}`);
     setFormData({ name: '', email: '', message: '' });
   };
 
