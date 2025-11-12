@@ -124,9 +124,25 @@ npm run lint
 - **Lucide React** - Iconos
 
 
-## Autor
+##  Colaboradores
 
-Desarrollado por estudiantes de Ingeniería en Computación de la Universidad de La Serena.
+**Líder:** Sady Guzman
 
+**Arquitecto de Software:** Nicolas Malebran
+
+**Diseñadora UI/UX:** Amaranta V.
+
+* **Tester/QA:** Miguel C.
+
+**SysAdmin y DevOps:** Brandon M.
+
+* **DB:** Josue B., Cristobal A.
+
+**Líder de Desarrollo:** Matias Fierro
+
+* **Frontend:** Joselyn M.
+* **Backend:** Benjamin U., Emilio M.
+
+Proyecto desarrollado por **404 Solutions****.
 
 **Última actualización**: 11 Noviembre 2025
