@@ -1,10 +1,8 @@
 
-//import { Mail,Phone, MapPin } from 'lucide-react'; // agregar Phone
+//import { Mail,Phone, MapPin } from 'lucide-react';  // Corregido: Se eliminó 'Phone' porque no se estaba usando.
 import { useState } from 'react';
-// Corregido: Revertido a tus nombres de archivo originales
 import Navbar from '@/components/Navbarpage'; 
 import Footer from '@/components/Footerpage';
-// Corregido: Se eliminó 'Phone' porque no se estaba usando.
 import { Mail, MapPin } from 'lucide-react'; 
 
 export default function Contact() {
