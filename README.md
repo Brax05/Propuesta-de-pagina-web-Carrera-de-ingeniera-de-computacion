@@ -1,88 +1,132 @@
-# Propuesta de Página Web — Carrera de Ingeniería en Computación
+# Propuesta Página Web Carrera Computación
 
-Proyecto web con arquitectura moderna basada en **TypeScript**. El **Frontend** está desarrollado con **Vite (React)** y desplegado en **Vercel**. **Supabase** se utiliza como backend completo para base de datos, almacenamiento de archivos, autenticación y lógica adicional mediante funciones.
+Sitio web frontend para la Escuela de Ingeniería en Computación de la Universidad de La Serena. Desarrollado con React, TypeScript y Tailwind CSS.
 
----
+## Características
 
-##  Stack Tecnológico
+- **Página de Inicio** - Hero section con información del programa
+- **Noticias** - Listado de noticias y eventos
+- **Estudiantes** - Perfiles de estudiantes
+- **Plan de Estudios** - Malla curricular completa
+- **Contacto** - Formulario de contacto y información de contacto
+- **Autenticación** - Login y registro con almacenamiento local
+- **Diseño Responsivo** - Funciona en móvil, tablet y desktop
+- **Interfaz Moderna** - Diseño limpio y profesional
 
-### **Frontend — Vite (React + TypeScript)**
+## Requisitos
 
-* Construcción rápida y modular del Frontend.
-* Desplegado automáticamente en **Vercel**.
+- Node.js 18+ 
+- npm o pnpm
 
-### **Backend / Servicios — Supabase**
+## Instalación
 
-* **Base de Datos:** PostgreSQL administrado.
-* **Storage:** Almacenamiento de imágenes, videos y otros archivos.
-* **Auth:** Gestión de usuarios, sesiones y seguridad.
-* **Funciones:** Posibilidad de agregar lógica backend con Supabase Functions.
-
----
-
-##  Configuración del Proyecto
-
-### 1. **Clonar el repositorio**
-
+1. **Clonar el repositorio**
 ```bash
-git clone [URL_DEL_REPOSITORIO]
-cd [NOMBRE_DEL_PROYECTO]
+git clone <repository-url>
 ```
 
-### 2. **Instalar dependencias**
-
-Asegúrate de tener **Node.js** instalado.
-
+2. **Instalar dependencias**
 ```bash
 npm install
+# o
+pnpm install
 ```
 
-### 3. **Configurar variables de entorno**
+3. **Iniciar servidor de desarrollo**
+```bash
+npm run dev
+# o
+pnpm dev
+```
 
-Crea un archivo **`.env.local`** en la raíz del proyecto.
+El sitio se abrirá automáticamente en `http://localhost:5173`
 
-Agrega tus claves públicas de Supabase:
+## Estructura del Proyecto
+
+```
+Proyecto Página Carrera/
+├── src/
+│   ├── components/
+│   │   ├── Navbar.tsx           # Navegación principal
+│   │   └── Footer.tsx           # Pie de página
+│   │   ├── LoadingSpinner.tsx   # Componente de carga
+│   │   └── ErrorBoundary.tsx    # Manejo de errores
+│   ├── pages/
+│   │   ├── Homepage.tsx         # Página principal
+│   │   ├── Login.tsx            # Inicio de sesión
+│   │   ├── Registro.tsx        
+│   │   ├── Noticias.tsx            
+│   │   ├── Estudiantes.tsx       
+│   │   ├── PlanEstudios.tsx       
+│   │   └── Contacto.tsx  
+│   │   └── CEC.tsx              # Falta por Agregar
+│   │   └── Admin/
+│   │       ├── Dashboard.tsx    # Panel admin
+│   │       ├── EstudiantesCRUD.tsx # CRUD docentes 
+│   │       └── NoticiasCRUD.tsx # CRUD noticias
+│   ├── hooks/
+│   │   └── useAuth.ts          # Hook de autenticación
+│   ├── types/
+│   │   └── index.ts            # Tipos TypeScript
+│   ├── App.tsx                 # Componente principal
+│   ├── main.tsx                # Punto de entrada
+│   └── index.css               # Estilos globales
+├── public/                     # Archivos estáticos
+├── index.html                  # HTML principal
+├── package.json                # Dependencias
+├── tsconfig.json               # Configuración TypeScript
+├── vite.config.ts              # Configuración Vite
+├── tailwind.config.js          # Configuración Tailwind
+└── README.md                   # Este archivo
+```
+
+## Colores y Estilos
+
+- **Primario**: Azul (#1e40af)
+- **Secundario**: Gris oscuro (#111827)
+- **Acento**: Amarillo (#eab308)
+- **Fuente**: Inter (Google Fonts)
+
+## Autenticación
+
+La autenticación es **local** (sin backend). Los datos se guardan en `localStorage`.
+
+**Datos de prueba:**
+- Email: `test@userena.cl`
+- Contraseña: `contraseña123`
+
+### Requisitos de contraseña:
+- Mínimo 6 caracteres
+
+## Scripts Disponibles
 
 ```bash
-VITE_SUPABASE_URL=YOUR_SUPABASE_URL
-VITE_SUPABASE_PUBLISHABLE_KEY=YOUR_SUPABASE_PUBLISHABLE_KEY
+# Iniciar servidor de desarrollo
+npm run dev
+
+# Compilar para producción
+npm run build
+
+# Previsualizar build de producción
+npm run preview
+
+# Ejecutar linter
+npm run lint
 ```
 
-Estas claves se obtienen desde el panel de Supabase.
+## Dependencias Principales
 
----
+- **React 19** - Librería UI
+- **React Router DOM 6** - Enrutamiento
+- **TypeScript** - Tipado estático
+- **Tailwind CSS 3** - Estilos utilitarios
+- **Vite** - Bundler rápido
+- **Lucide React** - Iconos
 
-##  Despliegue
 
-### **Frontend — Vercel**
+## Autor
 
-* Se despliega automáticamente al conectar el repositorio.
-* Vercel detecta el proyecto **Vite** y realiza una compilación optimizada.
+Desarrollado por estudiantes de Ingeniería en Computación de la Universidad de La Serena.
 
-### **Backend — Supabase**
 
-* La base de datos y servicios ya quedan activos desde Supabase.
-* No requiere configuración adicional más allá de las variables de entorno.
-
----
-
-##  Colaboradores
-
-**Líder:** Sady Guzman
-
-**Arquitecto de Software:** Nicolas Malebran
-
-**Diseñadora UI/UX:** Amaranta V.
-
-* **Tester/QA:** Miguel C.
-
-**SysAdmin y DevOps:** Brandon M.
-
-* **DB:** Josue B., Cristobal A.
-
-**Líder de Desarrollo:** Matias Fierro
-
-* **Frontend:** Joselyn M.
-* **Backend:** Benjamin U., Emilio M.
-
-Proyecto desarrollado por **404 Solutions****.
+**Última actualización**: 11 Noviembre 2025
