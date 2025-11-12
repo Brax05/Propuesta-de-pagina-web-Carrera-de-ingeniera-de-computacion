@@ -1,5 +1,3 @@
-# Universidad Web Frontend
-
 Sitio web frontend para la Escuela de Ingeniería en Computación de la Universidad de La Serena. Desarrollado con React, TypeScript y Tailwind CSS.
 
 ## Características
