@@ -1,7 +1,24 @@
-# Propuesta Página Web Carrera Computación
+# Propuesta de Página Web — Carrera de Ingeniería en Computación
 
-Sitio web frontend para la Escuela de Ingeniería en Computación de la Universidad de La Serena. Desarrollado con React, TypeScript y Tailwind CSS.
+Proyecto web con arquitectura moderna basada en **TypeScript**. El **Frontend** está desarrollado con **Vite (React)** y desplegado en **Vercel**. **Supabase** se utiliza como backend completo para base de datos, almacenamiento de archivos, autenticación y lógica adicional mediante funciones.
 
+---
+
+##  Stack Tecnológico
+
+### **Frontend — Vite (React + TypeScript)**
+
+* Construcción rápida y modular del Frontend.
+* Desplegado automáticamente en **Vercel**.
+
+### **Backend / Servicios — Supabase**
+
+* **Base de Datos:** PostgreSQL administrado.
+* **Storage:** Almacenamiento de imágenes, videos y otros archivos.
+* **Auth:** Gestión de usuarios, sesiones y seguridad.
+* **Funciones:** Posibilidad de agregar lógica backend con Supabase Functions.
+
+---
 ## Características
 
 - **Página de Inicio** - Hero section con información del programa
