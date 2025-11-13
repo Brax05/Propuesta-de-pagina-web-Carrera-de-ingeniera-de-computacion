@@ -11,7 +11,7 @@ export default function Login() {
   const { login } = useAuth();
   const navigate = useNavigate();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
 
@@ -20,10 +20,12 @@ export default function Login() {
       return;
     }
 
-    if (login(email, password)) {
+    const ok = await login(email, password);
+
+    if (ok) {
       navigate('/');
     } else {
-      setError('Email o contraseña inválidos. La contraseña debe tener al menos 6 caracteres.');
+      setError('Email o contraseña inválidos. Verifica tus datos.');
     }
   };
 
@@ -34,8 +36,12 @@ export default function Login() {
       <div className="flex-1 flex items-center justify-center py-12 px-4">
         <div className="w-full max-w-md">
           <div className="bg-white rounded-lg shadow-lg p-8 border border-gray-200">
-            <h1 className="text-3xl font-bold text-gray-900 mb-2 text-center">Iniciar Sesión</h1>
-            <p className="text-gray-600 text-center mb-8">Accede con tu cuenta institucional de la Universidad de La Serena.</p>
+            <h1 className="text-3xl font-bold text-gray-900 mb-2 text-center">
+              Iniciar Sesión
+            </h1>
+            <p className="text-gray-600 text-center mb-8">
+              Accede con tu cuenta institucional de la Universidad de La Serena.
+            </p>
 
             {error && (
               <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
@@ -45,7 +51,10 @@ export default function Login() {
 
             <form onSubmit={handleSubmit} className="space-y-6">
               <div>
-                <label htmlFor="email" className="block text-sm font-semibold text-gray-700 mb-2">
+                <label
+                  htmlFor="email"
+                  className="block text-sm font-semibold text-gray-700 mb-2"
+                >
                   Email
                 </label>
                 <input
@@ -59,7 +68,10 @@ export default function Login() {
               </div>
 
               <div>
-                <label htmlFor="password" className="block text-sm font-semibold text-gray-700 mb-2">
+                <label
+                  htmlFor="password"
+                  className="block text-sm font-semibold text-gray-700 mb-2"
+                >
                   Contraseña
                 </label>
                 <input
@@ -83,16 +95,13 @@ export default function Login() {
             <div className="mt-6 text-center">
               <p className="text-gray-600 text-sm">
                 ¿No tienes cuenta?{' '}
-                <Link to="/register" className="text-blue-600 hover:text-blue-700 font-semibold">
+                <Link
+                  to="/register"
+                  className="text-blue-600 hover:text-blue-700 font-semibold"
+                >
                   Regístrate aquí
                 </Link>
               </p>
-            </div>
-
-            <div className="mt-6 p-4 bg-blue-50 rounded-lg border border-blue-200">
-              <p className="text-xs text-gray-600 mb-2"><strong>Datos de prueba:</strong></p>
-              <p className="text-xs text-gray-600">Email: test@userena.cl</p>
-              <p className="text-xs text-gray-600">Contraseña: contraseña123</p>
             </div>
           </div>
         </div>
@@ -102,3 +111,4 @@ export default function Login() {
     </div>
   );
 }
+
