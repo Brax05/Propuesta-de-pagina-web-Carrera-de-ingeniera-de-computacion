@@ -16,27 +16,6 @@ export default function StudyPlan() {
     { numero: 10, curso: [ 'Taller de Desarrollo III', 'Electivo de Formación Profesional III', 'Electivo de Formación Profesional IV' ] }
   ];
 
-  const cursoInfo: { [k: string]: { descripcion: string, tipo: string, teoria: number, laboratorio: number } } = {
-  'Introducción al Cálculo': {
-    descripcion: 'Busca desarrollar el razonamiento científico y la resolución de problemas mediante el estudio de los fundamentos del cálculo diferencial e integral, como los límites, derivadas y la variación continua',
-    tipo: 'Semestral',
-    teoria: 6,
-    laboratorio: 2
-  },
-  'Introducción al Álgebra': {
-    descripcion: 'Abarca la lógica proposicional, las estructuras algebraicas fundamentales como grupos y anillos, el estudio de los conjuntos numéricos (\(N,Z,Q,R,C\)), funciones (exponenciales, logarítmicas, trigonométricas) y el álgebra lineal',
-    tipo: 'Semestral',
-    teoria: 6,
-    laboratorio: 2
-  },
-  'Introducción a la Ingeniería Civil en Computación e Informática': {
-    descripcion: 'introduce los fundamentos de la profesión, combinando conocimientos de ciencias básicas, ingeniería y computación.',
-    tipo: 'Anual',
-    teoria: 4,
-    laboratorio: 0
-  }
-};
-
   //lista de prerequisitos
   const prereqs: { [k: string]: string[] } = {
     'Cálculo Diferencial e Integral': ['Introducción al Cálculo'],
@@ -79,14 +58,9 @@ export default function StudyPlan() {
 
   const maxCursos = Math.max(...semestres.map(s => s.curso.length));
   const [hoveredCourse, setHoveredCourse] = useState<string | null>(null);
-  const [selectedCourse, setSelectedCourse] = useState<string | null>(null);
 
   // Siempre devuelve un string[]
   const highlightedPrereqs: string[] = hoveredCourse && prereqs[hoveredCourse] ? prereqs[hoveredCourse] : [];
-  
-  // --- Modal ---
-  const showModal = !!selectedCourse;
-  const closeModal = () => setSelectedCourse(null);
 
 
   return (
@@ -141,7 +115,6 @@ export default function StudyPlan() {
                         key={idx2}
                         onMouseEnter={() => setHoveredCourse(course)}
                         onMouseLeave={() => setHoveredCourse(null)}
-                        onClick={() => setSelectedCourse(course)}
                         className={`p-2 rounded text-xs text-gray-800 text-center font-medium transition-colors duration-100 ${
                           course.startsWith("Ampliando la mirada")
                             ? "bg-blue-200"
@@ -163,34 +136,6 @@ export default function StudyPlan() {
               </div>
             ))}
           </div>
-
-          {/* Modal */}
-          {showModal && selectedCourse && (
-            <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center" onClick={closeModal}>
-              <div className="bg-white p-6 rounded shadow-lg w-full max-w-xs md:max-w-md" onClick={e => e.stopPropagation()}>
-                <h2 className="font-bold text-lg mb-3">{selectedCourse}</h2>
-                <p className="text-sm mb-2">{cursoInfo[selectedCourse]?.descripcion || 'Sin información adicional para este curso.'}</p>
-                {cursoInfo[selectedCourse] && (
-                  <div>
-                    <span className="inline-block mb-2 px-2 py-1 bg-blue-100 text-blue-800 rounded text-xs font-semibold">
-                      {cursoInfo[selectedCourse].tipo}
-                    </span>
-                    <div className="flex gap-4 text-xs mb-4">
-                      <div>
-                        <span className="font-semibold text-gray-800">Teoría:</span> {cursoInfo[selectedCourse].teoria} hrs
-                      </div>
-                      <div>
-                        <span className="font-semibold text-gray-800">Laboratorio:</span> {cursoInfo[selectedCourse].laboratorio} hrs
-                      </div>
-                    </div>
-                  </div>
-                )}
-                <button onClick={closeModal} className="px-4 py-2 bg-blue-600 rounded text-white hover:bg-blue-700">
-                  Cerrar
-                </button>
-              </div>
-            </div>
-          )}
 
           <div className="mt-12 space-y-4 text-sm text-gray-700">
             <p className="border-l-4 border-blue-700 pl-4">

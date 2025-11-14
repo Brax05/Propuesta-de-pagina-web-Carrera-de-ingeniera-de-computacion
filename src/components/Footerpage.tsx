@@ -5,9 +5,12 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
           {/* Logo y Descripción */}
           <div className="flex flex-col items-center md:items-start">
-            <img src="/logo-footer.png" alt="Logo Footer ULS" className="h-[98px] w-auto object-contain flex-shrink-0" />
+            <div className="w-20 h-20 bg-white rounded-full flex items-center justify-center mb-4">
               <div className="text-center">
+                <p className="text-xs font-bold text-gray-800">UNIVERSIDAD</p>
+                <p className="text-xs text-gray-600">DE LA SERENA</p>
               </div>
+            </div>
           </div>
 
           {/* Contactos por Unidades */}

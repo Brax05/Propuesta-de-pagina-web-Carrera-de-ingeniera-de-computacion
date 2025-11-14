@@ -2,7 +2,6 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Menu, X } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
-//import logoULS from '../public/logo.png';
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
@@ -15,9 +14,13 @@ export default function Navbar() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-20">
           {/* Logo */}
-          <Link to="/" className="flex items-center gap-2 flex-shrink-0">
-          <img src="/logo.png" alt="Logo ULS" className="h-[95px] w-auto object-contain mt-4" />
-            <div className="hidden sm:block whitespace-nowrap">
+          <Link to="/" className="flex items-center gap-2">
+            <div className="w-12 h-12 bg-red-700 rounded-full flex items-center justify-center flex-shrink-0">
+              <span className="text-white font-bold text-lg">U</span>
+            </div>
+            <div className="hidden sm:block">
+              <p className="text-xs font-bold text-gray-800">UNIVERSIDAD</p>
+              <p className="text-xs text-gray-600">DE LA SERENA</p>
             </div>
           </Link>
 
