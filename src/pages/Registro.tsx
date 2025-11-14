@@ -14,32 +14,31 @@ export default function Register() {
   const { register } = useAuth();
   const navigate = useNavigate();
 
+  // Se agregó 'async' aquí
   const handleSubmit = async (e: React.FormEvent) => {
-  e.preventDefault();
-  setError('');
+    e.preventDefault();
+    setError('');
 
-  if (!firstName || !lastName || !email || !password || !confirmPassword) {
-    setError('Por favor completa todos los campos');
-    return;
-  }
-  if (password !== confirmPassword) {
-    setError('Las contraseñas no coinciden');
-    return;
-  }
-  if (password.length < 6) {
-    setError('La contraseña debe tener al menos 6 caracteres');
-    return;
-  }
-
-  const ok = await register(`${firstName} ${lastName}`, email, password);
-
-  if (ok) {
-    navigate('/');
-  } else {
-    setError('Error al registrarse. Intenta de nuevo.');
-  }
-};
-
+    if (!firstName || !lastName || !email || !password || !confirmPassword) {
+      setError('Por favor completa todos los campos');
+      return;
+    }
+    if (password !== confirmPassword) {
+      setError('Las contraseñas no coinciden');
+      return;
+    }
+    if (password.length < 6) {
+      setError('La contraseña debe tener al menos 6 caracteres');
+      return;
+    }
+    
+    // Se agregó 'await' aquí para esperar la respuesta de la promesa
+    if (await register(`${firstName} ${lastName}`, email, password)) {
+      navigate('/');
+    } else {
+      setError('Error al registrarse. Intenta de nuevo.');
+    }
+  };
 
   return (
     <div className="min-h-screen flex flex-col bg-white">
@@ -152,4 +151,3 @@ export default function Register() {
     </div>
   );
 }
-
