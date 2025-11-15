@@ -339,6 +339,7 @@ export default function StudyPlan() {
                         key={idx2}
                         onMouseEnter={() => setHoveredCourse(course)}
                         onMouseLeave={() => setHoveredCourse(null)}
+                        onClick={() => setSelectedCourse(course)}
                         className={`p-2 rounded text-xs text-gray-800 text-center font-medium transition-colors duration-100 ${
                           course.startsWith("Ampliando la mirada")
                             ? "bg-blue-200"
