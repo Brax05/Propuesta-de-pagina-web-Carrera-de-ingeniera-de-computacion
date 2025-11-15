@@ -2,6 +2,8 @@ import { useState } from 'react';
 import Navbar from '@/components/Navbarpage';
 import Footer from '@/components/Footerpage';
 
+//aaaaa
+
 export default function StudyPlan() {
   const semestres = [
     { numero: 1, curso: [ 'Introducción al Cálculo', 'Introducción al Álgebra', 'Introducción a la Ingeniería Civil en Computación e Informática', 'Taller de Estrategias de Aprendizaje para Ingeniería' ] },
@@ -288,10 +290,11 @@ export default function StudyPlan() {
   const [hoveredCourse, setHoveredCourse] = useState<string | null>(null);
   const [selectedCourse, setSelectedCourse] = useState<string | null>(null);
 
-  // Siempre devuelve un string[]
-  const highlightedPrereqs: string[] = hoveredCourse && prereqs[hoveredCourse] ? prereqs[hoveredCourse] : [];
+
   const showModal = !!selectedCourse;
   const closeModal = () => setSelectedCourse(null);
+  // Siempre devuelve un string[]
+  const highlightedPrereqs: string[] = hoveredCourse && prereqs[hoveredCourse] ? prereqs[hoveredCourse] : [];
   
   return (
     <div className="min-h-screen flex flex-col bg-white">
