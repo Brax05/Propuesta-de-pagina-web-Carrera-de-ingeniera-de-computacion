@@ -287,11 +287,11 @@ export default function StudyPlan() {
   const maxCursos = Math.max(...semestres.map(s => s.curso.length));
   const [hoveredCourse, setHoveredCourse] = useState<string | null>(null);
   const [selectedCourse, setSelectedCourse] = useState<string | null>(null);
-  const closeModal = () => setSelectedCourse(null);
 
   // Siempre devuelve un string[]
   const highlightedPrereqs: string[] = hoveredCourse && prereqs[hoveredCourse] ? prereqs[hoveredCourse] : [];
   const showModal = !!selectedCourse;
+  const closeModal = () => setSelectedCourse(null);
   
   return (
     <div className="min-h-screen flex flex-col bg-white">
