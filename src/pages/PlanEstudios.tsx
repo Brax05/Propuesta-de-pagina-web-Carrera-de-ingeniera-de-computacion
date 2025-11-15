@@ -287,15 +287,12 @@ export default function StudyPlan() {
   const maxCursos = Math.max(...semestres.map(s => s.curso.length));
   const [hoveredCourse, setHoveredCourse] = useState<string | null>(null);
   const [selectedCourse, setSelectedCourse] = useState<string | null>(null);
+  const closeModal = () => setSelectedCourse(null);
 
   // Siempre devuelve un string[]
   const highlightedPrereqs: string[] = hoveredCourse && prereqs[hoveredCourse] ? prereqs[hoveredCourse] : [];
-  
-  // --- Modal ---
   const showModal = !!selectedCourse;
-  const closeModal = () => setSelectedCourse(null);
-
-
+  
   return (
     <div className="min-h-screen flex flex-col bg-white">
       <Navbar />
@@ -339,7 +336,6 @@ export default function StudyPlan() {
                         key={idx2}
                         onMouseEnter={() => setHoveredCourse(course)}
                         onMouseLeave={() => setHoveredCourse(null)}
-                        onClick={() => setSelectedCourse(course)}
                         className={`p-2 rounded text-xs text-gray-800 text-center font-medium transition-colors duration-100 ${
                           course.startsWith("Ampliando la mirada")
                             ? "bg-blue-200"

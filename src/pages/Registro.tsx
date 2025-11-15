@@ -14,7 +14,8 @@ export default function Register() {
   const { register } = useAuth();
   const navigate = useNavigate();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  // Se agregó 'async' aquí
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
 
@@ -30,7 +31,9 @@ export default function Register() {
       setError('La contraseña debe tener al menos 6 caracteres');
       return;
     }
-    if (register(`${firstName} ${lastName}`, email, password)) {
+    
+    // Se agregó 'await' aquí para esperar la respuesta de la promesa
+    if (await register(`${firstName} ${lastName}`, email, password)) {
       navigate('/');
     } else {
       setError('Error al registrarse. Intenta de nuevo.');
@@ -148,4 +151,3 @@ export default function Register() {
     </div>
   );
 }
-
