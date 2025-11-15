@@ -16,24 +16,231 @@ export default function StudyPlan() {
     { numero: 10, curso: [ 'Taller de Desarrollo III', 'Electivo de Formación Profesional III', 'Electivo de Formación Profesional IV' ] }
   ];
 
-  const cursoInfo: { [k: string]: { descripcion: string, tipo: string, teoria: number, laboratorio: number } } = {
+  const cursoInfo: { [k: string]: { descripcion: string, tipo: string, tel: string } } = {
   'Introducción al Cálculo': {
     descripcion: 'Busca desarrollar el razonamiento científico y la resolución de problemas mediante el estudio de los fundamentos del cálculo diferencial e integral, como los límites, derivadas y la variación continua',
     tipo: 'Semestral',
-    teoria: 6,
-    laboratorio: 2
+    tel: '6-0-2'
   },
   'Introducción al Álgebra': {
-    descripcion: 'Abarca la lógica proposicional, las estructuras algebraicas fundamentales como grupos y anillos, el estudio de los conjuntos numéricos (\(N,Z,Q,R,C\)), funciones (exponenciales, logarítmicas, trigonométricas) y el álgebra lineal',
+    descripcion: 'Abarca la lógica proposicional, las estructuras algebraicas fundamentales como grupos y anillos, el estudio de los conjuntos numéricos (N,Z,Q,R,C), funciones (exponenciales, logarítmicas, trigonométricas) y el álgebra lineal',
     tipo: 'Semestral',
-    teoria: 6,
-    laboratorio: 2
+    tel: '6-0-2'
   },
   'Introducción a la Ingeniería Civil en Computación e Informática': {
     descripcion: 'introduce los fundamentos de la profesión, combinando conocimientos de ciencias básicas, ingeniería y computación.',
     tipo: 'Anual',
-    teoria: 4,
-    laboratorio: 0
+    tel: '4-0-0'
+  },
+  'Taller de Estrategias de Aprendizaje para Ingeniería': {
+    descripcion: 'Experiencia educativa práctica y colaborativa, diseñada para que los estudiantes de ingeniería desarrollen y mejoren sus habilidades de estudio y aprendizaje de forma activa. ',
+    tipo: 'Anual',
+    tel: '0-0-4'
+  },
+  'Cálculo Diferencial e Integral':{
+    descripcion: 'Abarca temas como límites, derivadas e integrales, con aplicaciones en el modelado, optimización y resolución de problemas en áreas como ingeniería y ciencias. ',
+    tipo: 'Semestral',
+    tel: '6-0-0'
+  },
+  'Álgebra Lineal': {
+    descripcion: 'Estudia vectores, matrices, sistemas de ecuaciones lineales, espacios vectoriales y transformaciones lineales.',
+    tipo: 'Semestral',
+    tel: '6-0-0'
+  },
+  'Física Newtoniana': {
+    descripcion: 'El	 estudiante	 es	 introducido	 a	 las	 bases	 de	 la	 física	 newtoniana,	 abarcando desde	los	elementos	básicos	matemáticos hasta	el	planteamiento	de	las	leyes	de	Newton.',
+    tipo: 'Semestral',
+    tel: '6-0-2'
+  },
+  'Programación Estructurada': {
+    descripcion: 'Introduce la lógica de programación y el diseño de algoritmos usando estructuras básicas como secuencia, selección y repetición.',
+    tipo: 'Anual',
+    tel: '4-0-2'
+  },
+  'Taller de Habilidades Comunicativas para Ingeniería':{
+    descripcion: 'Orientada a fortalecer la comunicación oral y escrita en contextos profesionales y tecnológicos.',
+    tipo: 'Anual',
+    tel: '0-0-2'
+  },
+  'Cálculo en Varias Variables': {
+    descripcion: 'Estudia funciones de varias variables y sus aplicaciones. Incluye derivadas parciales, gradientes, optimización multivariable e integración múltiple, enfocándose en resolver problemas propios de la ingeniería y las ciencias.',
+    tipo: 'Semestral',
+    tel: '4-0-0'
+  },
+  'Ecuaciones Diferenciales': {
+    descripcion: 'Dedicada al estudio y solución de ecuaciones diferenciales ordinarias que modelan fenómenos físicos y de ingeniería.',
+    tipo: 'Semestral',
+    tel: '4-0-0'
+  },
+  'Electromagnetismo': {
+    descripcion: 'Aborda los principios del campo eléctrico y magnético, sus interacciones y las leyes fundamentales que los rigen.',
+    tipo: 'Semestral',
+    tel: '4-0-2'
+  },
+  'Programación Orientada a Objetos': {
+    descripcion: 'Introduce el desarrollo de software utilizando el paradigma orientado a objetos. Se estudian conceptos como clases, objetos, encapsulamiento, herencia y polimorfismo, aplicados al diseño de programas modulares y reutilizables.',
+    tipo: 'Anual',
+    tel: '4-0-4'
+  },
+  'Inglés para Ingeniería I': {
+    descripcion: 'Enfocada en desarrollar competencias básicas de comprensión y comunicación en inglés dentro de contextos académicos y técnicos.',
+    tipo: 'Anual',
+    tel: '2-0-2'
+  },
+  'Métodos Numéricos para Ingeniería': {
+    descripcion: 'Aborda técnicas numéricas para resolver problemas matemáticos aplicados a la ingeniería. Incluye métodos de aproximación, solución de ecuaciones, interpolación, derivación e integración numérica, y análisis de errores.',
+    tipo: 'Semestral',
+    tel: '4-0-0'
+  },
+  'Probabilidad y Estadística': {
+    descripcion:'Introduce los fundamentos de probabilidad y el análisis estadístico para modelar, interpretar y tomar decisiones basadas en datos.',
+    tipo: 'Semestral',
+    tel: '4-0-0'
+  },
+  'Óptica y Ondas': {
+    descripcion: 'Estudia el comportamiento de las ondas y los principios fundamentales de la óptica.',
+    tipo: 'Semestral',
+    tel: '4-0-2'
+  },
+  'Bases de Datos': {
+    descripcion: 'Introduce los conceptos fundamentales del diseño, modelación y administración de bases de datos.',
+    tipo: 'Anual',
+    tel: '4-0-2'
+  },
+  'Desafío de Proyecto de Ingeniería I': {
+    descripcion: 'Orientada al desarrollo de un proyecto inicial de ingeniería, donde los estudiantes aplican conocimientos básicos para identificar un problema, proponer soluciones y elaborar un prototipo o informe técnico.',
+    tipo: 'Semestral',
+    tel: '0-0-4'
+  },
+  'Inglés para Ingeniería II': {
+    descripcion: 'Enfocada en fortalecer las habilidades de comprensión y comunicación en inglés en contextos técnicos.',
+    tipo: 'Anual',
+    tel: '2-0-2'
+  },
+  'Diseño y Análisis de Algoritmos': {
+    descripcion: 'Aborda la formulación, optimización y evaluación de algoritmos.',
+    tipo: 'Anual',
+    tel: '4-0-0'
+  },
+  'Fundamentos de Economía': {
+    descripcion: 'Introduce los principios básicos de la economía, incluyendo oferta y demanda, funcionamiento de mercados, costos, producción y toma de decisiones económicas.',
+    tipo: 'Semestral',
+    tel: '4-0-0'
+  },
+  'Investigación de Operaciones': {
+    descripcion: 'Estudia métodos cuantitativos para optimizar procesos y apoyar la toma de decisiones.',
+    tipo: 'Semestral',
+    tel: '4-0-0'
+  },
+  'Paradigmas y Lenguajes de Programación': {
+    descripcion: 'Presenta los principales paradigmas de programación —imperativo, funcional, orientado a objetos y lógico— y sus características.',
+    tipo: 'Anual',
+    tel: '4-0-2'
+  },
+  'Arquitectura de Computadores': {
+    descripcion: 'Estudia la organización interna y el funcionamiento de los computadores.',
+    tipo: 'Anual',
+    tel: '4-0-2'
+  },
+  'Inglés para Ingeniería III': {
+    descripcion: 'Orientada a desarrollar un dominio intermedio del inglés en contextos académicos y profesionales.',
+    tipo: 'Anual',
+    tel: '2-0-2'
+  },
+  'Inteligencia Artificial': {
+    descripcion: 'Introduce los fundamentos y técnicas básicas de la inteligencia artificial.',
+    tipo: 'Anual',
+    tel: '4-0-2'
+  },
+  'Teoría de la Computación': {
+    descripcion: 'Estudia los fundamentos formales de los sistemas computacionales.',
+    tipo: 'Anual',
+    tel: '4-0-2'
+  },
+  'Electrónica Aplicada': {
+    descripcion: 'Estudia el funcionamiento y uso práctico de componentes y circuitos electrónicos.',
+    tipo: 'Anual',
+    tel: '2-0-2'
+  },
+  'Tópicos Avanzados de Bases de Datos': {
+    descripcion: 'Profundiza en conceptos avanzados de gestión y diseño de bases de datos.',
+    tipo: 'Anual',
+    tel: '4-0-2'
+  },
+  'Sistemas Operativos': {
+    descripcion: 'Estudia el funcionamiento interno de los sistemas operativos.',
+    tipo: 'Anual',
+    tel: '4-0-2'
+  },
+  'Aprendizaje Automático': {
+    descripcion: 'Introduce métodos y algoritmos para que los sistemas puedan aprender a partir de datos.',
+    tipo: 'Anual',
+    tel: '4-0-2'
+  },
+  'Internet de las Cosas': {
+    descripcion: 'Estudia los principios, arquitecturas y tecnologías del Internet de las Cosas (IoT).',
+    tipo: 'Anual',
+    tel: '4-0-2'
+  },
+  'Ingeniería de Software': {
+    descripcion: 'Aborda los principios, métodos y herramientas para el desarrollo sistemático de software.',
+    tipo: 'Anual',
+    tel: '4-0-2'
+  },
+  'Preparación y Evaluación de Proyectos': {
+    descripcion: 'Aborda las etapas para formular, analizar y evaluar proyectos de ingeniería.',
+    tipo: 'Semestral',
+    tel: '4-0-0'
+  },
+  'Redes y Sistemas Distribuidos': {
+    descripcion: 'Estudia los principios de comunicación en redes y la arquitectura de sistemas distribuidos.',
+    tipo: 'Anual',
+    tel: '4-0-2'
+  },
+  'Sistemas Inteligentes': {
+    descripcion: 'Estudia técnicas y modelos capaces de resolver problemas complejos de manera autónoma.',
+    tipo: 'Anual',
+    tel: '4-0-2'
+  },
+  'Innovación y Emprendimiento Informático': {
+    descripcion: 'Fomenta la creación de soluciones tecnológicas innovadoras y el desarrollo de iniciativas de emprendimiento en el ámbito informático.',
+    tipo: 'Anual',
+    tel: '2-0-2'
+  },
+  'Taller de Desarrollo I': {
+    descripcion: 'Orientada a la aplicación práctica de fundamentos de programación y desarrollo de software.',
+    tipo: 'Anual',
+    tel: '0-0-4'
+  },
+  'Desafío de Proyecto de Ingeniería II': {
+    descripcion: 'Centrada en el desarrollo avanzado de un proyecto de ingeniería, donde los estudiantes profundizan en el análisis, diseño y validación de soluciones tecnológicas.',
+    tipo: 'Anual',
+    tel: '0-0-4'
+  },
+  'Sistemas de Información': {
+    descripcion: 'Estudia el diseño, implementación y gestión de sistemas que integran tecnología y procesos organizacionales para apoyar la toma de decisiones.',
+    tipo: 'Anual',
+    tel: '2-0-2'
+  },
+  'Gestión de Proyectos Informáticos': {
+    descripcion: 'Aborda metodologías y herramientas para planificar, ejecutar y controlar proyectos de software.',
+    tipo: 'Anual',
+    tel: '4-0-2'
+  },
+  'Informática y Sociedad': {
+    descripcion: 'Analiza el impacto social, ético y legal de las tecnologías de la información.',
+    tipo: 'Anual',
+    tel: '4-0-0'
+  },
+  'Taller de Desarrollo II': {
+    descripcion: 'Orientada al desarrollo de proyectos de software de mayor complejidad, aplicando prácticas avanzadas de diseño, programación, pruebas y documentación.',
+    tipo: 'Anual',
+    tel: '0-0-6'
+  },
+  'Taller de Desarrollo III': {
+    descripcion: 'Enfocada en el desarrollo de soluciones de software completas y profesionales.',
+    tipo: 'Anual',
+    tel: '0-0-6'
   }
 };
 
@@ -104,24 +311,15 @@ export default function StudyPlan() {
           <div className="mb-8 flex flex-col gap-2 items-center lg:items-start lg:flex-row lg:justify-between">
             <div>
               <div className="flex items-center gap-3 mb-2">
-                <div className="w-12 h-12 bg-blue-700 rounded-full flex items-center justify-center">
-                  <span className="text-white font-bold text-base">ULS</span>
-                </div>
                 <div>
-                  <h2 className="text-lg font-bold text-gray-900">UNIVERSIDAD DE LA SERENA</h2>
-                  <p className="text-gray-600 text-sm">CHILE</p>
+                  <img src="/logo.png" alt="Logo ULS" className="h-[120px] w-auto object-contain mt-4" />
                 </div>
               </div>
             </div>
             <div className="text-center lg:text-right">
               <div className="flex items-center gap-2 justify-center lg:justify-end">
-                <div className="w-12 h-12 bg-gray-300 rounded-full flex items-center justify-center">
-                  <span className="text-gray-700 font-bold text-xs">ISO-CHILE</span>
-                </div>
                 <div>
-                  <h3 className="text-base font-bold text-blue-700">PLAN DE ESTUDIO</h3>
-                  <p className="text-gray-700 text-sm">Ingeniería Civil en Computación e Informática</p>
-                  <p className="text-gray-700 font-semibold text-xs">COD. 25006</p>
+                  <img src="/sct.png" alt="Sct ULS" className="h-[120px] w-auto object-contain mt-4" />
                 </div>
               </div>
             </div>
@@ -174,17 +372,12 @@ export default function StudyPlan() {
                   <div>
                     <span className="inline-block mb-2 px-2 py-1 bg-blue-100 text-blue-800 rounded text-xs font-semibold">
                       {cursoInfo[selectedCourse].tipo}
-                    </span>
-                    <div className="flex gap-4 text-xs mb-4">
-                      <div>
-                        <span className="font-semibold text-gray-800">Teoría:</span> {cursoInfo[selectedCourse].teoria} hrs
-                      </div>
-                      <div>
-                        <span className="font-semibold text-gray-800">Laboratorio:</span> {cursoInfo[selectedCourse].laboratorio} hrs
-                      </div>
-                    </div>
-                  </div>
-                )}
+                      </span>
+                      <div className="text-xs mb-4">
+                        <span className="font-semibold text-gray-800">T.E.L:</span> {cursoInfo[selectedCourse].tel}
+                        </div>
+                        </div>
+                      )}
                 <button onClick={closeModal} className="px-4 py-2 bg-blue-600 rounded text-white hover:bg-blue-700">
                   Cerrar
                 </button>
