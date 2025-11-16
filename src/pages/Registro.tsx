@@ -13,6 +13,7 @@ export default function Register() {
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
+  // Se agregó 'async' aquí
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
