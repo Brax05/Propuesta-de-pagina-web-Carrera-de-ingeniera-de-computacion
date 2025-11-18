@@ -57,4 +57,3 @@ export async function registrarUsuario(payload: {
 
   return data as Usuario;
 }
-
