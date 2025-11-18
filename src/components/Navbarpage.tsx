@@ -100,7 +100,9 @@ export default function Navbar() {
               <Link to="/egresados" className="text-sm text-gray-700 hover:text-gray-900 py-2" onClick={() => setIsOpen(false)}>Nuestros Estudiantes</Link>
               <Link to="/contacto" className="text-sm text-gray-700 hover:text-gray-900 py-2" onClick={() => setIsOpen(false)}>Contacto</Link>
               {isAuthenticated && (
-                <Link to="/cec" className="text-sm text-gray-700 hover:text-gray-900 py-2" onClick={() => setIsOpen(false)}>CEC</Link>
+                <Link to="/cec" className="text-sm text-gray-700 hover:text-gray-900 py-2" onClick={() => setIsOpen(false)}>
+                  CEC
+                </Link>
               )}
               <div className="border-t border-gray-200 pt-3 mt-3">
                 {loading ? (
