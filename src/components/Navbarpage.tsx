@@ -37,7 +37,13 @@ export default function Navbar() {
             <Link to="/contacto" className="text-sm text-gray-700 hover:text-gray-900 transition">
               Contacto
             </Link>
-          </div>
+            {/* Enlace dinámico visible solo si el usuario está autenticado */}
+            {isAuthenticated && (
+              <Link to="/cec" className="text-sm text-gray-700 hover:text-gray-900 transition font-semibold">
+                CEC
+                </Link>
+              )}
+              </div>
 
           {/* Botones de autenticación */}
           <div className="hidden md:flex items-center gap-4">
@@ -94,6 +100,15 @@ export default function Navbar() {
               <Link to="/contacto" className="text-sm text-gray-700 hover:text-gray-900 py-2" onClick={() => setIsOpen(false)}>
                 Contacto
               </Link>
+              <Link to="/contacto" className="text-sm text-gray-700 hover:text-gray-900 py-2" onClick={() => setIsOpen(false)}>
+              Contacto
+              </Link>
+
+              {isAuthenticated && (
+                <Link to="/cec" className="text-sm text-gray-700 hover:text-gray-900 py-2" onClick={() => setIsOpen(false)}>
+                  CEC
+                  </Link>
+                )}
               <div className="border-t border-gray-200 pt-3 mt-3">
                 {isAuthenticated ? (
                   <button

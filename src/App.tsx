@@ -6,6 +6,7 @@ import Noticias from '@/pages/Noticias';
 import Estudiantes from '@/pages/Estudiantes';
 import PlanEstudios from '@/pages/PlanEstudios';
 import Contacto from '@/pages/Contacto';
+import CEC from '@/pages/CEC';
 
 function App() {
   return (
@@ -18,6 +19,7 @@ function App() {
         <Route path="/estudiantes" element={<Estudiantes />} />
         <Route path="/plan-estudios" element={<PlanEstudios />} />
         <Route path="/contacto" element={<Contacto />} />
+        <Route path="/cec" element={<CEC />} />
       </Routes>
     </BrowserRouter>
   );
