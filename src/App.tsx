@@ -1,16 +1,17 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import Home from '@/pages/Homepage';
-import Login from '@/pages/Login';
-import Registro from '@/pages/Registro';
-import Noticias from '@/pages/Noticias';
-import Estudiantes from '@/pages/Estudiantes';
-import PlanEstudios from '@/pages/PlanEstudios';
-import Contacto from '@/pages/Contacto';
+import { Routes, Route } from "react-router-dom";
+import Home from "@/pages/Homepage";
+import Login from "@/pages/Login";
+import Registro from "@/pages/Registro";
+import Noticias from "@/pages/Noticias";
+import Estudiantes from "@/pages/Estudiantes";
+import PlanEstudios from "@/pages/PlanEstudios";
+import Contacto from "@/pages/Contacto";
 import CEC from '@/pages/CEC';
-
+import { RutaProtected } from "./components/RutaProtected";
+import { AuthProvider } from "./hooks/AuthContext";
 function App() {
   return (
-    <BrowserRouter>
+    <AuthProvider>
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
@@ -20,8 +21,13 @@ function App() {
         <Route path="/plan-estudios" element={<PlanEstudios />} />
         <Route path="/contacto" element={<Contacto />} />
         <Route path="/cec" element={<CEC />} />
+
+        <Route
+          path="/editorpage"
+          element={<RutaProtected>Aqui va la pagina del editor</RutaProtected>}
+        />
       </Routes>
-    </BrowserRouter>
+    </AuthProvider>
   );
 }
 

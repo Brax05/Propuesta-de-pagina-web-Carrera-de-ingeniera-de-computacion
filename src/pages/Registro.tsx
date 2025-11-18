@@ -1,42 +1,49 @@
-import { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
-import { useAuth } from '@/hooks/useAuth';
-import Navbar from '@/components/Navbarpage';
-import Footer from '@/components/Footerpage';
+import { useState } from "react";
+import { useNavigate, Link } from "react-router-dom";
+import Navbar from "@/components/Navbarpage";
+import Footer from "@/components/Footerpage";
+import { supabaseCliente } from "@/services/supabaseClient";
 
 export default function Register() {
-  const [firstName, setFirstName] = useState('');
-  const [lastName, setLastName] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
-  const [error, setError] = useState('');
-  const { register } = useAuth();
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [error, setError] = useState("");
   const navigate = useNavigate();
 
   // Se agregó 'async' aquí
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError('');
+    setError("");
 
     if (!firstName || !lastName || !email || !password || !confirmPassword) {
-      setError('Por favor completa todos los campos');
+      setError("Por favor completa todos los campos");
       return;
     }
     if (password !== confirmPassword) {
-      setError('Las contraseñas no coinciden');
+      setError("Las contraseñas no coinciden");
       return;
     }
     if (password.length < 6) {
-      setError('La contraseña debe tener al menos 6 caracteres');
+      setError("La contraseña debe tener al menos 6 caracteres");
       return;
     }
-    
-    // Se agregó 'await' aquí para esperar la respuesta de la promesa
-    if (await register(`${firstName} ${lastName}`, email, password)) {
-      navigate('/');
-    } else {
-      setError('Error al registrarse. Intenta de nuevo.');
+
+    try {
+      const { error } = await supabaseCliente.auth.signUp({
+        email,
+        password,
+      });
+
+      if (error) throw error;
+
+      console.log("Usuario registrado exitosamente");
+      navigate("/login");
+    } catch (error: any) {
+      console.error(error);
+      setError(error.message || "Error al registrar usuario");
     }
   };
 
@@ -47,8 +54,12 @@ export default function Register() {
       <div className="flex-1 flex items-center justify-center py-12 px-4">
         <div className="w-full max-w-md">
           <div className="bg-white rounded-lg shadow-lg p-8 border border-gray-200">
-            <h1 className="text-3xl font-bold text-gray-900 mb-2 text-center">Crear Cuenta</h1>
-            <p className="text-gray-600 text-center mb-8">Regístrate con tu correo institucional terminado en "@userena.cl".</p>
+            <h1 className="text-3xl font-bold text-gray-900 mb-2 text-center">
+              Crear Cuenta
+            </h1>
+            <p className="text-gray-600 text-center mb-8">
+              Regístrate con tu correo institucional terminado en "@userena.cl".
+            </p>
 
             {error && (
               <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
@@ -58,7 +69,10 @@ export default function Register() {
 
             <form onSubmit={handleSubmit} className="space-y-6">
               <div>
-                <label htmlFor="firstName" className="block text-sm font-semibold text-gray-700 mb-2">
+                <label
+                  htmlFor="firstName"
+                  className="block text-sm font-semibold text-gray-700 mb-2"
+                >
                   Nombres
                 </label>
                 <input
@@ -72,7 +86,10 @@ export default function Register() {
               </div>
 
               <div>
-                <label htmlFor="lastName" className="block text-sm font-semibold text-gray-700 mb-2">
+                <label
+                  htmlFor="lastName"
+                  className="block text-sm font-semibold text-gray-700 mb-2"
+                >
                   Apellidos
                 </label>
                 <input
@@ -86,7 +103,10 @@ export default function Register() {
               </div>
 
               <div>
-                <label htmlFor="email" className="block text-sm font-semibold text-gray-700 mb-2">
+                <label
+                  htmlFor="email"
+                  className="block text-sm font-semibold text-gray-700 mb-2"
+                >
                   Email
                 </label>
                 <input
@@ -100,7 +120,10 @@ export default function Register() {
               </div>
 
               <div>
-                <label htmlFor="password" className="block text-sm font-semibold text-gray-700 mb-2">
+                <label
+                  htmlFor="password"
+                  className="block text-sm font-semibold text-gray-700 mb-2"
+                >
                   Contraseña
                 </label>
                 <input
@@ -114,7 +137,10 @@ export default function Register() {
               </div>
 
               <div>
-                <label htmlFor="confirmPassword" className="block text-sm font-semibold text-gray-700 mb-2">
+                <label
+                  htmlFor="confirmPassword"
+                  className="block text-sm font-semibold text-gray-700 mb-2"
+                >
                   Confirmar Contraseña
                 </label>
                 <input
@@ -137,8 +163,11 @@ export default function Register() {
 
             <div className="mt-6 text-center">
               <p className="text-gray-600 text-sm">
-                ¿Ya tienes cuenta?{' '}
-                <Link to="/login" className="text-blue-600 hover:text-blue-700 font-semibold">
+                ¿Ya tienes cuenta?{" "}
+                <Link
+                  to="/login"
+                  className="text-blue-600 hover:text-blue-700 font-semibold"
+                >
                   Inicia sesión aquí
                 </Link>
               </p>
