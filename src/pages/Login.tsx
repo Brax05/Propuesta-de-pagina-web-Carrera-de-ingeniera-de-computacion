@@ -1,31 +1,45 @@
-import { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
-import { useAuth } from '@/hooks/useAuth';
-import Navbar from '@/components/Navbarpage';
-import Footer from '@/components/Footerpage';
+import { useState } from "react";
+import { useNavigate, Link, Navigate } from "react-router-dom";
+import { useAuth } from "@/hooks/AuthContext";
+import { supabaseCliente } from "@/services/supabaseClient";
+
+import Navbar from "@/components/Navbarpage";
+import Footer from "@/components/Footerpage";
 
 export default function Login() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
-  const { login } = useAuth();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
   const navigate = useNavigate();
+  const { user } = useAuth();
+
+  // Opción que niega que un usuario ya logueado regrese al login
+  if (user) {
+    return <Navigate to="/" replace />;
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError('');
+    setError("");
 
     if (!email || !password) {
-      setError('Por favor completa todos los campos');
+      setError("Por favor completa todos los campos");
       return;
     }
 
-    const ok = await login(email, password);
+    try {
+      const { error } = await supabaseCliente.auth.signInWithPassword({
+        email,
+        password,
+      });
 
-    if (ok) {
-      navigate('/');
-    } else {
-      setError('Email o contraseña inválidos. Verifica tus datos.');
+      if (error) throw error;
+
+      console.log("Inicio de sesión exitoso");
+      navigate("/");
+    } catch (error: any) {
+      console.error(error);
+      setError(error.message || "Error al iniciar sesión");
     }
   };
 
@@ -64,6 +78,7 @@ export default function Login() {
                   onChange={(e) => setEmail(e.target.value)}
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-700"
                   placeholder="tu@userena.cl"
+                  required
                 />
               </div>
 
@@ -81,6 +96,7 @@ export default function Login() {
                   onChange={(e) => setPassword(e.target.value)}
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-700"
                   placeholder="••••••••"
+                  required
                 />
               </div>
 
@@ -94,7 +110,7 @@ export default function Login() {
 
             <div className="mt-6 text-center">
               <p className="text-gray-600 text-sm">
-                ¿No tienes cuenta?{' '}
+                ¿No tienes cuenta?{" "}
                 <Link
                   to="/register"
                   className="text-blue-600 hover:text-blue-700 font-semibold"
@@ -111,4 +127,3 @@ export default function Login() {
     </div>
   );
 }
-
