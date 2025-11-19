@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import Navbar from "@/components/Navbarpage";
 import Footer from "@/components/Footerpage";
-import { supabaseCliente } from "@/services/supabaseClient";
+import { supabaseCliente } from "@/services/supabaseCliente";
 import { registrarUsuario } from "@/services/authService";
 
 export default function Register() {
@@ -51,7 +51,7 @@ export default function Register() {
         throw new Error("No se pudo obtener el usuario creado");
       }
       await registrarUsuario({
-        idAuth: data.user.id,   // esto va a id_usuario
+        idAuth: data.user.id, // esto va a id_usuario
         nombre: firstName,
         apellido: lastName,
         correo: email,

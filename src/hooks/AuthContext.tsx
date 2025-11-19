@@ -102,6 +102,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     logout,
   };
 
-  // AuthContext.Provider permite 
+  // AuthContext.Provider es el que provee los datos
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
