@@ -7,7 +7,16 @@ export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
   const { user, loading, logout } = useAuth();
-  const userLabel = user?.user_metadata?.full_name || user?.email;
+  const fullNombres = (user?.user_metadata?.nombres ?? "").trim();
+  const fullApellidos = (user?.user_metadata?.apellidos ?? "").trim();
+
+  const primerNombre = fullNombres.split(/\s+/)[0] || "";
+  const primerApellido = fullApellidos.split(/\s+/)[0] || "";
+
+  const userLabel =
+    (primerNombre && primerApellido
+      ? `${primerNombre} ${primerApellido}`
+      : user?.user_metadata?.full_name) || user?.email;
 
   const toggleMenu = () => setIsOpen(!isOpen);
   const handleLogout = async () => {
@@ -29,12 +38,8 @@ export default function Navbar() {
         <div className="flex justify-between items-center h-20">
           {/* Logo */}
           <Link to="/" className="flex items-center gap-2">
-            <div className="w-12 h-12 bg-red-700 rounded-full flex items-center justify-center flex-shrink-0">
-              <span className="text-white font-bold text-lg">U</span>
-            </div>
             <div className="hidden sm:block">
-              <p className="text-xs font-bold text-gray-800">UNIVERSIDAD</p>
-              <p className="text-xs text-gray-600">DE LA SERENA</p>
+              <img src="/logo.png" alt="Logo Cna ULS" className="h-[98px] w-auto object-contain flex-shrink-0" />
             </div>
           </Link>
 

@@ -1,6 +1,7 @@
-import { Link } from "react-router-dom";
-import Navbar from "@/components/Navbarpage";
-import Footer from "@/components/Footerpage";
+import { Link } from 'react-router-dom';
+import Navbar from '@/components/Navbarpage';
+import Footer from '@/components/Footerpage';
+import ingCivilComputacion from '@/assets/icons/ing_civil_computacion_.png';
 
 export default function Home() {
   return (
@@ -52,11 +53,12 @@ export default function Home() {
 
             {/* Columna Derecha */}
             <div className="bg-white rounded-lg p-10 text-center shadow-xl">
-              <div className="text-blue-700 font-bold mb-6">
-                <p className="text-3xl leading-tight">«INGENIERÍA</p>
-                <p className="text-3xl leading-tight">CIVIL EN</p>
-                <p className="text-3xl leading-tight">COMPUTACIÓN E</p>
-                <p className="text-3xl leading-tight">INFORMÁTICA»</p>
+              <div className="mb-6">
+                <img
+                  src={ingCivilComputacion}
+                  alt="Ingeniería Civil en Computación e Informática"
+                  className="w-64 h-auto mx-auto object-scale-down"
+                />
               </div>
               <div className="mt-8 space-y-3 text-left text-gray-700 text-sm">
                 <p>

@@ -5,26 +5,17 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
           {/* Logo y Descripción */}
           <div className="flex flex-col items-center md:items-start">
-            <div className="w-20 h-20 bg-white rounded-full flex items-center justify-center mb-4">
-              <div className="text-center">
-                <p className="text-xs font-bold text-gray-800">UNIVERSIDAD</p>
-                <p className="text-xs text-gray-600">DE LA SERENA</p>
-              </div>
-            </div>
+            <img src="/logo-footer.png" alt="Logo Cna ULS" className="h-[98px] w-auto object-contain flex-shrink-0" />
           </div>
 
           {/* Contactos por Unidades */}
           <div className="text-center">
-            <h3 className="font-bold text-sm mb-4">CONTACTOS POR UNIDADES</h3>
-            <p className="text-xs text-gray-300">
-              <a href="#" className="hover:text-white transition">VER AQUÍ</a>
-            </p>
+            <img src="/contacto-por-unidades.png" alt="Contacto por unidades ULS" className="h-[115px] w-auto object-contain flex-shrink-0" />
           </div>
 
           {/* Logos de Alianzas */}
           <div className="flex justify-center md:justify-end gap-4">
-            <div className="w-12 h-12 bg-gray-700 rounded flex items-center justify-center text-xs font-semibold">CNA</div>
-            <div className="w-12 h-12 bg-gray-700 rounded flex items-center justify-center text-xs font-semibold">ACRED</div>
+            <img src="/logo-cna.png" alt="Logo Cna ULS" className="h-[98px] w-auto object-contain flex-shrink-0" />
           </div>
         </div>
 
