@@ -5,7 +5,7 @@ export default function Graduates() {
   const graduates = [
     { id: 1, name: 'Juanito Perez', title: 'Ingeniería Civil en Computación', specialty: 'Desarrollo de Software', description: 'Trabaja en Data Analytics para empresa del sector financiero.' },
     { id: 2, name: 'Carlita Flores', title: 'Ingeniería Civil en Computación', specialty: 'Ciencia de Datos', description: 'Lidera equipo de Data Scientists en empresa del sector financiero.' },
-    { id: 3, name: 'Camilito Bugz', title: 'Ingeniería en Computación', specialty: 'Computación en la Nube', description: 'Ingeniero de sistemas en compañía de servicios tecnológicos.' },
+    { id: 3, name: 'Camilito Bugz', title: 'Ingeniería Civil en Computación', specialty: 'Computación en la Nube', description: 'Ingeniero de sistemas en compañía de servicios tecnológicos.' },
   ];
 
   return (
@@ -29,7 +29,7 @@ export default function Graduates() {
 
       <section className="py-16 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-3xl font-bold text-gray-900 mb-12">Charla con nuestros profesionales</h2>
+          <h2 className="text-3xl font-bold text-gray-900 mb-12">Conoce a nuestros profesionales</h2>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {graduates.map((grad) => (
@@ -49,12 +49,9 @@ export default function Graduates() {
                     <p className="text-sm text-gray-600">{grad.specialty}</p>
                   </div>
                   <p className="text-sm text-gray-700">{grad.description}</p>
-                  <div className="flex gap-2 pt-4">
-                    <button className="flex-1 px-3 py-2 text-blue-600 hover:text-blue-700 text-sm font-semibold border border-blue-600 rounded hover:bg-blue-50 transition">
-                      Conócelo
-                    </button>
-                    <button className="flex-1 px-3 py-2 bg-blue-700 hover:bg-blue-800 text-white text-sm rounded transition">
-                      Contactar
+                  <div className="flex gap-2 justify-center">
+                   <button className="px-3 py-2 text-blue-600 hover:text-blue-700 text-sm font-semibold border border-blue-600 rounded hover:bg-blue-50 transition">
+                     Conócelo
                     </button>
                   </div>
                 </div>

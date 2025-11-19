@@ -22,8 +22,6 @@ export default function Footer() {
         {/* Divider */}
         <div className="border-t border-gray-700 pt-8">
           <div className="text-center text-xs text-gray-400">
-            <p>Benavente 980 - La Serena - Chile</p>
-            <p>51 2 20 4000</p>
             <p className="mt-4">© 2025 Derechos reservados</p>
             <p>Desarrollado por estudiantes de Ingeniería en Computación de la Universidad de la Serena</p>
           </div>

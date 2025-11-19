@@ -46,9 +46,11 @@ export default function Home() {
                   </span>
                 </li>
               </ul>
-              <button className="px-8 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded font-semibold transition">
-                Comunícate con nosotros
-              </button>
+              <Link to="/contacto">
+                <button className="px-8 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded font-semibold transition">
+                  Comunícate con nosotros
+                </button>
+              </Link>
             </div>
 
             {/* Columna Derecha */}
@@ -80,12 +82,11 @@ export default function Home() {
                 </p>
               </div>
               <div className="mt-8 space-y-3">
-                <button className="w-full px-4 py-3 bg-yellow-500 hover:bg-yellow-600 text-white font-semibold rounded transition">
-                  Ver Asignaturas
-                </button>
-                <button className="w-full px-4 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded transition">
-                  Conoce a la Facultad
-                </button>
+                <Link to="/plan-estudios">
+                  <button className="w-full px-4 py-3 bg-yellow-500 hover:bg-yellow-600 text-white font-semibold rounded transition">
+                    Ver Asignaturas
+                  </button>
+                </Link>
               </div>
             </div>
           </div>
@@ -148,17 +149,12 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Charla con Profesionales */}
+      {/* Conoce a Profesionales */}
       <section className="py-16 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center mb-12">
-            <h2 className="text-3xl font-bold text-gray-900">
-              Charla con nuestros profesionales
-            </h2>
-            <Link
-              to="/academicos"
-              className="text-blue-600 hover:text-blue-700 text-sm font-semibold"
-            >
+            <h2 className="text-3xl font-bold text-gray-900">Conoce a nuestros profesionales</h2>
+            <Link to="/estudiantes" className="text-blue-600 hover:text-blue-700 text-sm font-semibold">
               Ver todos →
             </Link>
           </div>

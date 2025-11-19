@@ -77,7 +77,7 @@ export default function Register() {
               Crear Cuenta
             </h1>
             <p className="text-gray-600 text-center mb-8">
-              Regístrate con tu correo institucional terminado en "@userena.cl".
+              Regístrate con tu correo institucional terminado en "@userena.cl" ó "@alumnosuls.cl.
             </p>
 
             {error && (
