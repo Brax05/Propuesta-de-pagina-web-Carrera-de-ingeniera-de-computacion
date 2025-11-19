@@ -27,26 +27,26 @@ export async function loginUsuario(correo: string, clave: string) {
 }
 
 export async function registrarUsuario(payload: {
+  idAuth: string;
   nombre: string;
   apellido: string;
   correo: string;
-  clave: string;
   rol?: string;
 }) {
-  const { nombre, apellido, correo, clave, rol = "student" } = payload;
+  const { idAuth, nombre, apellido, correo, rol = "student" } = payload;
 
   const { data, error } = await supabaseCliente
     .from("usuarios")
     .insert([
       {
-        nombre,
-        apellido,
-        correo,
-        clave,
+        id_usuario: idAuth,
+        correo_usuario: correo,
+        nombres: nombre,
+        apellidos: apellido,
         rol,
       },
     ])
-    .select("nombre, apellido, correo, rol")
+    .select("id_usuario, correo_usuario, nombres, apellidos, rol")
     .single();
 
   console.log("Respuesta Supabase registro:", { data, error });
@@ -55,5 +55,11 @@ export async function registrarUsuario(payload: {
     throw new Error(error.message);
   }
 
-  return data as Usuario;
+  return {
+    idAuth: data.id_usuario,
+    correo: data.correo_usuario,
+    nombre: data.nombres,
+    apellido: data.apellidos,
+    rol: data.rol,
+  };
 }

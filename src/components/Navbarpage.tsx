@@ -7,7 +7,16 @@ export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
   const { user, loading, logout } = useAuth();
-  const userLabel = user?.user_metadata?.full_name || user?.email;
+  const fullNombres = (user?.user_metadata?.nombres ?? "").trim();
+  const fullApellidos = (user?.user_metadata?.apellidos ?? "").trim();
+
+  const primerNombre = fullNombres.split(/\s+/)[0] || "";
+  const primerApellido = fullApellidos.split(/\s+/)[0] || "";
+
+  const userLabel =
+    (primerNombre && primerApellido
+      ? `${primerNombre} ${primerApellido}`
+      : user?.user_metadata?.full_name) || user?.email;
 
   const toggleMenu = () => setIsOpen(!isOpen);
   const handleLogout = async () => {
