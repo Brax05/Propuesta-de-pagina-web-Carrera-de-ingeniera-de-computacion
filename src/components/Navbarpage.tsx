@@ -9,7 +9,7 @@ export default function Navbar() {
   const { user, loading, logout } = useAuth();
   const fullNombres = (user?.user_metadata?.nombres ?? "").trim();
   const fullApellidos = (user?.user_metadata?.apellidos ?? "").trim();
-
+  const isAuthenticated = !!user;
   const primerNombre = fullNombres.split(/\s+/)[0] || "";
   const primerApellido = fullApellidos.split(/\s+/)[0] || "";
 
