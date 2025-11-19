@@ -34,9 +34,11 @@ export default function Home() {
                   <span>Vinculación con la industria, proyectos estudiantiles y trabajo colaborativo con el entorno regional.</span>
                 </li>
               </ul>
-              <button className="px-8 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded font-semibold transition">
-                Comunícate con nosotros
-              </button>
+              <Link to="/contacto">
+                <button className="px-8 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded font-semibold transition">
+                  Comunícate con nosotros
+                </button>
+              </Link>
             </div>
 
             {/* Columna Derecha */}
@@ -56,12 +58,11 @@ export default function Home() {
                 <p><strong>Arancel anual 2025:</strong> $4.105.000</p>
               </div>
               <div className="mt-8 space-y-3">
-                <button className="w-full px-4 py-3 bg-yellow-500 hover:bg-yellow-600 text-white font-semibold rounded transition">
-                  Ver Asignaturas
-                </button>
-                <button className="w-full px-4 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded transition">
-                  Conoce a la Facultad
-                </button>
+                <Link to="/plan-estudios">
+                  <button className="w-full px-4 py-3 bg-yellow-500 hover:bg-yellow-600 text-white font-semibold rounded transition">
+                    Ver Asignaturas
+                  </button>
+                </Link>
               </div>
             </div>
           </div>
@@ -105,12 +106,12 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Charla con Profesionales */}
+      {/* Conoce a Profesionales */}
       <section className="py-16 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center mb-12">
-            <h2 className="text-3xl font-bold text-gray-900">Charla con nuestros profesionales</h2>
-            <Link to="/academicos" className="text-blue-600 hover:text-blue-700 text-sm font-semibold">
+            <h2 className="text-3xl font-bold text-gray-900">Conoce a nuestros profesionales</h2>
+            <Link to="/estudiantes" className="text-blue-600 hover:text-blue-700 text-sm font-semibold">
               Ver todos →
             </Link>
           </div>
@@ -127,10 +128,7 @@ export default function Home() {
                 <p className="text-gray-600 text-sm mb-4">Ingeniería Civil en Computación</p>
                 <div className="flex gap-2 justify-center">
                   <button className="px-3 py-2 text-blue-600 hover:text-blue-700 text-sm font-semibold border border-blue-600 rounded hover:bg-blue-50 transition">
-                    Más Información
-                  </button>
-                  <button className="px-3 py-2 bg-blue-700 hover:bg-blue-800 text-white text-sm rounded transition">
-                    Contactar
+                    Conócelo
                   </button>
                 </div>
               </div>

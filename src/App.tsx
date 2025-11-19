@@ -7,11 +7,21 @@ import Estudiantes from "@/pages/Estudiantes";
 import PlanEstudios from "@/pages/PlanEstudios";
 import Contacto from "@/pages/Contacto";
 import CEC from '@/pages/CEC';
+import Perfil from '@/pages/Perfil';
+
+// Módulos de Dashboard
+import GestionUsuarios from '@/pages/dashboard/GestionUsuarios';
+import GestionNoticias from '@/pages/dashboard/GestionNoticias';
+import GestionEstudiantes from '@/pages/dashboard/GestionEstudiantes';
+
 import { RutaProtected } from "./components/RutaProtected";
 import { AuthProvider } from "./hooks/AuthContext";
+import ScrollToTop from "./components/ScrollToTop";
+
 function App() {
   return (
     <AuthProvider>
+      <ScrollToTop />
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
@@ -21,6 +31,10 @@ function App() {
         <Route path="/plan-estudios" element={<PlanEstudios />} />
         <Route path="/contacto" element={<Contacto />} />
         <Route path="/cec" element={<CEC />} />
+        <Route path="/perfil" element={<Perfil />} />
+        <Route path="/dashboard/gestion-usuarios" element={<GestionUsuarios />} />
+        <Route path="/dashboard/gestion-noticias" element={<GestionNoticias />} />
+        <Route path="/dashboard/gestion-estudiantes" element={<GestionEstudiantes />} />
 
         <Route
           path="/editorpage"
