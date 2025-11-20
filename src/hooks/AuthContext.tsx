@@ -33,19 +33,18 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [role, setRole] = useState<string | null>(null); // <-- Aquí faltaba esto
 
   // Función para obtener el rol desde la base de datos
-  const fetchUserRole = async (userId: string) => {
+  const fetchUserRole = async () => {
     try {
-      const { data, error } = await supabaseCliente
-        .from("usuarios")
-        .select("rol")
-        .eq("id_usuario", userId)
-        .single();
+      const { data, error } = await supabaseCliente.auth.getUser();
 
-      if (error) throw error;
+      if (error || !data.user) {
+        throw error || new Error("No hay usuario autenticado");
+      }
 
-      setRole(data?.rol || null);
+      const rol = data.user.user_metadata?.rol ?? null;
+      setRole(rol);
     } catch (error) {
-      console.error("Error al obtener rol:", error);
+      console.error("Error al obtener rol desde metadata:", error);
       setRole(null);
     }
   };
@@ -68,7 +67,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
       // Si hay usuario, obtener su rol
       if (session?.user) {
-        fetchUserRole(session.user.id);
+        fetchUserRole();
       }
 
       setLoading(false);
@@ -83,7 +82,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
       // Cuando cambia la sesión, actualizar el rol
       if (session?.user) {
-        fetchUserRole(session.user.id);
+        fetchUserRole();
       } else {
         setRole(null);
       }

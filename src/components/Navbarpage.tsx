@@ -12,7 +12,8 @@ export default function Navbar() {
   const isAuthenticated = !!user;
   const primerNombre = fullNombres.split(/\s+/)[0] || "";
   const primerApellido = fullApellidos.split(/\s+/)[0] || "";
-
+  //const rol = user?.user_metadata?.rol
+  //console.log(rol)
   const userLabel =
     (primerNombre && primerApellido
       ? `${primerNombre} ${primerApellido}`

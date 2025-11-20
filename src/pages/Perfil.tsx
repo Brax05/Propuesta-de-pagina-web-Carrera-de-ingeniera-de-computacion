@@ -2,30 +2,8 @@ import { Link, Navigate } from "react-router-dom";
 import Navbar from "@/components/Navbarpage";
 import Footer from "@/components/Footerpage";
 import { useAuth } from "@/hooks/AuthContext";
-import { User, Shield, Edit, Users } from "lucide-react";
-
-// ========================================
-// DATOS SIMULADOS LOCALES
-// ========================================
-// Mapeo de usuarios con sus roles
-const MOCK_USERS: Record<string, any> = {
-  'donmiguelo@userena.cl': {
-    email: 'donmiguelo@userena.cl',
-    firstName: 'Miguel',
-    lastName: 'Administrador',
-    role: 'admin',
-    isCECMember: false,
-    cecPosition: ''
-  },
-  'benjamin.urbina@userena.cl': {
-    email: 'benjamin.urbina@userena.cl',
-    firstName: 'Benjamín',
-    lastName: 'Urbina Editor',
-    role: 'editor',
-    isCECMember: true,
-    cecPosition: 'Secretario'
-  },
-};
+import { User, Shield, Edit, Users} from "lucide-react";
+//import { supabaseCliente } from "@/services/supabaseCliente";
 
 export default function Perfil() {
   const { user, loading } = useAuth();
@@ -45,15 +23,17 @@ export default function Perfil() {
       </div>
     );
   }
-
   // Obtener datos del usuario del mock o usar valores por defecto
-  const userData = MOCK_USERS[user?.email || ''] || {
-    email: user?.email || "usuario@userena.cl",
-    firstName: user?.user_metadata?.full_name?.split(' ')[0] || "Usuario",
-    lastName: user?.user_metadata?.full_name?.split(' ').slice(1).join(' ') || "ULS",
-    role: "student", // Por defecto todos son estudiantes
-    isCECMember: false,
-    cecPosition: ""
+  const firstNames = (user?.user_metadata?.nombres ?? "").trim();
+  const lastNames  = (user?.user_metadata?.apellidos ?? "").trim();
+
+  const userData = {
+    email: user?.email ?? "usuario@userena.cl",
+    firstName: firstNames || "Usuario",
+    lastName: lastNames || "ULS",
+    role: user?.user_metadata?.rol ?? "student",
+    isCECMember: user?.user_metadata?.isCECMember ?? false,
+    cecPosition: user?.user_metadata?.cecPosition ?? "",
   };
 
   const getRoleName = (role: string) => {
