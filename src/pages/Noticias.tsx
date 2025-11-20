@@ -26,7 +26,7 @@ export default function News() {
               <h3 className="text-2xl font-bold text-gray-900 mb-4">
                 Estudiantes de Ingeniería en Computación destacan en Hackathon Nacional 2025
               </h3>
-              <p className="text-gray-600 text-sm mb-4">Coiquimbo de Chile | 5 de noviembre de 2025</p>
+              <p className="text-gray-600 text-sm mb-4">Coiquimbo, Chile | 5 de noviembre de 2025</p>
               <p className="text-gray-700 mb-6">
                 Un equipo de estudiantes de la Universidad de La Serena obtuvo el segundo lugar en el Hackathon Nacional de Innovación Tecnológica, desarrollando una aplicación de inteligencia artificial enfocada en el monitoreo ambiental.
               </p>

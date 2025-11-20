@@ -1,3 +1,5 @@
+// Copia este código completo y reemplaza tu GestionNoticias.tsx actual
+
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import Navbar from "@/components/Navbarpage";
@@ -12,6 +14,7 @@ interface News {
   date: string;
   location: string;
   isFeatured: boolean;
+  isPublic: boolean;
   imageUrl?: string;
 }
 
@@ -25,6 +28,7 @@ export default function GestionNoticias() {
       date: "2025-11-05",
       location: "Coquimbo, Chile",
       isFeatured: true,
+      isPublic: true,
       imageUrl: "https://images.unsplash.com/photo-1552664730-d307ca884978?w=400&h=250&fit=crop"
     },
     {
@@ -34,7 +38,8 @@ export default function GestionNoticias() {
       content: "La Escuela de Ingeniería en Computación dio la bienvenida a más de 50 nuevos estudiantes en una ceremonia realizada en el Campus Andrés Bello.",
       date: "2025-03-15",
       location: "La Serena, Chile",
-      isFeatured: false
+      isFeatured: false,
+      isPublic: false 
     }
   ]);
 
@@ -49,6 +54,7 @@ export default function GestionNoticias() {
     date: "",
     location: "",
     isFeatured: false,
+    isPublic: true,
     imageUrl: ""
   });
 
@@ -66,6 +72,7 @@ export default function GestionNoticias() {
       date: newNews.date,
       location: newNews.location,
       isFeatured: newNews.isFeatured || false,
+      isPublic: newNews.isPublic !== undefined ? newNews.isPublic : true,
       imageUrl: newNews.imageUrl || ""
     };
 
@@ -76,7 +83,8 @@ export default function GestionNoticias() {
       content: "", 
       date: "", 
       location: "", 
-      isFeatured: false, 
+      isFeatured: false,
+      isPublic: true,
       imageUrl: "" 
     });
     setIsAdding(false);
@@ -127,7 +135,6 @@ export default function GestionNoticias() {
       <div className="flex-1 py-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           
-          {/* Barra de Búsqueda y Agregar */}
           <div className="flex flex-col md:flex-row gap-4 mb-8">
             <div className="flex-1 relative">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
@@ -148,7 +155,6 @@ export default function GestionNoticias() {
             </button>
           </div>
 
-          {/* Formulario Agregar Noticia */}
           {isAdding && (
             <div className="bg-white rounded-lg shadow border border-gray-200 p-6 mb-8">
               <h3 className="text-xl font-bold text-gray-900 mb-4">Nueva Noticia</h3>
@@ -210,7 +216,7 @@ export default function GestionNoticias() {
                       value={newNews.location}
                       onChange={(e) => setNewNews({ ...newNews, location: e.target.value })}
                       className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-700"
-                      placeholder="La Serena de Chile"
+                      placeholder="La Serena, Chile"
                     />
                   </div>
                 </div>
@@ -239,6 +245,23 @@ export default function GestionNoticias() {
                   </label>
                   <p className="text-xs text-gray-600 mt-2 ml-7">La noticia destacada aparecerá en un lugar prominente en la página principal</p>
                 </div>
+
+                <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                  <label className="flex items-center cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={newNews.isPublic}
+                      onChange={(e) => setNewNews({ ...newNews, isPublic: e.target.checked })}
+                      className="w-4 h-4 text-blue-700 rounded mr-3"
+                    />
+                    <span className="text-sm font-semibold text-gray-900">Noticia Pública</span>
+                  </label>
+                  <p className="text-xs text-gray-600 mt-2 ml-7">
+                    {newNews.isPublic 
+                      ? "Visible para todos los visitantes (logueados y no logueados)" 
+                      : "Visible solo para usuarios autenticados"}
+                  </p>
+                </div>
               </div>
 
               <div className="flex gap-4 mt-6">
@@ -260,12 +283,10 @@ export default function GestionNoticias() {
             </div>
           )}
 
-          {/* Lista de Noticias */}
           <div className="space-y-6">
             {filteredNews.map((news) => (
               <div key={news.id} className="bg-white rounded-lg shadow border border-gray-200 overflow-hidden">
                 {editingNews?.id === news.id ? (
-                  // Modo Edición
                   <div className="p-6">
                     <h3 className="text-xl font-bold text-gray-900 mb-4">Editar Noticia</h3>
                     
@@ -343,6 +364,23 @@ export default function GestionNoticias() {
                           <span className="text-sm font-semibold text-gray-900">Noticia Destacada</span>
                         </label>
                       </div>
+
+                      <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                        <label className="flex items-center cursor-pointer">
+                          <input
+                            type="checkbox"
+                            checked={editingNews.isPublic}
+                            onChange={(e) => setEditingNews({ ...editingNews, isPublic: e.target.checked })}
+                            className="w-4 h-4 text-blue-700 rounded mr-3"
+                          />
+                          <span className="text-sm font-semibold text-gray-900">Noticia Pública</span>
+                        </label>
+                        <p className="text-xs text-gray-600 mt-2 ml-7">
+                          {editingNews.isPublic 
+                            ? "Visible para todo público" 
+                            : "Visible solo para usuarios autenticados"}
+                        </p>
+                      </div>
                     </div>
 
                     <div className="flex gap-4 mt-6">
@@ -363,7 +401,6 @@ export default function GestionNoticias() {
                     </div>
                   </div>
                 ) : (
-                  // Modo Vista
                   <div className="flex flex-col md:flex-row">
                     {news.imageUrl && (
                       <div className="md:w-64 h-48 md:h-auto flex-shrink-0">
@@ -377,11 +414,20 @@ export default function GestionNoticias() {
                     <div className="flex-1 p-6">
                       <div className="flex items-start justify-between mb-3">
                         <div className="flex-1">
-                          <div className="flex items-center gap-2 mb-2">
-                            <h3 className="text-xl font-bold text-gray-900">{news.title}</h3>
-                            {news.isFeatured && (
-                              <Star className="w-5 h-5 text-yellow-500 fill-yellow-500" />
-                            )}
+                          <div className="mb-2">
+                            <h3 className="text-xl font-bold text-gray-900 mb-2">{news.title}</h3>
+                            <div className="flex flex-wrap items-center gap-2">
+                              {news.isFeatured && (
+                                <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
+                                  ⭐ Destacada
+                                </span>
+                              )}
+                              {!news.isPublic && (
+                                <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                                  🔒 Privada
+                                </span>
+                              )}
+                            </div>
                           </div>
                           <p className="text-sm text-gray-600 mb-3">{news.previewDescription}</p>
                           <div className="flex flex-wrap gap-3 text-xs text-gray-500">
