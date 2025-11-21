@@ -7,7 +7,7 @@ export default function Graduates() {
     { id: 2, name: 'Carlita Flores', title: 'Ingeniería Civil en Computación', specialty: 'Ciencia de Datos', description: 'Lidera equipo de Data Scientists en empresa del sector financiero.' },
     { id: 3, name: 'Camilito Bugz', title: 'Ingeniería en Computación', specialty: 'Computación en la Nube', description: 'Ingeniero de sistemas en compañía de servicios tecnológicos.' },
   ];
-
+//hola mundo lowkey
   return (
     <div className="min-h-screen flex flex-col bg-white">
       <Navbar />
