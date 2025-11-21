@@ -1,7 +1,6 @@
-// Copia este código completo y reemplaza tu GestionNoticias.tsx actual
-
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+import { supabaseCliente } from "@/services/supabaseCliente";
 import Navbar from "@/components/Navbarpage";
 import Footer from "@/components/Footerpage";
 import { ArrowLeft, Search, Edit, Trash2, Plus, Save, X, Star, Calendar, MapPin } from "lucide-react";
@@ -19,29 +18,9 @@ interface News {
 }
 
 export default function GestionNoticias() {
-  const [newsList, setNewsList] = useState<News[]>([
-    {
-      id: 1,
-      title: "Estudiantes de Ingeniería en Computación destacan en Hackathon Nacional 2025",
-      previewDescription: "Un equipo de estudiantes obtuvo el segundo lugar desarrollando una aplicación de IA.",
-      content: "Un equipo de estudiantes de la Universidad de La Serena obtuvo el segundo lugar en el Hackathon Nacional de Innovación Tecnológica, desarrollando una aplicación de inteligencia artificial enfocada en el monitoreo ambiental. El proyecto destacó por su innovación y aplicabilidad práctica.",
-      date: "2025-11-05",
-      location: "Coquimbo, Chile",
-      isFeatured: true,
-      isPublic: true,
-      imageUrl: "https://images.unsplash.com/photo-1552664730-d307ca884978?w=400&h=250&fit=crop"
-    },
-    {
-      id: 2,
-      title: "Bienvenida a nuevos estudiantes de Ingeniería en Computación",
-      previewDescription: "Conoce nuestras actividades académicas y de bienvenida.",
-      content: "La Escuela de Ingeniería en Computación dio la bienvenida a más de 50 nuevos estudiantes en una ceremonia realizada en el Campus Andrés Bello.",
-      date: "2025-03-15",
-      location: "La Serena, Chile",
-      isFeatured: false,
-      isPublic: false 
-    }
-  ]);
+  const [newsList, setNewsList] = useState<News[]>([]);
+  const [loadingList, setLoadingList] = useState(true);
+  const [loadError, setLoadError] = useState<string | null>(null);
 
   const [searchTerm, setSearchTerm] = useState("");
   const [isAdding, setIsAdding] = useState(false);
@@ -58,58 +37,191 @@ export default function GestionNoticias() {
     imageUrl: ""
   });
 
-  const handleAddNews = () => {
-    if (!newNews.title || !newNews.previewDescription || !newNews.content || !newNews.date || !newNews.location) {
+    useEffect(() => {
+    const fetchNews = async () => {
+      try {
+        setLoadingList(true);
+        setLoadError(null);
+
+        const { data, error } = await supabaseCliente
+          .from("noticias")
+          .select(
+            "id, titular, descripcion_previa, descripcion, fecha, ubicacion, imagen_url, es_destacada, es_publica"
+          )
+          .order("fecha", { ascending: false });
+
+        if (error) throw error;
+
+        const mapped: News[] =
+          data?.map((row: any) => ({
+            id: row.id,
+            title: row.titular,
+            previewDescription: row.descripcion_previa,
+            content: row.descripcion,
+            date: row.fecha,
+            location: row.ubicacion,
+            isFeatured: row.es_destacada,
+            isPublic: row.es_publica,
+            imageUrl: row.imagen_url || "",
+          })) || [];
+
+        setNewsList(mapped);
+      } catch (err) {
+        console.error("Error al cargar noticias:", err);
+        setLoadError("No se pudieron cargar las noticias");
+      } finally {
+        setLoadingList(false);
+      }
+    };
+
+    fetchNews();
+  }, []);
+
+  const handleAddNews = async () => {
+    if (
+      !newNews.title ||
+      !newNews.previewDescription ||
+      !newNews.content ||
+      !newNews.date ||
+      !newNews.location
+    ) {
       alert("Por favor completa todos los campos obligatorios");
       return;
     }
 
-    const news: News = {
-      id: Date.now(),
-      title: newNews.title,
-      previewDescription: newNews.previewDescription,
-      content: newNews.content,
-      date: newNews.date,
-      location: newNews.location,
-      isFeatured: newNews.isFeatured || false,
-      isPublic: newNews.isPublic !== undefined ? newNews.isPublic : true,
-      imageUrl: newNews.imageUrl || ""
-    };
+    try {
+      const { data, error } = await supabaseCliente
+        .from("noticias")
+        .insert([
+          {
+            titular: newNews.title,
+            autor: "Escuela de Ingenieria en Computacion",
+            descripcion_previa: newNews.previewDescription,
+            descripcion: newNews.content,
+            fecha: newNews.date,
+            ubicacion: newNews.location,
+            imagen_url: newNews.imageUrl || null,
+            es_destacada: newNews.isFeatured || false,
+            es_publica: true,
+          },
+        ])
+        .select(
+          "id, titular, autor, descripcion_previa, descripcion, fecha, ubicacion, imagen_url, es_destacada, es_publica"
+        )
+        .single();
 
-    setNewsList([news, ...newsList]);
-    setNewNews({ 
-      title: "", 
-      previewDescription: "", 
-      content: "", 
-      date: "", 
-      location: "", 
-      isFeatured: false,
-      isPublic: true,
-      imageUrl: "" 
-    });
-    setIsAdding(false);
+      if (error) throw error;
+
+      const news: News = {
+        id: data.id,
+        title: data.titular,
+        previewDescription: data.descripcion_previa,
+        content: data.descripcion,
+        date: data.fecha,
+        location: data.ubicacion,
+        isFeatured: data.es_destacada,
+        isPublic: data.es_publica,
+        imageUrl: data.imagen_url || "",
+      };
+
+      // La agregamos al estado
+      setNewsList((prev) => [news, ...prev]);
+
+      // Limpiamos el formulario
+      setNewNews({
+        title: "",
+        previewDescription: "",
+        content: "",
+        date: "",
+        location: "",
+        isFeatured: false,
+        isPublic: true,
+        imageUrl: "",
+      });
+      setIsAdding(false);
+    } catch (err) {
+      console.error("Error al publicar noticia:", err);
+      alert("Error al publicar noticia");
+    }
   };
 
   const handleEditNews = (news: News) => {
     setEditingNews({ ...news });
   };
 
-  const handleSaveEdit = () => {
+  const handleSaveEdit = async () => {
     if (!editingNews) return;
-    setNewsList(newsList.map(n => n.id === editingNews.id ? editingNews : n));
-    setEditingNews(null);
-  };
 
-  const handleDeleteNews = (id: number) => {
-    if (window.confirm("¿Estás seguro de eliminar esta noticia?")) {
-      setNewsList(newsList.filter(n => n.id !== id));
+    try {
+      const { error } = await supabaseCliente
+        .from("noticias")
+        .update({
+          titular: editingNews.title,
+          descripcion_previa: editingNews.previewDescription,
+          descripcion: editingNews.content,
+          fecha: editingNews.date,
+          ubicacion: editingNews.location,
+          imagen_url: editingNews.imageUrl || null,
+          es_destacada: editingNews.isFeatured,
+          es_publica: editingNews.isPublic,
+        })
+        .eq("id", editingNews.id);
+
+      if (error) throw error;
+
+      setNewsList((prev) =>
+        prev.map((n) =>
+          n.id === editingNews.id ? editingNews : n
+        )
+      );
+      setEditingNews(null);
+    } catch (err) {
+      console.error("Error al guardar cambios:", err);
+      alert("No se pudo guardar la noticia");
     }
   };
 
-  const toggleFeatured = (id: number) => {
-    setNewsList(newsList.map(n => 
-      n.id === id ? { ...n, isFeatured: !n.isFeatured } : n
-    ));
+  const handleDeleteNews = async (id: number) => {
+    if (!window.confirm("¿Estás seguro de eliminar esta noticia?")) return;
+
+    try {
+      const { error } = await supabaseCliente
+        .from("noticias")
+        .delete()
+        .eq("id", id);
+
+      if (error) throw error;
+
+      setNewsList((prev) => prev.filter((n) => n.id !== id));
+    } catch (err) {
+      console.error("Error al eliminar noticia:", err);
+      alert("No se pudo eliminar la noticia");
+    }
+  };
+  
+  const toggleFeatured = async (id: number) => {
+    const news = newsList.find((n) => n.id === id);
+    if (!news) return;
+
+    const nuevoValor = !news.isFeatured;
+
+    try {
+      const { error } = await supabaseCliente
+        .from("noticias")
+        .update({ es_destacada: nuevoValor })
+        .eq("id", id);
+
+      if (error) throw error;
+
+      setNewsList((prev) =>
+        prev.map((n) =>
+          n.id === id ? { ...n, isFeatured: nuevoValor } : n
+        )
+      );
+    } catch (err) {
+      console.error("Error al actualizar destacado:", err);
+      alert("No se pudo actualizar la noticia destacada");
+    }
   };
 
   const filteredNews = newsList.filter(news => 
@@ -154,6 +266,18 @@ export default function GestionNoticias() {
               Nueva Noticia
             </button>
           </div>
+
+          {/* Mensajes de carga / error */}
+          {loadingList && (
+            <div className="mb-6 text-gray-500 text-sm">
+              Cargando noticias…
+            </div>
+          )}
+          {loadError && (
+            <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg text-sm text-red-700">
+              {loadError}
+            </div>
+          )}
 
           {isAdding && (
             <div className="bg-white rounded-lg shadow border border-gray-200 p-6 mb-8">
