@@ -102,7 +102,7 @@ export default function GestionNoticias() {
             ubicacion: newNews.location,
             imagen_url: newNews.imageUrl || null,
             es_destacada: newNews.isFeatured || false,
-            es_publica: true,
+            es_publica: newNews.isPublic || false,
           },
         ])
         .select(
