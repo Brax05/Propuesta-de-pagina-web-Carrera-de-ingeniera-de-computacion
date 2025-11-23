@@ -14,7 +14,7 @@ import GestionUsuarios from '@/pages/dashboard/GestionUsuarios';
 import GestionNoticias from '@/pages/dashboard/GestionNoticias';
 import GestionEstudiantes from '@/pages/dashboard/GestionEstudiantes';
 
-import { RutaProtected } from "./components/RutaProtected";
+import { RutaProtected } from "./rutasProtected/RutaProtected";
 import { AuthProvider } from "./hooks/AuthContext";
 import ScrollToTop from "./components/ScrollToTop";
 

@@ -5,12 +5,11 @@ import Footer from "@/components/Footerpage";
 import { supabaseCliente } from "@/services/supabaseCliente";
 
 export default function Register() {
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState("");
+  const [showSuccess, setShowSuccess] = useState(false);
   const navigate = useNavigate();
 
   // Se agregó 'async' aquí
@@ -18,7 +17,7 @@ export default function Register() {
     e.preventDefault();
     setError("");
 
-    if (!firstName || !lastName || !email || !password || !confirmPassword) {
+    if (!email || !password || !confirmPassword) {
       setError("Por favor completa todos los campos");
       return;
     }
@@ -30,31 +29,32 @@ export default function Register() {
       setError("La contraseña debe tener al menos 6 caracteres");
       return;
     }
-
     try {
-      const { data, error } = await supabaseCliente.auth.signUp({
-        email,
-        password,
-        options: {
-          data: {
-            nombres: firstName,
-            apellidos: lastName,
-            full_name: `${firstName} ${lastName}`.trim(),
-            rol: "student",
-          },
-        },
-      });
+      // Primero insertamos el user en auth, obteniendo id
+      const { data: authData, error: authError } =
+        await supabaseCliente.auth.signUp({
+          email,
+          password,
+        });
 
-      if (error) throw error;
-      if (!data.user) {
-        throw new Error("No se pudo obtener el usuario creado");
+      if (authError) {
+        throw new Error(`${authError.message}`);
       }
 
-      console.log("Usuario registrado exitosamente");
-      navigate("/login");
-    } catch (error: any) {
-      console.error(error);
-      setError(error.message || "Error al registrar usuario");
+      const user = authData.user;
+      if (!user) {
+        throw new Error("Problemas con supabase auth");
+      }
+
+      setShowSuccess(true);
+
+      // timer para que se oculte el mensaje y que retorne al login
+      setTimeout(() => {
+        setShowSuccess(false);
+        navigate("/login");
+      }, 3000);
+    } catch (err: any) {
+      setError(err.message);
     }
   };
 
@@ -69,7 +69,7 @@ export default function Register() {
               Crear Cuenta
             </h1>
             <p className="text-gray-600 text-center mb-8">
-              Regístrate con tu correo institucional terminado en "@userena.cl" ó "@alumnosuls.cl.
+              Regístrate con tu correo institucional terminado en "@userena.cl".
             </p>
 
             {error && (
@@ -77,42 +77,15 @@ export default function Register() {
                 <p className="text-red-800 text-sm">{error}</p>
               </div>
             )}
+            {showSuccess && (
+              <div className="mb-6 p-4 bg-green-50 border border-green-200 rounded-lg">
+                <p className="text-green-800 text-sm">
+                  ✅ Registro guardado correctamente
+                </p>
+              </div>
+            )}
 
             <form onSubmit={handleSubmit} className="space-y-6">
-              <div>
-                <label
-                  htmlFor="firstName"
-                  className="block text-sm font-semibold text-gray-700 mb-2"
-                >
-                  Nombres
-                </label>
-                <input
-                  type="text"
-                  id="firstName"
-                  value={firstName}
-                  onChange={(e) => setFirstName(e.target.value)}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-700"
-                  placeholder="Nombres"
-                />
-              </div>
-
-              <div>
-                <label
-                  htmlFor="lastName"
-                  className="block text-sm font-semibold text-gray-700 mb-2"
-                >
-                  Apellidos
-                </label>
-                <input
-                  type="text"
-                  id="lastName"
-                  value={lastName}
-                  onChange={(e) => setLastName(e.target.value)}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-700"
-                  placeholder="Apellidos"
-                />
-              </div>
-
               <div>
                 <label
                   htmlFor="email"
