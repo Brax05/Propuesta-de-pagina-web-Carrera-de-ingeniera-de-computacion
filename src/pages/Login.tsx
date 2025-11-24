@@ -1,23 +1,88 @@
-import { useState } from "react";
-import { useNavigate, Link, Navigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "@/hooks/AuthContext";
 import { supabaseCliente } from "@/services/supabaseCliente";
 
 import Navbar from "@/components/Navbarpage";
 import Footer from "@/components/Footerpage";
+import { User } from "@supabase/supabase-js";
 
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const navigate = useNavigate();
-  const { user } = useAuth();
+  const { user, role, loading } = useAuth();
 
-  // Opción que niega que un usuario ya logueado regrese al login
-  if (user) {
-    return <Navigate to="/" replace />;
+  // Redirige si ya hay sesión; prioriza rol "miembro" a perfil
+  useEffect(() => {
+    if (!loading && user) {
+      if (role === "miembro") navigate("/perfil", { replace: true });
+      else if (role !== null) {
+        navigate("/", { replace: true });
+      }
+    }
+  }, [loading, user, role, navigate]);
+
+  if (loading && user) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-white">
+        <p className="text-gray-600">Redirigiendo...</p>
+      </div>
+    );
   }
 
+  if (!loading && user && role === null) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-white">
+        <p className="text-gray-600">Obteniendo rol...</p>
+      </div>
+    );
+  }
+
+  const validateUser = async (usuario: User) => {
+    try {
+      const { data: verificarUser, error: checkError } = await supabaseCliente
+        .from("usuarios")
+        .select("id_usuario")
+        .eq("id_usuario", usuario.id)
+        .maybeSingle();
+
+      if (checkError) {
+        console.error("Error al verificar usuario:", checkError);
+        return false;
+      }
+      if (!verificarUser && usuario.email_confirmed_at) {
+        //realizar insert de esa cuenta
+        const { error: insertError } = await supabaseCliente
+          .from("usuarios")
+          .insert({
+            id_usuario: usuario.id,
+            nombres: "",
+            apellidos: "",
+            correo_usuario: usuario.email,
+            es_destacado: false,
+            estado_estudiante: "activo",
+          });
+
+        if (insertError) {
+          console.error("Error al crear usuario:", insertError);
+          setError(
+            "Error al crear el perfil de usuario. Por favor contacta al soporte."
+          );
+          return false;
+        }
+
+        console.log("Usuario creado exitosamente");
+        return true;
+      }
+      // Si el usuario esta insertado solo retornamos true para que pase al home
+      return true;
+    } catch (e) {
+      console.error(e);
+      return false;
+    }
+  };
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
@@ -28,15 +93,18 @@ export default function Login() {
     }
 
     try {
-      const { error } = await supabaseCliente.auth.signInWithPassword({
+      const { data, error } = await supabaseCliente.auth.signInWithPassword({
         email,
         password,
       });
-
       if (error) throw error;
-
-      console.log("Inicio de sesión exitoso");
-      navigate("/");
+      if (data.user) {
+        const esValido = await validateUser(data.user);
+        if (!esValido) {
+          return navigate("/register", { replace: true });
+        }
+        return navigate("/", { replace: true });
+      }
     } catch (error: any) {
       console.error(error);
       setError(error.message || "Error al iniciar sesión");

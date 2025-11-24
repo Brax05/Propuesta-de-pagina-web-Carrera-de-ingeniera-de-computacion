@@ -44,11 +44,24 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       if (error) throw error;
 
       setRole(data?.rol || null);
+      console.log("[AuthDebug] Rol cargado", {
+        userId,
+        rol: data?.rol || null,
+      });
     } catch (error) {
       console.error("Error al obtener rol:", error);
       setRole(null);
     }
   };
+
+  useEffect(() => {
+    // Loguear cambios de rol y usuario para debug
+    console.log("[AuthDebug] Estado de rol actualizado", {
+      autenticado: !!user,
+      userId: user?.id,
+      rol: role,
+    });
+  }, [user, role]);
 
   const logout = async () => {
     const { error } = await supabaseCliente.auth.signOut();
@@ -65,6 +78,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     supabaseCliente.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
       setUser(session?.user ?? null);
+      console.log("[AuthDebug] Sesion inicial", {
+        autenticado: !!session?.user,
+        userId: session?.user?.id,
+      });
 
       // Si hay usuario, obtener su rol
       if (session?.user) {
@@ -77,9 +94,14 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     // Escuchador de cambios de autenticación
     const {
       data: { subscription },
-    } = supabaseCliente.auth.onAuthStateChange((_event, session) => {
+    } = supabaseCliente.auth.onAuthStateChange((event, session) => {
       setSession(session);
       setUser(session?.user ?? null);
+      console.log("[AuthDebug] Cambio de auth", {
+        evento: event,
+        autenticado: !!session?.user,
+        userId: session?.user?.id,
+      });
 
       // Cuando cambia la sesión, actualizar el rol
       if (session?.user) {
@@ -90,7 +112,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
       setLoading(false);
     });
-
     return () => subscription.unsubscribe();
   }, []);
 

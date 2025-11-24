@@ -47,12 +47,11 @@ export default function Register() {
       }
 
       setShowSuccess(true);
-
       // timer para que se oculte el mensaje y que retorne al login
       setTimeout(() => {
         setShowSuccess(false);
         navigate("/login");
-      }, 3000);
+      }, 5000);
     } catch (err: any) {
       setError(err.message);
     }

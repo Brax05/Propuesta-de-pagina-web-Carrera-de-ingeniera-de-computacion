@@ -1,4 +1,5 @@
-import { Routes, Route } from "react-router-dom";
+import { useEffect } from "react";
+import { Routes, Route, useLocation, useNavigate } from "react-router-dom";
 import Home from "@/pages/Homepage";
 import Login from "@/pages/Login";
 import Registro from "@/pages/Registro";
@@ -6,21 +7,39 @@ import Noticias from "@/pages/Noticias";
 import Estudiantes from "@/pages/Estudiantes";
 import PlanEstudios from "@/pages/PlanEstudios";
 import Contacto from "@/pages/Contacto";
-import CEC from '@/pages/CEC';
-import Perfil from '@/pages/Perfil';
+import CEC from "@/pages/CEC";
+import Perfil from "@/pages/Perfil";
 
 // Módulos de Dashboard
-import GestionUsuarios from '@/pages/dashboard/GestionUsuarios';
-import GestionNoticias from '@/pages/dashboard/GestionNoticias';
-import GestionEstudiantes from '@/pages/dashboard/GestionEstudiantes';
+import GestionUsuarios from "@/pages/dashboard/GestionUsuarios";
+import GestionNoticias from "@/pages/dashboard/GestionNoticias";
+import GestionEstudiantes from "@/pages/dashboard/GestionEstudiantes";
 
 import { RutaProtected } from "./rutasProtected/RutaProtected";
-import { AuthProvider } from "./hooks/AuthContext";
+import { AuthProvider, useAuth } from "./hooks/AuthContext";
 import ScrollToTop from "./components/ScrollToTop";
+
+// Redirige a miembros a /perfil para impedir que naveguen a otras rutas
+const MemberRedirect = () => {
+  const { role, loading } = useAuth();
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (loading) return;
+    // Con esto sabemos si estamos en la ruta distinta a /perfil
+    if (role === "miembro" && !location.pathname.startsWith("/perfil")) {
+      navigate("/perfil", { replace: true });
+    }
+  }, [role, loading, location.pathname, navigate]);
+
+  return null;
+};
 
 function App() {
   return (
     <AuthProvider>
+      <MemberRedirect />
       <ScrollToTop />
       <Routes>
         <Route path="/" element={<Home />} />
@@ -32,9 +51,18 @@ function App() {
         <Route path="/contacto" element={<Contacto />} />
         <Route path="/cec" element={<CEC />} />
         <Route path="/perfil" element={<Perfil />} />
-        <Route path="/dashboard/gestion-usuarios" element={<GestionUsuarios />} />
-        <Route path="/dashboard/gestion-noticias" element={<GestionNoticias />} />
-        <Route path="/dashboard/gestion-estudiantes" element={<GestionEstudiantes />} />
+        <Route
+          path="/dashboard/gestion-usuarios"
+          element={<GestionUsuarios />}
+        />
+        <Route
+          path="/dashboard/gestion-noticias"
+          element={<GestionNoticias />}
+        />
+        <Route
+          path="/dashboard/gestion-estudiantes"
+          element={<GestionEstudiantes />}
+        />
 
         <Route
           path="/editorpage"
