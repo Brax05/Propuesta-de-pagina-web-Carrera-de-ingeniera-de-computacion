@@ -41,20 +41,26 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [role, setRole] = useState<string | null>(null);
 
   // Función para obtener el rol desde la base de datos
-  const fetchUserRole = useCallback(async (userId: string) => {
+  const fetchUserRole = useCallback(async (userId: string, attempt = 1) => {
     try {
-      const { data, error } = await supabaseCliente
+      const { data } = await supabaseCliente
         .from("usuarios")
         .select("rol")
         .eq("id_usuario", userId)
-        .single();
+        .maybeSingle();
 
-      if (error) throw error;
+      const fetchedRole = data?.rol || null;
 
-      setRole(data?.rol || null);
+      // Si aún no hay rol (por triggers o default), reintentar unas veces
+      if (!fetchedRole && attempt < 3) {
+        await new Promise((resolve) => setTimeout(resolve, 400 * attempt));
+        return fetchUserRole(userId, attempt + 1);
+      }
+
+      setRole(fetchedRole);
       console.log("[AuthDebug] Rol cargado", {
         userId,
-        rol: data?.rol || null,
+        rol: fetchedRole,
       });
     } catch (error) {
       console.error("Error al obtener rol:", error);
@@ -119,7 +125,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   useEffect(() => {
-    refreshSession(2000);
+    refreshSession(1000);
     // Escuchador de cambios de autenticación
     const {
       data: { subscription },

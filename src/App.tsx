@@ -33,10 +33,11 @@ const MemberRedirect = () => {
 };
 
 const AppContent = () => {
-  const { loading, user, role } = useAuth();
+  const { loading, user } = useAuth();
 
-  const mustWaitForRole =
-    (loading && !!user) || (!loading && !!user && role === null);
+  // Esperamos solo mientras se resuelve la sesión (loading + user).
+  // Si el rol resulta null, dejamos avanzar para evitar quedarnos pegados.
+  const mustWaitForRole = loading && !!user;
 
   if (mustWaitForRole) {
     return (

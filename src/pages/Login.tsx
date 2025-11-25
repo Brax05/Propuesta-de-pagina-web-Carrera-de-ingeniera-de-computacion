@@ -24,6 +24,13 @@ export default function Login() {
     }
   }, [loading, user, role, navigate]);
 
+  // Si hay usuario pero aún no hay rol, reintentar refrescar sesión sin bloquear la vista
+  useEffect(() => {
+    if (!loading && user && role === null) {
+      refreshSession(400);
+    }
+  }, [loading, user, role, refreshSession]);
+
   const validateUser = async (usuario: User) => {
     try {
       // Query para saber si el usuario que usamos tiene tabla
@@ -89,7 +96,7 @@ export default function Login() {
           return navigate("/register", { replace: true });
         }
         // Damos tiempo para que la base asigne el rol y refrescamos la sesión
-        if (role == null) {
+        if (role == null && esValido) {
           await refreshSession();
         }
         return navigate("/", { replace: true });
