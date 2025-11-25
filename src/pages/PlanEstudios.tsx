@@ -401,6 +401,9 @@ export default function StudyPlan() {
 
           <div className="mt-12 space-y-4 text-sm text-gray-700">
             <p className="border-l-4 border-blue-700 pl-4">
+              * Cada número del TEL indica un crédito, 2 créditos equivalen a una clase semanal y el máximo semestral es de 32 créditos.
+            </p>
+            <p className="border-l-4 border-blue-700 pl-4">
               * Elaborará el grado de Bachiller en Ciencias de la Ingeniería cuando apruebe todas las asignaturas hasta el nivel 4 inclusive.
             </p>
             <p className="border-l-4 border-blue-700 pl-4">
