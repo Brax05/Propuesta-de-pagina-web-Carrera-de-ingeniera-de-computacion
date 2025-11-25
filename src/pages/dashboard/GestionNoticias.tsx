@@ -21,10 +21,13 @@ export default function GestionNoticias() {
   const [newsList, setNewsList] = useState<News[]>([]);
   const [loadingList, setLoadingList] = useState(true);
   const [loadError, setLoadError] = useState<string | null>(null);
+  const [imageFileName, setImageFileName] = useState<string>("");
 
   const [searchTerm, setSearchTerm] = useState("");
   const [isAdding, setIsAdding] = useState(false);
   const [editingNews, setEditingNews] = useState<News | null>(null);
+  const [imageFile, setImageFile] = useState<File | null>(null);
+
   
   const [newNews, setNewNews] = useState<Partial<News>>({
     title: "",
@@ -90,6 +93,33 @@ export default function GestionNoticias() {
     }
 
     try {
+      let uploadImageUrl: string | null = null;
+
+      if(imageFile){
+        const fileExt = imageFile.name.split(".").pop();
+        const fileName = `${Date.now()}-${Math.random()
+        .toString(36)
+        .substring(2)}.${fileExt}`;
+      const filePath = `noticias/${fileName}`;
+
+      const {error: uploadError } = await supabaseCliente.storage
+      .from("ImagenesNoticias")
+      .upload(filePath, imageFile);
+
+      if (uploadError) {
+        console.error("Error al subir la imagen:", uploadError);
+        alert("No se pudo subir la imagen");
+        return;
+      }
+
+      const {data:publicUrlData} = supabaseCliente.storage
+      .from("ImagenesNoticias")
+      .getPublicUrl(filePath);
+
+      uploadImageUrl = publicUrlData.publicUrl;
+      }
+
+
       const { data, error } = await supabaseCliente
         .from("noticias")
         .insert([
@@ -100,7 +130,7 @@ export default function GestionNoticias() {
             descripcion: newNews.content,
             fecha: newNews.date,
             ubicacion: newNews.location,
-            imagen_url: newNews.imageUrl || null,
+            imagen_url: uploadImageUrl || null,
             es_destacada: newNews.isFeatured || false,
             es_publica: newNews.isPublic || false,
           },
@@ -138,6 +168,8 @@ export default function GestionNoticias() {
         isPublic: true,
         imageUrl: "",
       });
+      setImageFile(null);
+      setImageFileName("");
       setIsAdding(false);
     } catch (err) {
       console.error("Error al publicar noticia:", err);
@@ -180,6 +212,13 @@ export default function GestionNoticias() {
       alert("No se pudo guardar la noticia");
     }
   };
+
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0] || null;
+    setImageFile(file);
+    setImageFileName(file ? file.name : "");
+  };
+
 
   const handleDeleteNews = async (id: number) => {
     if (!window.confirm("¿Estás seguro de eliminar esta noticia?")) return;
@@ -346,15 +385,31 @@ export default function GestionNoticias() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">URL de Imagen (opcional)</label>
-                  <input
-                    type="text"
-                    value={newNews.imageUrl}
-                    onChange={(e) => setNewNews({ ...newNews, imageUrl: e.target.value })}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-700"
-                    placeholder="https://..."
-                  />
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">
+                    Imagen (opcional)
+                  </label>
+
+                  <div className="flex items-center gap-3">
+                    <label className="px-4 py-2 bg-blue-50 border border-blue-300 rounded-lg text-sm font-semibold text-blue-700 cursor-pointer hover:bg-blue-100">
+                      Seleccionar archivo
+                      <input
+                        type="file"
+                        accept="image/*"
+                        className="hidden"
+                        onChange={handleImageChange}
+                      />
+                    </label>
+            
+                    <span className="inline-flex items-center px-2 py-1 mt-1 rounded-full border border-green-200 bg-green-50 text-xs font-medium text-green-700 max-w-xs truncate">
+                      {imageFileName || "Ningún archivo seleccionado"}
+                    </span>
+                  </div>
+
+                  <p className="text-xs text-gray-500 mt-1">
+                    Sube una imagen para la noticia (JPG, PNG, etc.)
+                  </p>
                 </div>
+
 
                 <div className="p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
                   <label className="flex items-center cursor-pointer">
