@@ -64,9 +64,9 @@ const AppContent = () => {
         <Route
           path="/dashboard/gestion-usuarios"
           element={
-            <RutaProtected>
+            <RutasAdmin>
               <GestionUsuarios />
-            </RutaProtected>
+            </RutasAdmin>
           }
         />
         <Route
@@ -80,9 +80,9 @@ const AppContent = () => {
         <Route
           path="/dashboard/gestion-estudiantes"
           element={
-            <RutasAdmin>
+            <RutaProtected>
               <GestionEstudiantes />
-            </RutasAdmin>
+            </RutaProtected>
           }
         />
         <Route
