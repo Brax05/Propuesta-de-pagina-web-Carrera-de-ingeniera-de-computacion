@@ -1,4 +1,10 @@
-import { createContext, useContext, useEffect, useState } from "react";
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
 import { supabaseCliente } from "../services/supabaseCliente";
 import type { User, Session } from "@supabase/supabase-js";
 
@@ -8,6 +14,7 @@ interface AuthContextType {
   loading: boolean;
   role: string | null;
   logout: () => Promise<void>;
+  refreshSession: (delayMs?: number) => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType>({
@@ -16,6 +23,7 @@ const AuthContext = createContext<AuthContextType>({
   loading: true,
   role: null,
   logout: async () => {},
+  refreshSession: async () => {},
 });
 
 export const useAuth = () => {
@@ -33,7 +41,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [role, setRole] = useState<string | null>(null);
 
   // Función para obtener el rol desde la base de datos
-  const fetchUserRole = async (userId: string) => {
+  const fetchUserRole = useCallback(async (userId: string) => {
     try {
       const { data, error } = await supabaseCliente
         .from("usuarios")
@@ -52,7 +60,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       console.error("Error al obtener rol:", error);
       setRole(null);
     }
-  };
+  }, []);
 
   useEffect(() => {
     // Loguear cambios de rol y usuario para debug
@@ -62,6 +70,43 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       rol: role,
     });
   }, [user, role]);
+
+  const refreshSession = useCallback(
+    async (delayMs = 0) => {
+      try {
+        if (delayMs > 0) {
+          await new Promise((resolve) => setTimeout(resolve, delayMs));
+        }
+
+        setLoading(true);
+        const {
+          data: { session },
+          error,
+        } = await supabaseCliente.auth.getSession();
+
+        if (error) {
+          throw error;
+        }
+
+        setSession(session);
+        setUser(session?.user ?? null);
+
+        if (session?.user) {
+          await fetchUserRole(session.user.id);
+        } else {
+          setRole(null);
+        }
+      } catch (error) {
+        console.error("Error al refrescar sesión:", error);
+        setSession(null);
+        setUser(null);
+        setRole(null);
+      } finally {
+        setLoading(false);
+      }
+    },
+    [fetchUserRole]
+  );
 
   const logout = async () => {
     const { error } = await supabaseCliente.auth.signOut();
@@ -74,23 +119,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   useEffect(() => {
-    // Obtener sesión inicial
-    supabaseCliente.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-      setUser(session?.user ?? null);
-      console.log("[AuthDebug] Sesion inicial", {
-        autenticado: !!session?.user,
-        userId: session?.user?.id,
-      });
-
-      // Si hay usuario, obtener su rol
-      if (session?.user) {
-        fetchUserRole(session.user.id);
-      }
-
-      setLoading(false);
-    });
-
+    refreshSession(2000);
     // Escuchador de cambios de autenticación
     const {
       data: { subscription },
@@ -113,13 +142,14 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       setLoading(false);
     });
     return () => subscription.unsubscribe();
-  }, []);
+  }, [refreshSession]);
 
   const value = {
     user,
     session,
     loading,
     role,
+    refreshSession,
     logout,
   };
 

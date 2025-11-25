@@ -1,5 +1,4 @@
-import { useEffect } from "react";
-import { Routes, Route, useLocation, useNavigate } from "react-router-dom";
+import { Routes, Route, useLocation, Navigate } from "react-router-dom";
 import Home from "@/pages/Homepage";
 import Login from "@/pages/Login";
 import Registro from "@/pages/Registro";
@@ -23,22 +22,32 @@ import ScrollToTop from "./components/ScrollToTop";
 const MemberRedirect = () => {
   const { role, loading } = useAuth();
   const location = useLocation();
-  const navigate = useNavigate();
 
-  useEffect(() => {
-    if (loading) return;
-    // Con esto sabemos si estamos en la ruta distinta a /perfil
-    if (role === "miembro" && !location.pathname.startsWith("/perfil")) {
-      navigate("/perfil", { replace: true });
-    }
-  }, [role, loading, location.pathname, navigate]);
+  if (loading) return null;
+  // Renderizamos Navigate directamente para evitar parpadeo en home antes del redirect
+  if (role === "miembro" && !location.pathname.startsWith("/perfil")) {
+    return <Navigate to="/perfil" replace />;
+  }
 
   return null;
 };
 
-function App() {
+const AppContent = () => {
+  const { loading, user, role } = useAuth();
+
+  const mustWaitForRole =
+    (loading && !!user) || (!loading && !!user && role === null);
+
+  if (mustWaitForRole) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-white">
+        <p className="text-gray-600">Redirigiendo...</p>
+      </div>
+    );
+  }
+
   return (
-    <AuthProvider>
+    <>
       <MemberRedirect />
       <ScrollToTop />
       <Routes>
@@ -69,6 +78,14 @@ function App() {
           element={<RutaProtected>Aqui va la pagina del editor</RutaProtected>}
         />
       </Routes>
+    </>
+  );
+};
+
+function App() {
+  return (
+    <AuthProvider>
+      <AppContent />
     </AuthProvider>
   );
 }

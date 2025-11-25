@@ -12,7 +12,7 @@ export default function Login() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const navigate = useNavigate();
-  const { user, role, loading } = useAuth();
+  const { user, role, loading, refreshSession } = useAuth();
 
   // Redirige si ya hay sesión; prioriza rol "miembro" a perfil
   useEffect(() => {
@@ -24,24 +24,9 @@ export default function Login() {
     }
   }, [loading, user, role, navigate]);
 
-  if (loading && user) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-white">
-        <p className="text-gray-600">Redirigiendo...</p>
-      </div>
-    );
-  }
-
-  if (!loading && user && role === null) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-white">
-        <p className="text-gray-600">Obteniendo rol...</p>
-      </div>
-    );
-  }
-
   const validateUser = async (usuario: User) => {
     try {
+      // Query para saber si el usuario que usamos tiene tabla
       const { data: verificarUser, error: checkError } = await supabaseCliente
         .from("usuarios")
         .select("id_usuario")
@@ -53,15 +38,15 @@ export default function Login() {
         return false;
       }
       if (!verificarUser && usuario.email_confirmed_at) {
-        //realizar insert de esa cuenta
+        //Si el usuario existe esta confirmado insertar al compare nuevo
         const { error: insertError } = await supabaseCliente
           .from("usuarios")
           .insert({
             id_usuario: usuario.id,
             nombres: "",
             apellidos: "",
+            rol: "miembro",
             correo_usuario: usuario.email,
-            es_destacado: false,
             estado_estudiante: "activo",
           });
 
@@ -102,6 +87,10 @@ export default function Login() {
         const esValido = await validateUser(data.user);
         if (!esValido) {
           return navigate("/register", { replace: true });
+        }
+        // Damos tiempo para que la base asigne el rol y refrescamos la sesión
+        if (role == null) {
+          await refreshSession();
         }
         return navigate("/", { replace: true });
       }
