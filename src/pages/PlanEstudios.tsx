@@ -349,7 +349,7 @@ export default function StudyPlan() {
                       className={`p-2 rounded text-xs text-gray-800 text-center font-medium transition-colors duration-100
                         ${course.startsWith("Ampliando la mirada") ? "bg-blue-200"
                           : isPrereq ? "bg-yellow-200"
-                          : isSiguiente ? "bg-gray-400"
+                          : isSiguiente ? "bg-yellow-200"
                           : "bg-gray-200"}
                           ${hoveredCourse === course ? 'ring-2 ring-blue-400' : ''}
                           `}
@@ -369,12 +369,8 @@ export default function StudyPlan() {
                             <div className="flex gap-6 items-center justify-start mt-4 mb-8">
                               <div className="flex items-center gap-2">
                                 <div className="w-5 h-5 rounded bg-yellow-200 border border-yellow-200"></div>
-                                <span className="text-sm font-semibold text-gray-700">Prerrequisito</span>
+                                <span className="text-sm font-semibold text-gray-700">Prerrequisito y Asignatura Dependiente</span>
                                 </div>
-                                <div className="flex items-center gap-2">
-                                  <div className="w-5 h-5 rounded bg-gray-400 border border-gray-400"></div>
-                                  <span className="text-sm font-semibold text-gray-700">Asignatura dependiente</span>
-                                  </div>
                                   </div>
           {/* Modal */}
           {showModal && selectedCourse && (

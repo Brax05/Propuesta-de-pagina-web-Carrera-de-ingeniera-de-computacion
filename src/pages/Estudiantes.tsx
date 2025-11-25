@@ -31,9 +31,9 @@ export default function Graduates() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <h2 className="text-3xl font-bold text-gray-900 mb-12">Conoce a nuestros profesionales</h2>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
             {graduates.map((grad) => (
-              <div key={grad.id} className="bg-white rounded-lg p-6 border border-gray-200 hover:shadow-lg transition">
+              <div key={grad.id} className="bg-white rounded-lg p-6 border border-gray-200 hover:shadow-lg transition flex flex-col items-center">
                 <div className="text-center mb-4">
                   <img
                     src={`https://images.unsplash.com/photo-${grad.id % 2 === 0 ? '1438761681033-6461ffad8d80' : '1507003211169-0a1dd7228f2d'}?w=150&h=150&fit=crop`}

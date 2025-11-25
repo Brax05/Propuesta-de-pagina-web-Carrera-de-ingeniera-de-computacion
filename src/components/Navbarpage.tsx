@@ -30,8 +30,8 @@ export default function Navbar() {
         <div className="flex justify-between items-center h-20">
           {/* Logo */}
           <Link to="/" className="flex items-center gap-2">
-            <div className="hidden sm:block">
-              <img src="/logo.png" alt="Logo Cna ULS" className="h-[98px] w-auto object-contain flex-shrink-0" />
+            <div className="block">
+              <img src="/logo.png" alt="Logo ULS" className="h-[92px] w-auto object-contain flex-shrink-0" />
             </div>
           </Link>
 
@@ -100,7 +100,7 @@ export default function Navbar() {
               <Link to="/" className="text-sm text-gray-700 hover:text-gray-900 py-2" onClick={() => setIsOpen(false)}>Inicio</Link>
               <Link to="/plan-estudios" className="text-sm text-gray-700 hover:text-gray-900 py-2" onClick={() => setIsOpen(false)}>Plan de Estudios</Link>
               <Link to="/noticias" className="text-sm text-gray-700 hover:text-gray-900 py-2" onClick={() => setIsOpen(false)}>Noticias</Link>
-              <Link to="/egresados" className="text-sm text-gray-700 hover:text-gray-900 py-2" onClick={() => setIsOpen(false)}>Nuestros Estudiantes</Link>
+              <Link to="/estudiantes" className="text-sm text-gray-700 hover:text-gray-900 py-2" onClick={() => setIsOpen(false)}>Nuestros Estudiantes</Link>
               <Link to="/contacto" className="text-sm text-gray-700 hover:text-gray-900 py-2" onClick={() => setIsOpen(false)}>Contacto</Link>
               {isAuthenticated && (
                 <Link to="/cec" className="text-sm text-gray-700 hover:text-gray-900 py-2" onClick={() => setIsOpen(false)}>
