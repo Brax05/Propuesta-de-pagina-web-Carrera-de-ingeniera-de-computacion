@@ -40,79 +40,125 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [loading, setLoading] = useState(true);
   const [role, setRole] = useState<string | null>(null);
 
-  // Función para obtener el rol desde la base de datos
-  const fetchUserRole = useCallback(async (userId: string, attempt = 1) => {
-    try {
-      const { data } = await supabaseCliente
-        .from("usuarios")
-        .select("rol")
-        .eq("id_usuario", userId)
-        .maybeSingle();
-
-      const fetchedRole = data?.rol || null;
-
-      // Si aún no hay rol (por triggers o default), reintentar unas veces
-      if (!fetchedRole && attempt < 3) {
-        await new Promise((resolve) => setTimeout(resolve, 400 * attempt));
-        return fetchUserRole(userId, attempt + 1);
-      }
-
-      setRole(fetchedRole);
-      console.log("[AuthDebug] Rol cargado", {
-        userId,
-        rol: fetchedRole,
-      });
-    } catch (error) {
-      console.error("Error al obtener rol:", error);
-      setRole(null);
-    }
-  }, []);
-
-  useEffect(() => {
-    // Loguear cambios de rol y usuario para debug
-    console.log("[AuthDebug] Estado de rol actualizado", {
-      autenticado: !!user,
-      userId: user?.id,
-      rol: role,
-    });
-  }, [user, role]);
-
-  const refreshSession = useCallback(
-    async (delayMs = 0) => {
+  // Función para crear usuario si no existe (para confirmación por email)
+  const createUserIfNotExists = useCallback(
+    async (userId: string, email: string) => {
       try {
-        if (delayMs > 0) {
-          await new Promise((resolve) => setTimeout(resolve, delayMs));
+        const { data: existingUser } = await supabaseCliente
+          .from("usuarios")
+          .select("id_usuario")
+          .eq("id_usuario", userId)
+          .maybeSingle();
+
+        if (!existingUser) {
+          const { error: insertError } = await supabaseCliente
+            .from("usuarios")
+            .insert({
+              id_usuario: userId,
+              nombres: "",
+              apellidos: "",
+              rol: "miembro",
+              correo_usuario: email,
+              estado_estudiante: "activo",
+            });
+
+          if (insertError) {
+            console.error(
+              "Error al crear usuario en confirmación de email:",
+              insertError
+            );
+            return false;
+          }
+          console.log(
+            "[AuthDebug] Usuario creado automáticamente en confirmación"
+          );
+          return true;
         }
-
-        setLoading(true);
-        const {
-          data: { session },
-          error,
-        } = await supabaseCliente.auth.getSession();
-
-        if (error) {
-          throw error;
-        }
-
-        setSession(session);
-        setUser(session?.user ?? null);
-
-        if (session?.user) {
-          await fetchUserRole(session.user.id);
-        } else {
-          setRole(null);
-        }
+        return true;
       } catch (error) {
-        console.error("Error al refrescar sesión:", error);
-        setSession(null);
-        setUser(null);
+        console.error("Error en createUserIfNotExists:", error);
+        return false;
+      }
+    },
+    []
+  );
+
+  // Función para obtener el rol desde la base de datos
+  const fetchUserRole = useCallback(
+    async (userId: string, email: string, attempt = 1) => {
+      try {
+        const { data } = await supabaseCliente
+          .from("usuarios")
+          .select("rol")
+          .eq("id_usuario", userId)
+          .maybeSingle();
+
+        const fetchedRole = data?.rol || null;
+
+        // Si no existe el usuario, crearlo (sucede en confirmación de email)
+        if (!fetchedRole && attempt === 1) {
+          const created = await createUserIfNotExists(userId, email);
+          if (created) {
+            // Reintentar obtener el rol después de crear
+            return fetchUserRole(userId, email, attempt + 1);
+          }
+        }
+
+        // Si aún no hay rol (por triggers o default), reintentar unas veces
+        if (!fetchedRole && attempt < 4) {
+          await new Promise((resolve) => setTimeout(resolve, 400 * attempt));
+          return fetchUserRole(userId, email, attempt + 1);
+        }
+
+        setRole(fetchedRole);
+        setLoading(false);
+        console.log("[AuthDebug] Rol cargado", {
+          userId,
+          rol: fetchedRole,
+        });
+      } catch (error) {
+        console.error("Error al obtener rol:", error);
         setRole(null);
-      } finally {
         setLoading(false);
       }
     },
-    [fetchUserRole]
+    [createUserIfNotExists]
   );
+
+  const refreshSession = useCallback(async (delayMs = 0) => {
+    try {
+      if (delayMs > 0) {
+        await new Promise((resolve) => setTimeout(resolve, delayMs));
+      }
+
+      setLoading(true);
+      const {
+        data: { session },
+        error,
+      } = await supabaseCliente.auth.getSession();
+
+      if (error) {
+        throw error;
+      }
+
+      setSession(session);
+      setUser(session?.user ?? null);
+
+      if (session?.user) {
+        // Cargar el rol del usuario
+        await fetchUserRole(session.user.id, session.user.email || "");
+      } else {
+        setRole(null);
+        setLoading(false);
+      }
+    } catch (error) {
+      console.error("Error al refrescar sesión:", error);
+      setSession(null);
+      setUser(null);
+      setRole(null);
+      setLoading(false);
+    }
+  }, [fetchUserRole]);
 
   const logout = async () => {
     const { error } = await supabaseCliente.auth.signOut();
@@ -125,7 +171,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   useEffect(() => {
-    refreshSession(1000);
+    refreshSession();
     // Escuchador de cambios de autenticación
     const {
       data: { subscription },
@@ -140,15 +186,15 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
       // Cuando cambia la sesión, actualizar el rol
       if (session?.user) {
-        fetchUserRole(session.user.id);
+        setLoading(true);
+        fetchUserRole(session.user.id, session.user.email || "");
       } else {
         setRole(null);
+        setLoading(false);
       }
-
-      setLoading(false);
     });
     return () => subscription.unsubscribe();
-  }, [refreshSession]);
+  }, [refreshSession, fetchUserRole]);
 
   const value = {
     user,

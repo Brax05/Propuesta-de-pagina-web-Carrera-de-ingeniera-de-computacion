@@ -97,9 +97,10 @@ export default function Login() {
         }
         // Damos tiempo para que la base asigne el rol y refrescamos la sesión
         if (role == null && esValido) {
-          await refreshSession();
+          await refreshSession(500);
         }
-        return navigate("/", { replace: true });
+        // No navegamos aquí, dejamos que MemberRedirect lo haga
+        // El useEffect de arriba se ejecutará cuando role cambie
       }
     } catch (error: any) {
       console.error(error);

@@ -46,7 +46,8 @@ export default function Perfil() {
   );
 
   const getRoleColor = useCallback(
-    (role: string) => roleColors[role] ?? "bg-gray-100 text-gray-800 border-gray-300",
+    (role: string) =>
+      roleColors[role] ?? "bg-gray-100 text-gray-800 border-gray-300",
     []
   );
 
@@ -105,7 +106,10 @@ export default function Perfil() {
         .single();
 
       if (error) {
-        console.error("Error al intentar actualizar los datos del usuario", error);
+        console.error(
+          "Error al intentar actualizar los datos del usuario",
+          error
+        );
         return;
       }
 
@@ -122,11 +126,17 @@ export default function Perfil() {
         role: data.rol ?? prev.role,
         estado_estudiante: data.estado_estudiante ?? prev.estado_estudiante,
       }));
-      await refreshSession();
+      await refreshSession(1000);
     } catch (e) {
       console.error("Problemas al intentar actualizar", e);
     }
-  }, [user?.id, userData.nombres, userData.apellidos, userData.role, refreshSession]);
+  }, [
+    user?.id,
+    userData.nombres,
+    userData.apellidos,
+    userData.role,
+    refreshSession,
+  ]);
 
   useEffect(() => {
     if (!loading && user) {

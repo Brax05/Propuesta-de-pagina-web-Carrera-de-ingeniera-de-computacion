@@ -17,40 +17,35 @@ import GestionEstudiantes from "@/pages/dashboard/GestionEstudiantes";
 import { RutaProtected } from "./rutasProtected/RutaProtected";
 import { AuthProvider, useAuth } from "./hooks/AuthContext";
 import ScrollToTop from "./components/ScrollToTop";
+import AuthDebug from "./components/AuthDebug";
 
 // Redirige a miembros a /perfil para impedir que naveguen a otras rutas
 const MemberRedirect = () => {
-  const { role, loading } = useAuth();
+  const { role, loading, user } = useAuth();
   const location = useLocation();
 
   if (loading) return null;
-  // Renderizamos Navigate directamente para evitar parpadeo en home antes del redirect
-  if (role === "miembro" && !location.pathname.startsWith("/perfil")) {
-    return <Navigate to="/perfil" replace />;
-  }
 
+  // Si es miembro y NO está en /perfil, redirecciona
+  if (role === "miembro" && user && !location.pathname.startsWith("/perfil")) {
+    return (
+      <>
+        <Navigate to="/perfil" replace />
+        <div className="min-h-screen flex items-center justify-center bg-white">
+          <p className="text-gray-600">Redirigiendo...</p>
+        </div>
+      </>
+    );
+  }
   return null;
 };
 
 const AppContent = () => {
-  const { loading, user } = useAuth();
-
-  // Esperamos solo mientras se resuelve la sesión (loading + user).
-  // Si el rol resulta null, dejamos avanzar para evitar quedarnos pegados.
-  const mustWaitForRole = loading && !!user;
-
-  if (mustWaitForRole) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-white">
-        <p className="text-gray-600">Redirigiendo...</p>
-      </div>
-    );
-  }
-
   return (
     <>
       <MemberRedirect />
       <ScrollToTop />
+      <AuthDebug />
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
