@@ -2,7 +2,7 @@ import { Navigate } from "react-router-dom";
 import { useAuth } from "../hooks/AuthContext";
 
 // Especificamos que recibe un tipo children ya que este envuelve otros componentes
-export const RutaProtected = ({ children }: { children: React.ReactNode }) => {
+export const RutasAdmin = ({ children }: { children: React.ReactNode }) => {
   const { user, role, loading } = useAuth();
 
   // Evitar redireccionar mientras se cargan sesión/rol
@@ -14,7 +14,7 @@ export const RutaProtected = ({ children }: { children: React.ReactNode }) => {
     return <Navigate to="/login" replace />;
   }
 
-  if (role === "admin" || role === "editor") {
+  if (role === "admin") {
     return <>{children}</>;
   }
   return <Navigate to="/" />;

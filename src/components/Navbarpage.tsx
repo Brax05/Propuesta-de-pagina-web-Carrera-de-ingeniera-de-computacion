@@ -8,8 +8,8 @@ export default function Navbar() {
   const [isLoggingOut, setIsLoggingOut] = useState(false);
   const { user, loading, logout } = useAuth();
   const isAuthenticated = !!user;
-  
-  const userLabel ="Mi Perfil";
+
+  const userLabel = "Mi Perfil";
 
   const toggleMenu = () => setIsOpen(!isOpen);
   const handleLogout = async () => {
@@ -32,19 +32,51 @@ export default function Navbar() {
           {/* Logo */}
           <Link to="/" className="flex items-center gap-2">
             <div className="hidden sm:block">
-              <img src="/logo.png" alt="Logo Cna ULS" className="h-[98px] w-auto object-contain flex-shrink-0" />
+              <img
+                src="/logo.png"
+                alt="Logo Cna ULS"
+                className="h-[98px] w-auto object-contain flex-shrink-0"
+              />
             </div>
           </Link>
 
           {/* Menú escritorio */}
           <div className="hidden md:flex items-center gap-8">
-            <Link to="/" className="text-sm text-gray-700 hover:text-gray-900 transition">Inicio</Link>
-            <Link to="/plan-estudios" className="text-sm text-gray-700 hover:text-gray-900 transition">Plan de Estudios</Link>
-            <Link to="/noticias" className="text-sm text-gray-700 hover:text-gray-900 transition">Noticias</Link>
-            <Link to="/estudiantes" className="text-sm text-gray-700 hover:text-gray-900 transition">Nuestros Estudiantes</Link>
-            <Link to="/contacto" className="text-sm text-gray-700 hover:text-gray-900 transition">Contacto</Link>
+            <Link
+              to="/"
+              className="text-sm text-gray-700 hover:text-gray-900 transition"
+            >
+              Inicio
+            </Link>
+            <Link
+              to="/plan-estudios"
+              className="text-sm text-gray-700 hover:text-gray-900 transition"
+            >
+              Plan de Estudios
+            </Link>
+            <Link
+              to="/noticias"
+              className="text-sm text-gray-700 hover:text-gray-900 transition"
+            >
+              Noticias
+            </Link>
+            <Link
+              to="/estudiantes"
+              className="text-sm text-gray-700 hover:text-gray-900 transition"
+            >
+              Nuestros Estudiantes
+            </Link>
+            <Link
+              to="/contacto"
+              className="text-sm text-gray-700 hover:text-gray-900 transition"
+            >
+              Contacto
+            </Link>
             {isAuthenticated && (
-              <Link to="/cec" className="text-sm text-gray-700 hover:text-gray-900 transition font-semibold">
+              <Link
+                to="/cec"
+                className="text-sm text-gray-700 hover:text-gray-900 transition font-semibold"
+              >
                 CEC
               </Link>
             )}
@@ -56,12 +88,12 @@ export default function Navbar() {
               <span className="text-sm text-gray-500">Verificando sesión…</span>
             ) : isAuthenticated ? (
               <>
-              <Link 
-                to="/perfil" 
-                className="text-sm text-gray-700 hover:text-gray-900 truncate max-w-[160px] transition underline"
-              >
-                {userLabel}
-              </Link>
+                <Link
+                  to="/dashboard/perfil"
+                  className="text-sm text-gray-700 hover:text-gray-900 truncate max-w-[160px] transition underline"
+                >
+                  {userLabel}
+                </Link>
                 <button
                   onClick={handleLogout}
                   disabled={isLoggingOut}
@@ -98,27 +130,63 @@ export default function Navbar() {
         {isOpen && (
           <div className="md:hidden pb-4 border-t border-gray-200">
             <div className="flex flex-col gap-2 pt-4">
-              <Link to="/" className="text-sm text-gray-700 hover:text-gray-900 py-2" onClick={() => setIsOpen(false)}>Inicio</Link>
-              <Link to="/plan-estudios" className="text-sm text-gray-700 hover:text-gray-900 py-2" onClick={() => setIsOpen(false)}>Plan de Estudios</Link>
-              <Link to="/noticias" className="text-sm text-gray-700 hover:text-gray-900 py-2" onClick={() => setIsOpen(false)}>Noticias</Link>
-              <Link to="/egresados" className="text-sm text-gray-700 hover:text-gray-900 py-2" onClick={() => setIsOpen(false)}>Nuestros Estudiantes</Link>
-              <Link to="/contacto" className="text-sm text-gray-700 hover:text-gray-900 py-2" onClick={() => setIsOpen(false)}>Contacto</Link>
+              <Link
+                to="/"
+                className="text-sm text-gray-700 hover:text-gray-900 py-2"
+                onClick={() => setIsOpen(false)}
+              >
+                Inicio
+              </Link>
+              <Link
+                to="/plan-estudios"
+                className="text-sm text-gray-700 hover:text-gray-900 py-2"
+                onClick={() => setIsOpen(false)}
+              >
+                Plan de Estudios
+              </Link>
+              <Link
+                to="/noticias"
+                className="text-sm text-gray-700 hover:text-gray-900 py-2"
+                onClick={() => setIsOpen(false)}
+              >
+                Noticias
+              </Link>
+              <Link
+                to="/egresados"
+                className="text-sm text-gray-700 hover:text-gray-900 py-2"
+                onClick={() => setIsOpen(false)}
+              >
+                Nuestros Estudiantes
+              </Link>
+              <Link
+                to="/contacto"
+                className="text-sm text-gray-700 hover:text-gray-900 py-2"
+                onClick={() => setIsOpen(false)}
+              >
+                Contacto
+              </Link>
               {isAuthenticated && (
-                <Link to="/cec" className="text-sm text-gray-700 hover:text-gray-900 py-2" onClick={() => setIsOpen(false)}>
+                <Link
+                  to="/cec"
+                  className="text-sm text-gray-700 hover:text-gray-900 py-2"
+                  onClick={() => setIsOpen(false)}
+                >
                   CEC
                 </Link>
               )}
               <div className="border-t border-gray-200 pt-3 mt-3">
                 {loading ? (
-                  <span className="text-sm text-gray-500">Verificando sesión…</span>
+                  <span className="text-sm text-gray-500">
+                    Verificando sesión…
+                  </span>
                 ) : isAuthenticated ? (
                   <div className="flex flex-col gap-2">
-                    <Link 
-                      to="/perfil" 
+                    <Link
+                      to="/dashboard/perfil"
                       className="text-sm text-gray-700 hover:text-gray-900 transition underline block mb-2"
                       onClick={() => setIsOpen(false)}
                     >
-                     {userLabel}
+                      {userLabel}
                     </Link>
                     <button
                       onClick={handleLogout}
