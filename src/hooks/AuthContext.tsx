@@ -146,7 +146,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         }
 
         if (!fetchedRole && attempt < 2) {
-          const delayMs = 100 * attempt;
+          const delayMs = 300 * attempt;
           console.log(
             `[AuthDebug] Rol aún null, reintentando en ${delayMs}ms...`
           );
