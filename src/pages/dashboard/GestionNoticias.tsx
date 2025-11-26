@@ -3,7 +3,18 @@ import { Link } from "react-router-dom";
 import { supabaseCliente } from "@/services/supabaseCliente";
 import Navbar from "@/components/Navbarpage";
 import Footer from "@/components/Footerpage";
-import { ArrowLeft, Search, Edit, Trash2, Plus, Save, X, Star, Calendar, MapPin } from "lucide-react";
+import {
+  ArrowLeft,
+  Search,
+  Edit,
+  Trash2,
+  Plus,
+  Save,
+  X,
+  Star,
+  Calendar,
+  MapPin,
+} from "lucide-react";
 
 interface News {
   id: number;
@@ -49,10 +60,10 @@ export default function GestionNoticias() {
     location: "",
     isFeatured: false,
     isPublic: true,
-    imageUrl: ""
+    imageUrl: "",
   });
 
-    useEffect(() => {
+  useEffect(() => {
     const fetchNews = async () => {
       try {
         setLoadingList(true);
@@ -107,30 +118,29 @@ export default function GestionNoticias() {
     try {
       let uploadImageUrl: string | null = null;
 
-      if(imageFile){
+      if (imageFile) {
         const fileExt = imageFile.name.split(".").pop();
         const fileName = `${Date.now()}-${Math.random()
-        .toString(36)
-        .substring(2)}.${fileExt}`;
-      const filePath = `noticias/${fileName}`;
+          .toString(36)
+          .substring(2)}.${fileExt}`;
+        const filePath = `noticias/${fileName}`;
 
-      const {error: uploadError } = await supabaseCliente.storage
-      .from("ImagenesNoticias")
-      .upload(filePath, imageFile);
+        const { error: uploadError } = await supabaseCliente.storage
+          .from("ImagenesNoticias")
+          .upload(filePath, imageFile);
 
-      if (uploadError) {
-        console.error("Error al subir la imagen:", uploadError);
-        alert("No se pudo subir la imagen");
-        return;
+        if (uploadError) {
+          console.error("Error al subir la imagen:", uploadError);
+          alert("No se pudo subir la imagen");
+          return;
+        }
+
+        const { data: publicUrlData } = supabaseCliente.storage
+          .from("ImagenesNoticias")
+          .getPublicUrl(filePath);
+
+        uploadImageUrl = publicUrlData.publicUrl;
       }
-
-      const {data:publicUrlData} = supabaseCliente.storage
-      .from("ImagenesNoticias")
-      .getPublicUrl(filePath);
-
-      uploadImageUrl = publicUrlData.publicUrl;
-      }
-
 
       const { data, error } = await supabaseCliente
         .from("noticias")
@@ -252,9 +262,7 @@ export default function GestionNoticias() {
       if (error) throw error;
 
       setNewsList((prev) =>
-        prev.map((n) =>
-          n.id === editingNews.id ? editingNews : n
-        )
+        prev.map((n) => (n.id === editingNews.id ? editingNews : n))
       );
       setEditingNews(null);
     } catch (err) {
@@ -268,7 +276,6 @@ export default function GestionNoticias() {
     setImageFile(file);
     setImageFileName(file ? file.name : "");
   };
-
 
   const handleDeleteNews = async (id: number) => {
     if (!window.confirm("¿Estás seguro de eliminar esta noticia?")) return;
@@ -289,7 +296,7 @@ export default function GestionNoticias() {
       alert("No se pudo eliminar la noticia");
     }
   };
-  
+
   const toggleFeatured = async (id: number) => {
     const news = newsList.find((n) => n.id === id);
     if (!news) return;
@@ -305,9 +312,7 @@ export default function GestionNoticias() {
       if (error) throw error;
 
       setNewsList((prev) =>
-        prev.map((n) =>
-          n.id === id ? { ...n, isFeatured: nuevoValor } : n
-        )
+        prev.map((n) => (n.id === id ? { ...n, isFeatured: nuevoValor } : n))
       );
     } catch (err) {
       console.error("Error al actualizar destacado:", err);
@@ -315,9 +320,10 @@ export default function GestionNoticias() {
     }
   };
 
-  const filteredNews = newsList.filter(news => 
-    news.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    news.previewDescription.toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredNews = newsList.filter(
+    (news) =>
+      news.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      news.previewDescription.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   return (
@@ -326,18 +332,22 @@ export default function GestionNoticias() {
 
       <div className="bg-blue-700 text-white py-12 border-b-4 border-blue-800">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <Link to="/perfil" className="inline-flex items-center text-blue-100 hover:text-white mb-4 text-sm">
+          <Link
+            to="/dashboard/perfil"
+            className="inline-flex items-center text-blue-100 hover:text-white mb-4 text-sm"
+          >
             <ArrowLeft className="w-4 h-4 mr-2" />
             Volver al Perfil
           </Link>
           <h1 className="text-4xl font-bold mb-2">Edición de Noticias</h1>
-          <p className="text-blue-100">Crea, edita y gestiona las noticias de la escuela</p>
+          <p className="text-blue-100">
+            Crea, edita y gestiona las noticias de la escuela
+          </p>
         </div>
       </div>
 
       <div className="flex-1 py-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          
           <div className="flex flex-col md:flex-row gap-4 mb-8">
             <div className="flex-1 relative">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
@@ -360,9 +370,7 @@ export default function GestionNoticias() {
 
           {/* Mensajes de carga / error */}
           {loadingList && (
-            <div className="mb-6 text-gray-500 text-sm">
-              Cargando noticias…
-            </div>
+            <div className="mb-6 text-gray-500 text-sm">Cargando noticias…</div>
           )}
           {loadError && (
             <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg text-sm text-red-700">
@@ -372,25 +380,38 @@ export default function GestionNoticias() {
 
           {isAdding && (
             <div className="bg-white rounded-lg shadow border border-gray-200 p-6 mb-8">
-              <h3 className="text-xl font-bold text-gray-900 mb-4">Nueva Noticia</h3>
-              
+              <h3 className="text-xl font-bold text-gray-900 mb-4">
+                Nueva Noticia
+              </h3>
+
               <div className="space-y-4">
                 <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">Título *</label>
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">
+                    Título *
+                  </label>
                   <input
                     type="text"
                     value={newNews.title}
-                    onChange={(e) => setNewNews({ ...newNews, title: e.target.value })}
+                    onChange={(e) =>
+                      setNewNews({ ...newNews, title: e.target.value })
+                    }
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-700"
                     placeholder="Título de la noticia"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">Descripción de Vista Previa *</label>
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">
+                    Descripción de Vista Previa *
+                  </label>
                   <textarea
                     value={newNews.previewDescription}
-                    onChange={(e) => setNewNews({ ...newNews, previewDescription: e.target.value })}
+                    onChange={(e) =>
+                      setNewNews({
+                        ...newNews,
+                        previewDescription: e.target.value,
+                      })
+                    }
                     rows={2}
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-700 resize-none"
                     placeholder="Breve descripción que se mostrará en la vista previa"
@@ -398,10 +419,14 @@ export default function GestionNoticias() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">Contenido Completo *</label>
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">
+                    Contenido Completo *
+                  </label>
                   <textarea
                     value={newNews.content}
-                    onChange={(e) => setNewNews({ ...newNews, content: e.target.value })}
+                    onChange={(e) =>
+                      setNewNews({ ...newNews, content: e.target.value })
+                    }
                     rows={6}
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-700 resize-none"
                     placeholder="Contenido completo de la noticia..."
@@ -417,7 +442,9 @@ export default function GestionNoticias() {
                     <input
                       type="date"
                       value={newNews.date}
-                      onChange={(e) => setNewNews({ ...newNews, date: e.target.value })}
+                      onChange={(e) =>
+                        setNewNews({ ...newNews, date: e.target.value })
+                      }
                       className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-700"
                     />
                   </div>
@@ -429,7 +456,9 @@ export default function GestionNoticias() {
                     <input
                       type="text"
                       value={newNews.location}
-                      onChange={(e) => setNewNews({ ...newNews, location: e.target.value })}
+                      onChange={(e) =>
+                        setNewNews({ ...newNews, location: e.target.value })
+                      }
                       className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-700"
                       placeholder="La Serena, Chile"
                     />
@@ -451,7 +480,7 @@ export default function GestionNoticias() {
                         onChange={handleImageChange}
                       />
                     </label>
-            
+
                     <span className="inline-flex items-center px-2 py-1 mt-1 rounded-full border border-green-200 bg-green-50 text-xs font-medium text-green-700 max-w-xs truncate">
                       {imageFileName || "Ningún archivo seleccionado"}
                     </span>
@@ -462,19 +491,25 @@ export default function GestionNoticias() {
                   </p>
                 </div>
 
-
                 <div className="p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
                   <label className="flex items-center cursor-pointer">
                     <input
                       type="checkbox"
                       checked={newNews.isFeatured}
-                      onChange={(e) => setNewNews({ ...newNews, isFeatured: e.target.checked })}
+                      onChange={(e) =>
+                        setNewNews({ ...newNews, isFeatured: e.target.checked })
+                      }
                       className="w-4 h-4 text-blue-700 rounded mr-3"
                     />
                     <Star className="w-5 h-5 text-yellow-600 mr-2" />
-                    <span className="text-sm font-semibold text-gray-900">Marcar como Noticia Destacada</span>
+                    <span className="text-sm font-semibold text-gray-900">
+                      Marcar como Noticia Destacada
+                    </span>
                   </label>
-                  <p className="text-xs text-gray-600 mt-2 ml-7">La noticia destacada aparecerá en un lugar prominente en la página principal</p>
+                  <p className="text-xs text-gray-600 mt-2 ml-7">
+                    La noticia destacada aparecerá en un lugar prominente en la
+                    página principal
+                  </p>
                 </div>
 
                 <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg">
@@ -482,14 +517,18 @@ export default function GestionNoticias() {
                     <input
                       type="checkbox"
                       checked={newNews.isPublic}
-                      onChange={(e) => setNewNews({ ...newNews, isPublic: e.target.checked })}
+                      onChange={(e) =>
+                        setNewNews({ ...newNews, isPublic: e.target.checked })
+                      }
                       className="w-4 h-4 text-blue-700 rounded mr-3"
                     />
-                    <span className="text-sm font-semibold text-gray-900">Noticia Pública</span>
+                    <span className="text-sm font-semibold text-gray-900">
+                      Noticia Pública
+                    </span>
                   </label>
                   <p className="text-xs text-gray-600 mt-2 ml-7">
-                    {newNews.isPublic 
-                      ? "Visible para todos los visitantes (logueados y no logueados)" 
+                    {newNews.isPublic
+                      ? "Visible para todos los visitantes (logueados y no logueados)"
                       : "Visible solo para usuarios autenticados"}
                   </p>
                 </div>
@@ -516,37 +555,63 @@ export default function GestionNoticias() {
 
           <div className="space-y-6">
             {filteredNews.map((news) => (
-              <div key={news.id} className="bg-white rounded-lg shadow border border-gray-200 overflow-hidden">
+              <div
+                key={news.id}
+                className="bg-white rounded-lg shadow border border-gray-200 overflow-hidden"
+              >
                 {editingNews?.id === news.id ? (
                   <div className="p-6">
-                    <h3 className="text-xl font-bold text-gray-900 mb-4">Editar Noticia</h3>
-                    
+                    <h3 className="text-xl font-bold text-gray-900 mb-4">
+                      Editar Noticia
+                    </h3>
+
                     <div className="space-y-4">
                       <div>
-                        <label className="block text-sm font-semibold text-gray-700 mb-2">Título</label>
+                        <label className="block text-sm font-semibold text-gray-700 mb-2">
+                          Título
+                        </label>
                         <input
                           type="text"
                           value={editingNews.title}
-                          onChange={(e) => setEditingNews({ ...editingNews, title: e.target.value })}
+                          onChange={(e) =>
+                            setEditingNews({
+                              ...editingNews,
+                              title: e.target.value,
+                            })
+                          }
                           className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-700"
                         />
                       </div>
 
                       <div>
-                        <label className="block text-sm font-semibold text-gray-700 mb-2">Descripción de Vista Previa</label>
+                        <label className="block text-sm font-semibold text-gray-700 mb-2">
+                          Descripción de Vista Previa
+                        </label>
                         <textarea
                           value={editingNews.previewDescription}
-                          onChange={(e) => setEditingNews({ ...editingNews, previewDescription: e.target.value })}
+                          onChange={(e) =>
+                            setEditingNews({
+                              ...editingNews,
+                              previewDescription: e.target.value,
+                            })
+                          }
                           rows={2}
                           className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-700 resize-none"
                         />
                       </div>
 
                       <div>
-                        <label className="block text-sm font-semibold text-gray-700 mb-2">Contenido Completo</label>
+                        <label className="block text-sm font-semibold text-gray-700 mb-2">
+                          Contenido Completo
+                        </label>
                         <textarea
                           value={editingNews.content}
-                          onChange={(e) => setEditingNews({ ...editingNews, content: e.target.value })}
+                          onChange={(e) =>
+                            setEditingNews({
+                              ...editingNews,
+                              content: e.target.value,
+                            })
+                          }
                           rows={6}
                           className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-700 resize-none"
                         />
@@ -554,20 +619,34 @@ export default function GestionNoticias() {
 
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
-                          <label className="block text-sm font-semibold text-gray-700 mb-2">Fecha</label>
+                          <label className="block text-sm font-semibold text-gray-700 mb-2">
+                            Fecha
+                          </label>
                           <input
                             type="date"
                             value={editingNews.date}
-                            onChange={(e) => setEditingNews({ ...editingNews, date: e.target.value })}
+                            onChange={(e) =>
+                              setEditingNews({
+                                ...editingNews,
+                                date: e.target.value,
+                              })
+                            }
                             className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-700"
                           />
                         </div>
                         <div>
-                          <label className="block text-sm font-semibold text-gray-700 mb-2">Ubicación</label>
+                          <label className="block text-sm font-semibold text-gray-700 mb-2">
+                            Ubicación
+                          </label>
                           <input
                             type="text"
                             value={editingNews.location}
-                            onChange={(e) => setEditingNews({ ...editingNews, location: e.target.value })}
+                            onChange={(e) =>
+                              setEditingNews({
+                                ...editingNews,
+                                location: e.target.value,
+                              })
+                            }
                             className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-700"
                           />
                         </div>
@@ -604,11 +683,18 @@ export default function GestionNoticias() {
                           <input
                             type="checkbox"
                             checked={editingNews.isFeatured}
-                            onChange={(e) => setEditingNews({ ...editingNews, isFeatured: e.target.checked })}
+                            onChange={(e) =>
+                              setEditingNews({
+                                ...editingNews,
+                                isFeatured: e.target.checked,
+                              })
+                            }
                             className="w-4 h-4 text-blue-700 rounded mr-3"
                           />
                           <Star className="w-5 h-5 text-yellow-600 mr-2" />
-                          <span className="text-sm font-semibold text-gray-900">Noticia Destacada</span>
+                          <span className="text-sm font-semibold text-gray-900">
+                            Noticia Destacada
+                          </span>
                         </label>
                       </div>
 
@@ -617,14 +703,21 @@ export default function GestionNoticias() {
                           <input
                             type="checkbox"
                             checked={editingNews.isPublic}
-                            onChange={(e) => setEditingNews({ ...editingNews, isPublic: e.target.checked })}
+                            onChange={(e) =>
+                              setEditingNews({
+                                ...editingNews,
+                                isPublic: e.target.checked,
+                              })
+                            }
                             className="w-4 h-4 text-blue-700 rounded mr-3"
                           />
-                          <span className="text-sm font-semibold text-gray-900">Noticia Pública</span>
+                          <span className="text-sm font-semibold text-gray-900">
+                            Noticia Pública
+                          </span>
                         </label>
                         <p className="text-xs text-gray-600 mt-2 ml-7">
-                          {editingNews.isPublic 
-                            ? "Visible para todo público" 
+                          {editingNews.isPublic
+                            ? "Visible para todo público"
                             : "Visible solo para usuarios autenticados"}
                         </p>
                       </div>
@@ -662,7 +755,9 @@ export default function GestionNoticias() {
                       <div className="flex items-start justify-between mb-3">
                         <div className="flex-1">
                           <div className="mb-2">
-                            <h3 className="text-xl font-bold text-gray-900 mb-2">{news.title}</h3>
+                            <h3 className="text-xl font-bold text-gray-900 mb-2">
+                              {news.title}
+                            </h3>
                             <div className="flex flex-wrap items-center gap-2">
                               {news.isFeatured && (
                                 <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
@@ -676,11 +771,17 @@ export default function GestionNoticias() {
                               )}
                             </div>
                           </div>
-                          <p className="text-sm text-gray-600 mb-3">{news.previewDescription}</p>
+                          <p className="text-sm text-gray-600 mb-3">
+                            {news.previewDescription}
+                          </p>
                           <div className="flex flex-wrap gap-3 text-xs text-gray-500">
                             <span className="flex items-center gap-1">
                               <Calendar className="w-4 h-4" />
-                              {new Date(news.date).toLocaleDateString('es-CL', { year: 'numeric', month: 'long', day: 'numeric' })}
+                              {new Date(news.date).toLocaleDateString("es-CL", {
+                                year: "numeric",
+                                month: "long",
+                                day: "numeric",
+                              })}
                             </span>
                             <span className="flex items-center gap-1">
                               <MapPin className="w-4 h-4" />
@@ -688,14 +789,26 @@ export default function GestionNoticias() {
                             </span>
                           </div>
                         </div>
-                        
+
                         <div className="flex gap-2 ml-4">
                           <button
                             onClick={() => toggleFeatured(news.id)}
-                            className={`p-2 rounded transition ${news.isFeatured ? 'text-yellow-600 hover:bg-yellow-50' : 'text-gray-400 hover:bg-gray-100'}`}
-                            title={news.isFeatured ? "Quitar destacado" : "Marcar como destacado"}
+                            className={`p-2 rounded transition ${
+                              news.isFeatured
+                                ? "text-yellow-600 hover:bg-yellow-50"
+                                : "text-gray-400 hover:bg-gray-100"
+                            }`}
+                            title={
+                              news.isFeatured
+                                ? "Quitar destacado"
+                                : "Marcar como destacado"
+                            }
                           >
-                            <Star className={`w-5 h-5 ${news.isFeatured ? 'fill-yellow-500' : ''}`} />
+                            <Star
+                              className={`w-5 h-5 ${
+                                news.isFeatured ? "fill-yellow-500" : ""
+                              }`}
+                            />
                           </button>
                           <button
                             onClick={() => handleEditNews(news)}
@@ -711,9 +824,11 @@ export default function GestionNoticias() {
                           </button>
                         </div>
                       </div>
-                      
+
                       <div className="border-t border-gray-200 pt-3 mt-3">
-                        <p className="text-sm text-gray-700 line-clamp-2">{news.content}</p>
+                        <p className="text-sm text-gray-700 line-clamp-2">
+                          {news.content}
+                        </p>
                       </div>
                     </div>
                   </div>
@@ -728,7 +843,6 @@ export default function GestionNoticias() {
               <p className="text-gray-500">No se encontraron noticias</p>
             </div>
           )}
-
         </div>
       </div>
 

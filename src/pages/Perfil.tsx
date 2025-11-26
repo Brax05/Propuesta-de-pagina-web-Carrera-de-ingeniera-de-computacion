@@ -29,7 +29,7 @@ const roleColors: Record<string, string> = {
 };
 
 export default function Perfil() {
-  const { loading, user, refreshSession } = useAuth();
+  const { loading, user, refreshUserRole } = useAuth();
   const [valorEditarPerfil, setEditarPerfil] = useState(false);
   const [userData, setUserData] = useState<UserData>({
     nombres: "",
@@ -126,7 +126,7 @@ export default function Perfil() {
         role: data.rol ?? prev.role,
         estado_estudiante: data.estado_estudiante ?? prev.estado_estudiante,
       }));
-      await refreshSession(1000);
+      await refreshUserRole();
     } catch (e) {
       console.error("Problemas al intentar actualizar", e);
     }
@@ -135,7 +135,7 @@ export default function Perfil() {
     userData.nombres,
     userData.apellidos,
     userData.role,
-    refreshSession,
+    refreshUserRole,
   ]);
 
   useEffect(() => {

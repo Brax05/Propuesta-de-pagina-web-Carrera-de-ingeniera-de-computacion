@@ -8,6 +8,7 @@ import PlanEstudios from "@/pages/PlanEstudios";
 import Contacto from "@/pages/Contacto";
 import CEC from "@/pages/CEC";
 import Perfil from "@/pages/Perfil";
+import NoticiaDetalle from "@/pages/NoticiaDetalle";
 
 // Módulos de Dashboard
 import GestionUsuarios from "@/pages/dashboard/GestionUsuarios";
@@ -15,6 +16,8 @@ import GestionNoticias from "@/pages/dashboard/GestionNoticias";
 import GestionEstudiantes from "@/pages/dashboard/GestionEstudiantes";
 
 import { RutaProtected } from "./rutasProtected/RutaProtected";
+import { RutaUsuariosLog } from "./rutasProtected/RutaUsuariosLog";
+import { RutasAdmin } from "./rutasProtected/RutasAdmin";
 import { AuthProvider, useAuth } from "./hooks/AuthContext";
 import ScrollToTop from "./components/ScrollToTop";
 import AuthDebug from "./components/AuthDebug";
@@ -27,10 +30,14 @@ const MemberRedirect = () => {
   if (loading) return null;
 
   // Si es miembro y NO está en /perfil, redirecciona
-  if (role === "miembro" && user && !location.pathname.startsWith("/perfil")) {
+  if (
+    role === "miembro" &&
+    user &&
+    !location.pathname.startsWith("/dashboard/perfil")
+  ) {
     return (
       <>
-        <Navigate to="/perfil" replace />
+        <Navigate to="/dashboard/perfil" replace />
         <div className="min-h-screen flex items-center justify-center bg-white">
           <p className="text-gray-600">Redirigiendo...</p>
         </div>
@@ -55,24 +62,42 @@ const AppContent = () => {
         <Route path="/plan-estudios" element={<PlanEstudios />} />
         <Route path="/contacto" element={<Contacto />} />
         <Route path="/cec" element={<CEC />} />
-        <Route path="/perfil" element={<Perfil />} />
         <Route
           path="/dashboard/gestion-usuarios"
-          element={<GestionUsuarios />}
+          element={
+            <RutasAdmin>
+              <GestionUsuarios />
+            </RutasAdmin>
+          }
         />
         <Route
           path="/dashboard/gestion-noticias"
-          element={<GestionNoticias />}
+          element={
+            <RutaProtected>
+              <GestionNoticias />
+            </RutaProtected>
+          }
         />
         <Route
           path="/dashboard/gestion-estudiantes"
-          element={<GestionEstudiantes />}
+          element={
+            <RutaProtected>
+              <GestionEstudiantes />
+            </RutaProtected>
+          }
+        />
+        <Route
+          path="/dashboard/perfil"
+          element={
+            <RutaUsuariosLog>
+              <Perfil />
+            </RutaUsuariosLog>
+          }
         />
 
-        <Route
-          path="/editorpage"
-          element={<RutaProtected>Aqui va la pagina del editor</RutaProtected>}
-        />
+        <Route 
+          path="/noticias/:id" 
+          element={<NoticiaDetalle />} />
       </Routes>
     </>
   );
