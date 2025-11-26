@@ -4,6 +4,7 @@ import {
   useContext,
   useEffect,
   useState,
+  useRef,
 } from "react";
 import { supabaseCliente } from "../services/supabaseCliente";
 import type { User, Session } from "@supabase/supabase-js";
@@ -14,7 +15,7 @@ interface AuthContextType {
   loading: boolean;
   role: string | null;
   logout: () => Promise<void>;
-  refreshSession: (delayMs?: number) => Promise<void>;
+  refreshUserRole: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType>({
@@ -23,7 +24,7 @@ const AuthContext = createContext<AuthContextType>({
   loading: true,
   role: null,
   logout: async () => {},
-  refreshSession: async () => {},
+  refreshUserRole: async () => {},
 });
 
 export const useAuth = () => {
@@ -40,7 +41,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [loading, setLoading] = useState(true);
   const [role, setRole] = useState<string | null>(null);
 
-  // Función para crear usuario si no existe (para confirmación por email)
+  const isLoadingRole = useRef(false);
+  const currentUserId = useRef<string | null>(null);
+
   const createUserIfNotExists = useCallback(
     async (userId: string, email: string) => {
       try {
@@ -50,7 +53,11 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           .eq("id_usuario", userId)
           .maybeSingle();
 
+        // Si el usuario NO existe, crearlo
         if (!existingUser) {
+          console.log(
+            "[AuthDebug] Usuario no existe, creando con rol miembro..."
+          );
           const { error: insertError } = await supabaseCliente
             .from("usuarios")
             .insert({
@@ -70,10 +77,13 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
             return false;
           }
           console.log(
-            "[AuthDebug] Usuario creado automáticamente en confirmación"
+            "[AuthDebug] Usuario creado automáticamente con rol miembro"
           );
           return true;
         }
+
+        // Usuario ya existe
+        console.log("[AuthDebug] Usuario ya existe en tabla usuarios");
         return true;
       } catch (error) {
         console.error("Error en createUserIfNotExists:", error);
@@ -83,10 +93,22 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     []
   );
 
-  // Función para obtener el rol desde la base de datos
   const fetchUserRole = useCallback(
     async (userId: string, email: string, attempt = 1) => {
+      if (isLoadingRole.current && currentUserId.current === userId) {
+        console.log("[AuthDebug] Ya se está cargando el rol para este usuario");
+        return;
+      }
+
+      isLoadingRole.current = true;
+      currentUserId.current = userId;
+
       try {
+        console.log(`[AuthDebug] Intentando obtener rol - Intento ${attempt}`, {
+          userId,
+          email,
+        });
+
         const { data } = await supabaseCliente
           .from("usuarios")
           .select("rol")
@@ -95,116 +117,175 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
         const fetchedRole = data?.rol || null;
 
-        // Si no existe el usuario, crearlo (sucede en confirmación de email)
+        console.log(`[AuthDebug] Resultado de query - Intento ${attempt}:`, {
+          fetchedRole,
+          data,
+        });
+
         if (!fetchedRole && attempt === 1) {
-          const created = await createUserIfNotExists(userId, email);
-          if (created) {
-            // Reintentar obtener el rol después de crear
-            return fetchUserRole(userId, email, attempt + 1);
+          console.log(
+            "[AuthDebug] Rol null en intento 1, asegurando que usuario existe..."
+          );
+          const result = await createUserIfNotExists(userId, email);
+          if (!result) {
+            // Error al crear o verificar usuario
+            console.error(
+              "[AuthDebug] Error al crear/verificar usuario. Haciendo logout..."
+            );
+            setRole(null);
+            setLoading(false);
+            await logout();
+            return;
           }
+          // Usuario ahora debe existir con rol, reintentando...
+          console.log(
+            "[AuthDebug] Usuario verificado, reintentando obtener rol..."
+          );
+          isLoadingRole.current = false;
+          return fetchUserRole(userId, email, attempt + 1);
         }
 
-        // Si aún no hay rol (por triggers o default), reintentar unas veces
-        if (!fetchedRole && attempt < 4) {
-          await new Promise((resolve) => setTimeout(resolve, 400 * attempt));
+        if (!fetchedRole && attempt < 2) {
+          const delayMs = 300 * attempt;
+          console.log(
+            `[AuthDebug] Rol aún null, reintentando en ${delayMs}ms...`
+          );
+          isLoadingRole.current = false;
+          await new Promise((resolve) => setTimeout(resolve, delayMs));
           return fetchUserRole(userId, email, attempt + 1);
+        }
+
+        if (!fetchedRole && attempt >= 2) {
+          console.error(
+            "[AuthDebug] No se pudo obtener el rol después de 2 intentos. Haciendo logout..."
+          );
+          setRole(null);
+          setLoading(false);
+          await logout();
+          return;
         }
 
         setRole(fetchedRole);
         setLoading(false);
-        console.log("[AuthDebug] Rol cargado", {
+        console.log("[AuthDebug] Rol cargado exitosamente", {
           userId,
           rol: fetchedRole,
+          intento: attempt,
         });
       } catch (error) {
         console.error("Error al obtener rol:", error);
         setRole(null);
         setLoading(false);
+      } finally {
+        isLoadingRole.current = false;
       }
     },
     [createUserIfNotExists]
   );
 
-  const refreshSession = useCallback(async (delayMs = 0) => {
+  const refreshUserRole = useCallback(async () => {
+    if (!user?.id || !user?.email) {
+      console.warn("[AuthDebug] No hay usuario para refrescar el rol");
+      return;
+    }
+
+    console.log("[AuthDebug] Refrescando solo el rol del usuario actual");
+
+    // Forzar la recarga ignorando el guard
+    isLoadingRole.current = false;
+
+    await fetchUserRole(user.id, user.email);
+  }, [user, fetchUserRole]);
+
+  const logout = async () => {
+    console.log("[AuthDebug] Iniciando logout...");
+
     try {
-      if (delayMs > 0) {
-        await new Promise((resolve) => setTimeout(resolve, delayMs));
-      }
-
       setLoading(true);
-      const {
-        data: { session },
-        error,
-      } = await supabaseCliente.auth.getSession();
 
-      if (error) {
-        throw error;
-      }
-
-      setSession(session);
-      setUser(session?.user ?? null);
-
-      if (session?.user) {
-        // Cargar el rol del usuario
-        await fetchUserRole(session.user.id, session.user.email || "");
-      } else {
-        setRole(null);
-        setLoading(false);
+      try {
+        await supabaseCliente.auth.signOut({ scope: "global" });
+      } catch (globalError) {
+        console.warn("[AuthDebug] Error con global scope:", globalError);
+        try {
+          await supabaseCliente.auth.signOut({ scope: "local" });
+        } catch (localError) {
+          console.warn("[AuthDebug] Error con local scope:", localError);
+        }
       }
     } catch (error) {
-      console.error("Error al refrescar sesión:", error);
+      console.error("Error en signOut:", error);
+    } finally {
+      try {
+        const localKeys = Object.keys(localStorage);
+        localKeys.forEach((key) => {
+          if (key.startsWith("sb-") || key.includes("supabase")) {
+            localStorage.removeItem(key);
+          }
+        });
+
+        const sessionKeys = Object.keys(sessionStorage);
+        sessionKeys.forEach((key) => {
+          if (key.startsWith("sb-") || key.includes("supabase")) {
+            sessionStorage.removeItem(key);
+          }
+        });
+      } catch (storageError) {
+        console.error("Error limpiando storage:", storageError);
+      }
+
+      isLoadingRole.current = false;
+      currentUserId.current = null;
+
       setSession(null);
       setUser(null);
       setRole(null);
       setLoading(false);
-    }
-  }, [fetchUserRole]);
 
-  const logout = async () => {
-    const { error } = await supabaseCliente.auth.signOut();
-    if (error) {
-      throw error;
+      console.log("[AuthDebug] Logout completado totalmente");
     }
-    setSession(null);
-    setUser(null);
-    setRole(null);
   };
 
   useEffect(() => {
-    refreshSession();
-    // Escuchador de cambios de autenticación
+    console.log("[AuthDebug] Montando AuthProvider");
+
     const {
       data: { subscription },
     } = supabaseCliente.auth.onAuthStateChange((event, session) => {
-      setSession(session);
-      setUser(session?.user ?? null);
-      console.log("[AuthDebug] Cambio de auth", {
+      console.log("[AuthDebug] onAuthStateChange", {
         evento: event,
         autenticado: !!session?.user,
         userId: session?.user?.id,
       });
 
-      // Cuando cambia la sesión, actualizar el rol
+      setSession(session);
+      setUser(session?.user ?? null);
+
       if (session?.user) {
         setLoading(true);
         fetchUserRole(session.user.id, session.user.email || "");
       } else {
         setRole(null);
         setLoading(false);
+        isLoadingRole.current = false;
+        currentUserId.current = null;
       }
     });
-    return () => subscription.unsubscribe();
-  }, [refreshSession, fetchUserRole]);
+
+    return () => {
+      console.log("[AuthDebug] Desmontando AuthProvider");
+      subscription.unsubscribe();
+    };
+  }, [fetchUserRole]);
 
   const value = {
     user,
     session,
     loading,
     role,
-    refreshSession,
     logout,
+    refreshUserRole,
   };
 
-  // AuthContext.Provider permite
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };

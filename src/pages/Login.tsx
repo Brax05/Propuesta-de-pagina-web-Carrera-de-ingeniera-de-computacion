@@ -12,7 +12,7 @@ export default function Login() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const navigate = useNavigate();
-  const { user, role, loading, refreshSession } = useAuth();
+  const { user, role, loading, refreshUserRole } = useAuth();
 
   // Redirige si ya hay sesión; prioriza rol "miembro" a perfil
   useEffect(() => {
@@ -27,9 +27,9 @@ export default function Login() {
   // Si hay usuario pero aún no hay rol, reintentar refrescar sesión sin bloquear la vista
   useEffect(() => {
     if (!loading && user && role === null) {
-      refreshSession(400);
+      refreshUserRole();
     }
-  }, [loading, user, role, refreshSession]);
+  }, [loading, user, role, refreshUserRole]);
 
   const validateUser = async (usuario: User) => {
     try {
@@ -97,7 +97,7 @@ export default function Login() {
         }
         // Damos tiempo para que la base asigne el rol y refrescamos la sesión
         if (role == null && esValido) {
-          await refreshSession(500);
+          await refreshUserRole();
         }
         // No navegamos aquí, dejamos que MemberRedirect lo haga
         // El useEffect de arriba se ejecutará cuando role cambie
