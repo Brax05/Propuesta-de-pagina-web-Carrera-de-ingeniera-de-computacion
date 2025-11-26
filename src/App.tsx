@@ -8,6 +8,7 @@ import PlanEstudios from "@/pages/PlanEstudios";
 import Contacto from "@/pages/Contacto";
 import CEC from "@/pages/CEC";
 import Perfil from "@/pages/Perfil";
+import NoticiaDetalle from "@/pages/NoticiaDetalle";
 
 // Módulos de Dashboard
 import GestionUsuarios from "@/pages/dashboard/GestionUsuarios";
@@ -73,6 +74,10 @@ const AppContent = () => {
           path="/editorpage"
           element={<RutaProtected>Aqui va la pagina del editor</RutaProtected>}
         />
+
+        <Route 
+          path="/noticias/:id" 
+          element={<NoticiaDetalle />} />
       </Routes>
     </>
   );

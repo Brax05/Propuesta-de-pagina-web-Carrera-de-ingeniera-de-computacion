@@ -1,8 +1,75 @@
-import { Link } from 'react-router-dom';
-import Navbar from '@/components/Navbarpage';
-import Footer from '@/components/Footerpage';
+import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
+import Navbar from "@/components/Navbarpage";
+import Footer from "@/components/Footerpage";
+import { supabaseCliente } from "@/services/supabaseCliente";
+import { Calendar, MapPin, Loader2, Star } from "lucide-react";
+
+interface NewsItem {
+  id: number;
+  title: string;
+  previewDescription: string;
+  content: string;
+  date: string;
+  location: string;
+  isFeatured: boolean;
+  isPublic: boolean;
+  imageUrl?: string;
+}
 
 export default function News() {
+  const [newsList, setNewsList] = useState<NewsItem[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchPublicNews = async () => {
+      try {
+        setLoading(true);
+        setLoadError(null);
+
+        const { data, error } = await supabaseCliente
+          .from("noticias")
+          .select(
+            "id, titular, descripcion_previa, descripcion, fecha, ubicacion, imagen_url, es_destacada, es_publica"
+          )
+          .eq("es_publica", true) // solo públicas
+          .order("es_destacada", { ascending: false })
+          .order("fecha", { ascending: false });
+
+        if (error) throw error;
+
+        const mapped: NewsItem[] =
+          data?.map((row: any) => ({
+            id: row.id,
+            title: row.titular,
+            previewDescription: row.descripcion_previa,
+            content: row.descripcion,
+            date: row.fecha,
+            location: row.ubicacion,
+            isFeatured: row.es_destacada,
+            isPublic: row.es_publica,
+            imageUrl: row.imagen_url || "",
+          })) ?? [];
+
+        setNewsList(mapped);
+      } catch (err) {
+        console.error("Error al cargar noticias públicas:", err);
+        setLoadError("No se pudieron cargar las noticias.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchPublicNews();
+  }, []);
+
+  // una destacada (si hay) + el resto
+  const featured = newsList.find((n) => n.isFeatured) ?? newsList[0] ?? null;
+  const others = featured
+    ? newsList.filter((n) => n.id !== featured.id)
+    : newsList;
+
   return (
     <div className="min-h-screen flex flex-col bg-white">
       <Navbar />
@@ -15,48 +82,129 @@ export default function News() {
 
       <div className="flex-1 py-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-3xl font-bold text-blue-700 mb-8">Noticia Destacada</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 bg-gray-50 p-8 rounded-lg mb-16">
-            <img
-              src="https://images.unsplash.com/photo-1552664730-d307ca884978?w=500&h=350&fit=crop"
-              alt="Estudiantes en Hackathon"
-              className="w-full h-80 object-cover rounded"
-            />
-            <div>
-              <h3 className="text-2xl font-bold text-gray-900 mb-4">
-                Estudiantes de Ingeniería en Computación destacan en Hackathon Nacional 2025
-              </h3>
-              <p className="text-gray-600 text-sm mb-4">Coiquimbo, Chile | 5 de noviembre de 2025</p>
-              <p className="text-gray-700 mb-6">
-                Un equipo de estudiantes de la Universidad de La Serena obtuvo el segundo lugar en el Hackathon Nacional de Innovación Tecnológica, desarrollando una aplicación de inteligencia artificial enfocada en el monitoreo ambiental.
-              </p>
-              <button className="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded transition">
-                Ver Noticia Completa
-              </button>
+          {/* ESTADOS: cargando / error / sin noticias */}
+          {loading && (
+            <div className="flex items-center justify-center py-10 text-gray-500 gap-2">
+              <Loader2 className="w-5 h-5 animate-spin" />
+              <span>Cargando noticias…</span>
             </div>
-          </div>
+          )}
 
-          <h2 className="text-3xl font-bold text-gray-900 mb-8">Noticias Recientes</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {[1, 2, 3].map((i) => (
-              <div key={i} className="bg-white rounded-lg overflow-hidden shadow hover:shadow-lg transition border border-gray-200">
+          {loadError && (
+            <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg text-sm text-red-700">
+              {loadError}
+            </div>
+          )}
+
+          {!loading && !loadError && newsList.length === 0 && (
+            <div className="text-center py-16 bg-gray-50 rounded-lg border">
+              <p className="text-gray-500">
+                Aún no hay noticias publicadas. Vuelve pronto.
+              </p>
+            </div>
+          )}
+
+          {/* NOTICIA DESTACADA */}
+          {featured && (
+            <>
+              <h2 className="text-3xl font-bold text-blue-700 mb-8">
+                Noticia Destacada
+              </h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8 bg-gray-50 p-8 rounded-lg mb-16">
                 <img
-                  src={`https://images.unsplash.com/photo-1552664730-d307ca884978?w=400&h=250&fit=crop&t=${i}`}
-                  alt={`Noticia ${i}`}
-                  className="w-full h-48 object-cover"
+                  src={
+                    featured.imageUrl ||
+                    "https://images.unsplash.com/photo-1552664730-d307ca884978?w=500&h=350&fit=crop"
+                  }
+                  alt={featured.title}
+                  className="w-full h-80 object-cover rounded"
                 />
-                <div className="p-6">
-                  <h3 className="font-bold text-lg text-gray-900 mb-2">
-                    {i === 1 ? 'Bienvenido Ing. Computación' : 'Capacitación Departamento'}
-                  </h3>
-                  <p className="text-gray-600 text-sm">Conoce nuestras actividades académicas.</p>
-                  <Link to="#" className="text-blue-600 hover:text-blue-700 text-sm font-semibold mt-4 inline-block">
-                    Leer más
+                <div>
+                  <div className="flex items-center gap-2 mb-2">
+                    <h3 className="text-2xl font-bold text-gray-900">
+                      {featured.title}
+                    </h3>
+                    <Star className="w-5 h-5 text-yellow-400" />
+                  </div>
+
+                  <p className="text-gray-600 text-sm mb-2 flex items-center gap-2">
+                    <Calendar className="w-4 h-4" />
+                    {new Date(featured.date).toLocaleDateString("es-CL", {
+                      year: "numeric",
+                      month: "long",
+                      day: "numeric",
+                    })}
+                  </p>
+                  <p className="text-gray-600 text-sm mb-4 flex items-center gap-2">
+                    <MapPin className="w-4 h-4" />
+                    {featured.location}
+                  </p>
+
+                  <p className="text-gray-700 mb-6">
+                    {featured.previewDescription}
+                  </p>
+
+                  <Link to={`/noticias/${featured.id}`}>
+                    <button className="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded transition">
+                      Ver Noticia Completa
+                    </button>
                   </Link>
                 </div>
               </div>
-            ))}
-          </div>
+            </>
+          )}
+
+          {/* NOTICIAS RECIENTES */}
+          {others.length > 0 && (
+            <>
+              <h2 className="text-3xl font-bold text-gray-900 mb-8">
+                Noticias Recientes
+              </h2>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                {others.map((n) => (
+                  <div
+                    key={n.id}
+                    className="bg-white rounded-lg overflow-hidden shadow hover:shadow-lg transition border border-gray-200"
+                  >
+                    <img
+                      src={
+                        n.imageUrl ||
+                        "https://images.unsplash.com/photo-1552664730-d307ca884978?w=400&h=250&fit=crop"
+                      }
+                      alt={n.title}
+                      className="w-full h-48 object-cover"
+                    />
+                    <div className="p-6">
+                      <h3 className="font-bold text-lg text-gray-900 mb-2">
+                        {n.title}
+                      </h3>
+                      <p className="text-gray-600 text-xs mb-1 flex items-center gap-1">
+                        <Calendar className="w-4 h-4" />
+                        {new Date(n.date).toLocaleDateString("es-CL", {
+                          year: "numeric",
+                          month: "short",
+                          day: "numeric",
+                        })}
+                      </p>
+                      <p className="text-gray-600 text-xs mb-3 flex items-center gap-1">
+                        <MapPin className="w-4 h-4" />
+                        {n.location}
+                      </p>
+                      <p className="text-gray-600 text-sm line-clamp-3">
+                        {n.previewDescription}
+                      </p>
+                      <Link
+                        to={`/noticias/${n.id}`}
+                        className="text-blue-600 hover:text-blue-700 text-sm font-semibold mt-4 inline-block"
+                      >
+                        Leer más
+                      </Link>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </>
+          )}
         </div>
       </div>
 

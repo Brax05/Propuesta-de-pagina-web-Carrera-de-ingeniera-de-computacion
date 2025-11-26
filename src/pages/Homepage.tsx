@@ -1,7 +1,10 @@
 import { Link } from 'react-router-dom';
 import Navbar from '@/components/Navbarpage';
 import Footer from '@/components/Footerpage';
+
 import ingCivilComputacion from '@/assets/icons/ing_civil_computacion_.png';
+import NoticiasRecientesSection from "@/components/NoticiasRecientesSection";
+
 
 export default function Home() {
   return (
@@ -70,41 +73,7 @@ export default function Home() {
       </section>
 
       {/* Noticias Recientes */}
-      <section className="py-16 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center mb-12">
-            <h2 className="text-3xl font-bold text-gray-900">Noticias Recientes</h2>
-            <Link to="/noticias" className="text-blue-600 hover:text-blue-700 text-sm font-semibold">
-              Ver todas →
-            </Link>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {[1, 2, 3].map((i) => (
-              <div key={i} className="bg-white rounded-lg overflow-hidden shadow hover:shadow-lg transition border border-gray-200">
-                <img
-                  src={`https://images.unsplash.com/photo-1552664730-d307ca884978?w=400&h=250&fit=crop&t=${i}`}
-                  alt={`Noticia ${i}`}
-                  className="w-full h-48 object-cover"
-                />
-                <div className="p-6">
-                  <h3 className="font-bold text-lg text-gray-900 mb-2">
-                    {i === 1 ? 'Bienvenido Ing. Computación' : i === 2 ? 'Capacitación Departamento' : '¡Pronto más noticias!'}
-                  </h3>
-                  <p className="text-gray-600 text-sm">
-                    {i === 1 ? 'Conoce nuestras actividades académicas.' : i === 2 ? 'Se realizaron talleres de actualización para docentes.' : 'Mantente atento a nuestras actividades.'}
-                  </p>
-                  {i < 3 && (
-                    <Link to="#" className="text-blue-600 hover:text-blue-700 text-sm font-semibold mt-4 inline-block">
-                      Leer más
-                    </Link>
-                  )}
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
+      <NoticiasRecientesSection />
 
       {/* Conoce a Profesionales */}
       <section className="py-16 bg-gray-50">
