@@ -28,6 +28,18 @@ export default function GestionNoticias() {
   const [editingNews, setEditingNews] = useState<News | null>(null);
   const [imageFile, setImageFile] = useState<File | null>(null);
 
+  const getStoragePathFromUrl = (url: string | undefined | null): string | null => {
+  if (!url) return null;
+
+  // Ajusta el nombre del bucket si es distinto
+  const marker = "/storage/v1/object/public/ImagenesNoticias/";
+  const idx = url.indexOf(marker);
+  if (idx === -1) return null;
+
+  // Devuelve solo "noticias/archivo.jpg"
+  return url.substring(idx + marker.length);
+};
+
   
   const [newNews, setNewNews] = useState<Partial<News>>({
     title: "",
@@ -185,6 +197,44 @@ export default function GestionNoticias() {
     if (!editingNews) return;
 
     try {
+      // Imagen actual antes de guardar
+      const oldImageUrl = newsList.find(n => n.id === editingNews.id)?.imageUrl || null;
+      let newImageUrl = oldImageUrl; // por defecto, mantenemos la anterior
+
+      if(imageFile){
+        const fileExt = imageFile.name.split(".").pop();
+        const fileName = `${Date.now()}-${Math.random()
+        .toString(36)
+        .substring(2)}.${fileExt}`;
+      const filePath = `noticias/${fileName}`;
+
+      const {error: uploadError } = await supabaseCliente.storage
+      .from("ImagenesNoticias")
+      .upload(filePath, imageFile);
+
+      if (uploadError) {
+        console.error("Error al subir la imagen:", uploadError);
+        alert("No se pudo subir la imagen");
+        return;
+      }
+
+      const {data:publicUrlData} = supabaseCliente.storage
+      .from("ImagenesNoticias")
+      .getPublicUrl(filePath);
+
+      newImageUrl = publicUrlData.publicUrl;
+
+      const oldPath = getStoragePathFromUrl(oldImageUrl);
+      if (oldPath) {
+        const { error: removeError } = await supabaseCliente.storage
+          .from("ImagenesNoticias")
+          .remove([oldPath]);
+        if (removeError) {
+          console.warn("No se pudo borrar la imagen anterior:", removeError);
+        }
+      }
+    }
+
       const { error } = await supabaseCliente
         .from("noticias")
         .update({
@@ -193,7 +243,7 @@ export default function GestionNoticias() {
           descripcion: editingNews.content,
           fecha: editingNews.date,
           ubicacion: editingNews.location,
-          imagen_url: editingNews.imageUrl || null,
+          imagen_url: newImageUrl || null,
           es_destacada: editingNews.isFeatured,
           es_publica: editingNews.isPublic,
         })
@@ -224,6 +274,8 @@ export default function GestionNoticias() {
     if (!window.confirm("¿Estás seguro de eliminar esta noticia?")) return;
 
     try {
+      
+
       const { error } = await supabaseCliente
         .from("noticias")
         .delete()
@@ -522,13 +574,29 @@ export default function GestionNoticias() {
                       </div>
 
                       <div>
-                        <label className="block text-sm font-semibold text-gray-700 mb-2">URL de Imagen</label>
-                        <input
-                          type="text"
-                          value={editingNews.imageUrl || ""}
-                          onChange={(e) => setEditingNews({ ...editingNews, imageUrl: e.target.value })}
-                          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-700"
-                        />
+                        <label className="block text-sm font-semibold text-gray-700 mb-2">
+                          Imagen (opcional)
+                        </label>
+
+                        <div className="flex items-center gap-3">
+                          <label className="px-4 py-2 bg-blue-50 border border-blue-300 rounded-lg text-sm font-semibold text-blue-700 cursor-pointer hover:bg-blue-100">
+                            Seleccionar archivo
+                            <input
+                              type="file"
+                              accept="image/*"
+                              className="hidden"
+                              onChange={handleImageChange}
+                            />
+                          </label>
+                  
+                          <span className="inline-flex items-center px-2 py-1 mt-1 rounded-full border border-green-200 bg-green-50 text-xs font-medium text-green-700 max-w-xs truncate">
+                            {imageFileName || "Ningún archivo seleccionado"}
+                          </span>
+                        </div>
+
+                        <p className="text-xs text-gray-500 mt-1">
+                          Sube una imagen para la noticia (JPG, PNG, etc.)
+                        </p>
                       </div>
 
                       <div className="p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
