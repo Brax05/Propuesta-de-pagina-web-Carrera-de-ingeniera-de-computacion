@@ -12,6 +12,7 @@ import NoticiaDetalle from "@/pages/NoticiaDetalle";
 
 // Módulos de Dashboard
 import GestionUsuarios from "@/pages/dashboard/GestionUsuarios";
+import GestionRegistros from "@/pages/dashboard/GestionRegistros";
 import GestionNoticias from "@/pages/dashboard/GestionNoticias";
 import GestionEstudiantes from "@/pages/dashboard/GestionEstudiantes";
 
@@ -67,6 +68,14 @@ const AppContent = () => {
           element={
             <RutasAdmin>
               <GestionUsuarios />
+            </RutasAdmin>
+          }
+        />
+        <Route
+          path="/dashboard/gestion-registros"
+          element={
+            <RutasAdmin>
+              <GestionRegistros />
             </RutasAdmin>
           }
         />

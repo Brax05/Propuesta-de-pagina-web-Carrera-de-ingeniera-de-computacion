@@ -1,5 +1,3 @@
-// src/components/ScrollToTop.tsx
-
 import { useEffect } from "react";
 import { useLocation } from "react-router-dom";
 

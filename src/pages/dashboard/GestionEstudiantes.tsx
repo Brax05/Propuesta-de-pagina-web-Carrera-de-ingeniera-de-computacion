@@ -146,11 +146,10 @@ export default function GestionEstudiantes() {
             Volver al Perfil
           </Link>
           <h1 className="text-4xl font-bold mb-2">
-            Edición de Estudiantes Destacados
+            Edición de Estudiantes
           </h1>
           <p className="text-blue-100">
-            Gestiona los perfiles de estudiantes destacados que aparecen en el
-            sitio
+            Gestiona los perfiles de estudiantes que aparecen en el sitio
           </p>
         </div>
       </div>
