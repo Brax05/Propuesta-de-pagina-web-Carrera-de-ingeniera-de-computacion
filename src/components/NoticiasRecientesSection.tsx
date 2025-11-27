@@ -1,8 +1,8 @@
-// src/components/NoticiasRecientesSection.tsx
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { supabaseCliente } from "@/services/supabaseCliente";
 import { Calendar, MapPin, Loader2 } from "lucide-react";
+import { useAuth } from "@/hooks/AuthContext";
 
 interface NewsHome {
   id: number;
@@ -14,11 +14,14 @@ interface NewsHome {
 }
 
 export default function NoticiasRecientesSection() {
+  const { loading: authLoading } = useAuth();
   const [news, setNews] = useState<NewsHome[]>([]);
   const [loadingNews, setLoadingNews] = useState(true);
   const [newsError, setNewsError] = useState<string | null>(null);
 
   useEffect(() => {
+    if (authLoading) return;
+
     const fetchHomeNews = async () => {
       try {
         setLoadingNews(true);
@@ -55,7 +58,7 @@ export default function NoticiasRecientesSection() {
     };
 
     fetchHomeNews();
-  }, []);
+  }, [authLoading]);
 
   return (
     <section className="py-16 bg-white">

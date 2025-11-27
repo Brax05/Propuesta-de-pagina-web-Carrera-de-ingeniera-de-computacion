@@ -4,6 +4,7 @@ import Navbar from "@/components/Navbarpage";
 import Footer from "@/components/Footerpage";
 import { supabaseCliente } from "@/services/supabaseCliente";
 import { ArrowLeft, Calendar, MapPin, Loader2, Star } from "lucide-react";
+import { useAuth } from "@/hooks/AuthContext"; 
 
 interface NewsDetail {
   id: number;
@@ -18,17 +19,18 @@ interface NewsDetail {
 }
 
 export default function NoticiaDetalle() {
+  const { loading: authLoading, session } = useAuth();
   const { id } = useParams<{ id: string }>();
   const [news, setNews] = useState<NewsDetail | null>(null);
-  const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [loadingNews, setLoadingNews] = useState(true);
 
   useEffect(() => {
-    const fetchNewsById = async () => {
-      if (!id) return;
+    if (authLoading || !id) return;
 
+    const fetchNewsById = async () => {
       try {
-        setLoading(true);
+        setLoadingNews(true);
         setError(null);
 
         const { data, error } = await supabaseCliente
@@ -41,8 +43,8 @@ export default function NoticiaDetalle() {
 
         if (error) throw error;
 
-        if (!data || !data.es_publica) {
-          setError("La noticia no existe o no es pública.");
+        if (!data) {
+          setError("La noticia no existe o no tienes permiso para verla.");
           return;
         }
 
@@ -63,12 +65,13 @@ export default function NoticiaDetalle() {
         console.error("Error al cargar noticia:", err);
         setError("No se pudo cargar la noticia.");
       } finally {
-        setLoading(false);
+        setLoadingNews(false);
       }
     };
 
     fetchNewsById();
-  }, [id]);
+  }, [authLoading, session, id]);
+
 
   return (
     <div className="min-h-screen flex flex-col bg-white">
@@ -91,7 +94,7 @@ export default function NoticiaDetalle() {
 
       <main className="flex-1 py-10">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          {loading && (
+          {loadingNews && (
             <div className="flex items-center justify-center py-16 text-gray-500 gap-2">
               <Loader2 className="w-5 h-5 animate-spin" />
               <span>Cargando noticia…</span>
@@ -104,7 +107,7 @@ export default function NoticiaDetalle() {
             </div>
           )}
 
-          {!loading && !error && news && (
+          {!loadingNews && !error && news && (
             <article className="bg-white rounded-lg shadow border border-gray-200 overflow-hidden">
               {news.imageUrl && (
                 <img

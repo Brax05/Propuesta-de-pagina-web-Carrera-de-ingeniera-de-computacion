@@ -4,6 +4,7 @@ import Navbar from "@/components/Navbarpage";
 import Footer from "@/components/Footerpage";
 import { supabaseCliente } from "@/services/supabaseCliente";
 import { Calendar, MapPin, Loader2, Star } from "lucide-react";
+import { useAuth } from "@/hooks/AuthContext";
 
 interface NewsItem {
   id: number;
@@ -18,51 +19,53 @@ interface NewsItem {
 }
 
 export default function News() {
+  const { loading: authLoading, session } = useAuth();
   const [newsList, setNewsList] = useState<NewsItem[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [loadingNews, setLoadingNews] = useState(true);
   const [loadError, setLoadError] = useState<string | null>(null);
 
   useEffect(() => {
-    const fetchPublicNews = async () => {
-      try {
-        setLoading(true);
-        setLoadError(null);
+  if (authLoading) return; 
 
-        const { data, error } = await supabaseCliente
-          .from("noticias")
-          .select(
-            "id, titular, descripcion_previa, descripcion, fecha, ubicacion, imagen_url, es_destacada, es_publica"
-          )
-          .eq("es_publica", true) // solo públicas
-          .order("es_destacada", { ascending: false })
-          .order("fecha", { ascending: false });
+  const fetchNews = async () => {
+    try {
+      setLoadingNews(true);
+      setLoadError(null);
 
-        if (error) throw error;
+      const { data, error } = await supabaseCliente
+        .from("noticias")
+        .select(
+          "id, titular, descripcion_previa, descripcion, fecha, ubicacion, imagen_url, es_destacada, es_publica"
+        )
+        .order("es_destacada", { ascending: false })
+        .order("fecha", { ascending: false });
 
-        const mapped: NewsItem[] =
-          data?.map((row: any) => ({
-            id: row.id,
-            title: row.titular,
-            previewDescription: row.descripcion_previa,
-            content: row.descripcion,
-            date: row.fecha,
-            location: row.ubicacion,
-            isFeatured: row.es_destacada,
-            isPublic: row.es_publica,
-            imageUrl: row.imagen_url || "",
-          })) ?? [];
+      if (error) throw error;
 
-        setNewsList(mapped);
-      } catch (err) {
-        console.error("Error al cargar noticias públicas:", err);
-        setLoadError("No se pudieron cargar las noticias.");
-      } finally {
-        setLoading(false);
-      }
-    };
+      const mapped =
+        data?.map((row: any) => ({
+          id: row.id,
+          title: row.titular,
+          previewDescription: row.descripcion_previa,
+          content: row.descripcion,
+          date: row.fecha,
+          location: row.ubicacion,
+          isFeatured: row.es_destacada,
+          isPublic: row.es_publica,
+          imageUrl: row.imagen_url || "",
+        })) ?? [];
 
-    fetchPublicNews();
-  }, []);
+      setNewsList(mapped);
+    } catch (err) {
+      console.error("Error al cargar noticias:", err);
+      setLoadError("No se pudieron cargar las noticias.");
+    } finally {
+      setLoadingNews(false);
+    }
+  };
+  fetchNews();
+}, [authLoading, session]);
+
 
   // una destacada (si hay) + el resto
   const featured = newsList.find((n) => n.isFeatured) ?? newsList[0] ?? null;
@@ -83,7 +86,7 @@ export default function News() {
       <div className="flex-1 py-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* ESTADOS: cargando / error / sin noticias */}
-          {loading && (
+          {loadingNews && (
             <div className="flex items-center justify-center py-10 text-gray-500 gap-2">
               <Loader2 className="w-5 h-5 animate-spin" />
               <span>Cargando noticias…</span>
@@ -96,7 +99,7 @@ export default function News() {
             </div>
           )}
 
-          {!loading && !loadError && newsList.length === 0 && (
+          {!loadingNews && !loadError && newsList.length === 0 && (
             <div className="text-center py-16 bg-gray-50 rounded-lg border">
               <p className="text-gray-500">
                 Aún no hay noticias publicadas. Vuelve pronto.
@@ -147,7 +150,7 @@ export default function News() {
                   <Link to={`/noticias/${featured.id}`}>
                     <button className="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded transition">
                       Ver Noticia Completa
-                    </button>
+                  </button>
                   </Link>
                 </div>
               </div>
