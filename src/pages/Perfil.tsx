@@ -2,7 +2,7 @@ import { Link, Navigate } from "react-router-dom";
 import Navbar from "@/components/Navbarpage";
 import Footer from "@/components/Footerpage";
 import { useAuth } from "@/hooks/AuthContext";
-import { User, Shield, Edit, Users } from "lucide-react";
+import { User, Shield, Edit, Users, UserPlus } from "lucide-react";
 
 // ========================================
 // DATOS SIMULADOS LOCALES
@@ -161,6 +161,27 @@ export default function Perfil() {
                       <h3 className="text-lg font-bold text-gray-900 mb-2">Gestión de Usuarios</h3>
                       <p className="text-sm text-gray-600 mb-4">
                         Administra usuarios, roles y membresías CEC
+                      </p>
+                      <span className="text-sm text-blue-600 font-semibold group-hover:text-blue-700">
+                        Ir al módulo →
+                      </span>
+                    </Link>
+
+                    {/* Gestión de Usuarios recién registrados */}
+                    <Link
+                      to="/dashboard/gestion-registros"
+                      className="bg-white rounded-lg shadow border border-gray-200 p-6 hover:shadow-lg transition group"
+                    >
+                      <div className="flex items-center mb-4">
+                        <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center group-hover:bg-purple-200 transition">
+                          <UserPlus className="w-6 h-6 text-purple-700" />
+                        </div>
+                      </div>
+                      <h3 className="text-lg font-bold text-gray-900 mb-2">
+                        Gestión de Registros
+                      </h3>
+                      <p className="text-sm text-gray-600 mb-4">
+                        Aprueba o rechaza nuevos usuarios
                       </p>
                       <span className="text-sm text-blue-600 font-semibold group-hover:text-blue-700">
                         Ir al módulo →

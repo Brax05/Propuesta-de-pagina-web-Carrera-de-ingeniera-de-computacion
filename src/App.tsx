@@ -13,6 +13,7 @@ import Perfil from '@/pages/Perfil';
 import GestionUsuarios from '@/pages/dashboard/GestionUsuarios';
 import GestionNoticias from '@/pages/dashboard/GestionNoticias';
 import GestionEstudiantes from '@/pages/dashboard/GestionEstudiantes';
+import GestionRegistros from "@/pages/dashboard/GestionRegistros";
 
 import { RutaProtected } from "./components/RutaProtected";
 import { AuthProvider } from "./hooks/AuthContext";
@@ -35,6 +36,7 @@ function App() {
         <Route path="/dashboard/gestion-usuarios" element={<GestionUsuarios />} />
         <Route path="/dashboard/gestion-noticias" element={<GestionNoticias />} />
         <Route path="/dashboard/gestion-estudiantes" element={<GestionEstudiantes />} />
+        <Route path="/dashboard/gestion-registros" element={<GestionRegistros />} />
 
         <Route
           path="/editorpage"
