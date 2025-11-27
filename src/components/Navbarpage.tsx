@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Menu, X } from "lucide-react";
 import { useAuth } from "@/hooks/AuthContext";
+import LogoNavbar from '@/assets/icons/logo.png';
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
@@ -31,7 +32,10 @@ export default function Navbar() {
           {/* Logo */}
           <Link to="/" className="flex items-center gap-2">
             <div className="block">
-              <img src="/logo.png" alt="Logo ULS" className="h-[92px] w-auto object-contain flex-shrink-0" />
+              <img 
+              src={LogoNavbar} 
+              alt="Logo ULS" 
+              className="h-[92px] w-auto object-contain flex-shrink-0" />
             </div>
           </Link>
 

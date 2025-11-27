@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import Navbar from '@/components/Navbarpage';
 import Footer from '@/components/Footerpage';
+import LogoULS from '@/assets/icons/logo.png';
+import Sct from '@/assets/icons/sct.png';
 
 
 export default function StudyPlan() {
@@ -317,14 +319,20 @@ export default function StudyPlan() {
             <div>
               <div className="flex items-center gap-3 mb-2">
                 <div>
-                  <img src="/logo.png" alt="Logo ULS" className="h-[120px] w-auto object-contain mt-4" />
+                  <img 
+                  src={LogoULS} 
+                  alt="Logo ULS" 
+                  className="h-[120px] w-auto object-contain mt-4" />
                 </div>
               </div>
             </div>
             <div className="text-center lg:text-right">
               <div className="flex items-center gap-2 justify-center lg:justify-end">
                 <div>
-                  <img src="/sct.png" alt="Sct ULS" className="h-[120px] w-auto object-contain mt-4" />
+                  <img 
+                  src={Sct} 
+                  alt="Sct ULS" 
+                  className="h-[120px] w-auto object-contain mt-4" />
                 </div>
               </div>
             </div>
