@@ -4,6 +4,7 @@ import Navbar from "@/components/Navbarpage";
 import Footer from "@/components/Footerpage";
 import LoadingSpinner from "@/components/LoadingSpinner";
 import { ArrowLeft, Search, Check, X, Clock, UserCheck } from "lucide-react";
+import { supabaseCliente } from "@/services/supabaseCliente";
 
 interface PendingUser {
   id_usuario: string;
@@ -14,49 +15,7 @@ interface PendingUser {
   estado_registro: "pendiente" | "aprobado" | "rechazado";
 }
 
-// DATOS DE EJEMPLO PARA SIMULAR USUARIOS PENDIENTES
-const MOCK_USERS: PendingUser[] = [
-  {
-    id_usuario: "1",
-    correo_usuario: "pedro.martinez@userena.cl",
-    nombres: "Pedro",
-    apellidos: "Martínez López",
-    fecha_registro: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(), // Hace 2 horas
-    estado_registro: "pendiente",
-  },
-  {
-    id_usuario: "2",
-    correo_usuario: "ana.silva@userena.cl",
-    nombres: "Ana",
-    apellidos: "Silva García",
-    fecha_registro: new Date(Date.now() - 5 * 60 * 60 * 1000).toISOString(), // Hace 5 horas
-    estado_registro: "pendiente",
-  },
-  {
-    id_usuario: "3",
-    correo_usuario: "luis.fernandez@userena.cl",
-    nombres: "Luis",
-    apellidos: "Fernández Torres",
-    fecha_registro: new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString(), // Hace 1 día
-    estado_registro: "pendiente",
-  },
-  {
-    id_usuario: "4",
-    correo_usuario: "carolina.rojas@userena.cl",
-    nombres: "Carolina",
-    apellidos: "Rojas Muñoz",
-    fecha_registro: new Date(Date.now() - 36 * 60 * 60 * 1000).toISOString(), // Hace 1.5 días
-    estado_registro: "pendiente",
-  },
-  {
-    id_usuario: "5",
-    correo_usuario: "diego.castro@userena.cl",
-    nombres: "Diego",
-    apellidos: "Castro Pérez",
-    fecha_registro: new Date(Date.now() - 48 * 60 * 60 * 1000).toISOString(), // Hace 2 días
-    estado_registro: "aprobado",
-  },
-];
+
 
 export default function GestionRegistros() {
   const [pendingUsers, setPendingUsers] = useState<PendingUser[]>([]);
@@ -67,17 +26,37 @@ export default function GestionRegistros() {
   const [processingId, setProcessingId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
-  // Simular carga de datos
   const loadPendingUsers = useCallback(async () => {
     setLoading(true);
-    
-    // Simular delay de red
-    await new Promise(resolve => setTimeout(resolve, 800));
-    
-    // Reemplazar con llamada real a Supabase
-    
-    setPendingUsers(MOCK_USERS);
-    setLoading(false);
+
+    try {
+      const { data, error } = await supabaseCliente
+        .from("usuarios")
+        .select("id_usuario, correo_usuario, nombres, apellidos, confirmed_user, id")
+        .eq("confirmed_user", false)          
+        .order("id", { ascending: false });  
+
+      if (error) throw error;
+
+      const mapped: PendingUser[] =
+        data?.map((row: any) => ({
+          id_usuario: row.id_usuario,
+          correo_usuario: row.correo_usuario,
+          nombres: row.nombres ?? "",
+          apellidos: row.apellidos ?? "",
+          // Como no tenemos created_at, usamos “ahora” como fecha de registro
+          // (si luego agregas una columna timestamp, la pones aquí).
+          fecha_registro: new Date().toISOString(),
+          estado_registro: "pendiente" as const,
+        })) ?? [];
+
+      setPendingUsers(mapped);
+    } catch (err) {
+      console.error("Error al cargar usuarios pendientes:", err);
+      alert("No se pudieron cargar los registros pendientes.");
+    } finally {
+      setLoading(false);
+    }
   }, []);
 
   useEffect(() => {
@@ -88,11 +67,14 @@ export default function GestionRegistros() {
     setProcessingId(userId);
 
     try {
-      // Simular delay de procesamiento
-      await new Promise(resolve => setTimeout(resolve, 500));
+      const { error } = await supabaseCliente
+        .from("usuarios")
+        .update({ confirmed_user: true })
+        .eq("id_usuario", userId);
 
-      // Reemplazar con llamada real
+      if (error) throw error;
 
+      // Actualizamos sólo el estado de UI (para estadísticas / filtros)
       setPendingUsers((prevUsers) =>
         prevUsers.map((user) =>
           user.id_usuario === userId
@@ -100,6 +82,7 @@ export default function GestionRegistros() {
             : user
         )
       );
+
       alert("Usuario aprobado exitosamente");
     } catch (error) {
       console.error("Error al aprobar usuario:", error);
@@ -109,10 +92,11 @@ export default function GestionRegistros() {
     }
   };
 
+
   const handleReject = async (userId: string) => {
     if (
       !window.confirm(
-        "¿Estás seguro de rechazar este registro? El usuario quedará marcado como rechazado."
+        "¿Estás seguro de rechazar este registro? El usuario será eliminado."
       )
     ) {
       return;
@@ -121,27 +105,18 @@ export default function GestionRegistros() {
     setProcessingId(userId);
 
     try {
-      // Simular delay de procesamiento
-      await new Promise(resolve => setTimeout(resolve, 500));
+      const { error } = await supabaseCliente
+        .from("usuarios")
+        .delete()
+        .eq("id_usuario", userId);
 
-      // Reemplazar con llamada real
-      // Marcar como rechazado? (Por si quieren mantener historial)
-      // const { error } = await supabaseCliente
-      //   .from("usuarios")
-      //   .update({
-      //     estado_registro: "rechazado",
-      //     fecha_rechazo: new Date().toISOString(),
-      //   })
-      //   .eq("id_usuario", userId);
+      if (error) throw error;
 
       setPendingUsers((prevUsers) =>
-        prevUsers.map((user) =>
-          user.id_usuario === userId
-            ? { ...user, estado_registro: "rechazado" as const }
-            : user
-        )
+        prevUsers.filter((user) => user.id_usuario !== userId)
       );
-      alert("Usuario rechazado");
+
+      alert("Usuario rechazado y eliminado");
     } catch (error) {
       console.error("Error al rechazar usuario:", error);
       alert("Error al rechazar el usuario");
@@ -149,6 +124,7 @@ export default function GestionRegistros() {
       setProcessingId(null);
     }
   };
+
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
