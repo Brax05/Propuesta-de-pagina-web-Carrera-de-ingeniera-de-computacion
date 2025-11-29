@@ -14,7 +14,7 @@ interface NewsHome {
 }
 
 export default function NoticiasRecientesSection() {
-  const { loading: authLoading } = useAuth();
+  const { loading: authLoading, session } = useAuth();
   const [news, setNews] = useState<NewsHome[]>([]);
   const [loadingNews, setLoadingNews] = useState(true);
   const [newsError, setNewsError] = useState<string | null>(null);
@@ -30,9 +30,8 @@ export default function NoticiasRecientesSection() {
         const { data, error } = await supabaseCliente
           .from("noticias")
           .select(
-            "id, titular, descripcion_previa, fecha, ubicacion, imagen_url, es_publica"
+            "id, titular, descripcion_previa, fecha, ubicacion, imagen_url"
           )
-          .eq("es_publica", true)
           .order("fecha", { ascending: false })
           .limit(3);
 
@@ -58,7 +57,7 @@ export default function NoticiasRecientesSection() {
     };
 
     fetchHomeNews();
-  }, [authLoading]);
+  }, [authLoading, session]);
 
   return (
     <section className="py-16 bg-white">
