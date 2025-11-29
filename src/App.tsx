@@ -9,6 +9,7 @@ import Contacto from "@/pages/Contacto";
 import CEC from "@/pages/CEC";
 import Perfil from "@/pages/Perfil";
 import NoticiaDetalle from "@/pages/NoticiaDetalle";
+import EsperandoAutorizacion from "@/pages/EsperandoAutorizacion";
 
 // Módulos de Dashboard
 import GestionUsuarios from "@/pages/dashboard/GestionUsuarios";
@@ -25,22 +26,39 @@ import AuthDebug from "./components/AuthDebug";
 
 // Redirige a miembros a /perfil para impedir que naveguen a otras rutas
 const MemberRedirect = () => {
-  const { role, loading, user } = useAuth();
+  const { role, loading, user, confirmed_user } = useAuth();
   const location = useLocation();
 
   if (loading) return null;
 
-  // Si es miembro y NO está en /perfil, redirecciona
+  // Si no está confirmado, redirige a la pantalla de espera
   if (
-    role === "miembro" &&
     user &&
+    confirmed_user === false &&
+    location.pathname !== "/esperando-autorizacion"
+  ) {
+    return (
+      <>
+        <Navigate to="/esperando-autorizacion" replace />
+        <div className="min-h-screen flex items-center justify-center bg-white">
+          <p className="text-gray-600">Redirigiendo...</p>
+        </div>
+      </>
+    );
+  }
+
+  // Si es miembro confirmado y no está en su perfil, redirige allí
+  if (
+    user &&
+    confirmed_user === true &&
+    role === "miembro" &&
     !location.pathname.startsWith("/dashboard/perfil")
   ) {
     return (
       <>
         <Navigate to="/dashboard/perfil" replace />
         <div className="min-h-screen flex items-center justify-center bg-white">
-          <p className="text-gray-600">Redirigiendo...</p>
+          <p className="text-gray-600">Redirigiendo a tu perfil...</p>
         </div>
       </>
     );
@@ -63,6 +81,10 @@ const AppContent = () => {
         <Route path="/plan-estudios" element={<PlanEstudios />} />
         <Route path="/contacto" element={<Contacto />} />
         <Route path="/cec" element={<CEC />} />
+        <Route
+          path="/esperando-autorizacion"
+          element={<EsperandoAutorizacion />}
+        />
         <Route
           path="/dashboard/gestion-usuarios"
           element={
@@ -104,9 +126,7 @@ const AppContent = () => {
           }
         />
 
-        <Route 
-          path="/noticias/:id" 
-          element={<NoticiaDetalle />} />
+        <Route path="/noticias/:id" element={<NoticiaDetalle />} />
       </Routes>
     </>
   );

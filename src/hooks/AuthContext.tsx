@@ -12,8 +12,9 @@ import type { User, Session } from "@supabase/supabase-js";
 interface AuthContextType {
   user: User | null;
   session: Session | null;
-  loading: boolean;
+  loading: boolean | false;
   role: string | null;
+  confirmed_user: boolean | false;
   logout: () => Promise<void>;
   refreshUserRole: () => Promise<void>;
 }
@@ -23,6 +24,7 @@ const AuthContext = createContext<AuthContextType>({
   session: null,
   loading: true,
   role: null,
+  confirmed_user: false,
   logout: async () => {},
   refreshUserRole: async () => {},
 });
@@ -40,16 +42,17 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
   const [role, setRole] = useState<string | null>(null);
+  const [confirmed_user, setConfirmedUser] = useState(false);
 
   const isLoadingRole = useRef(false);
   const currentUserId = useRef<string | null>(null);
 
   const createUserIfNotExists = useCallback(
-    async (userId: string, email: string) => {
+    async (userId: string, email: string, isConfirmed: boolean) => {
       try {
         const { data: existingUser } = await supabaseCliente
           .from("usuarios")
-          .select("id_usuario")
+          .select("id_usuario, confirmed_user")
           .eq("id_usuario", userId)
           .maybeSingle();
 
@@ -67,6 +70,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
               rol: "miembro",
               correo_usuario: email,
               estado_estudiante: "activo",
+              confirmed_user: isConfirmed,
             });
 
           if (insertError) {
@@ -94,7 +98,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   );
 
   const fetchUserRole = useCallback(
-    async (userId: string, email: string, attempt = 1) => {
+    async (userId: string, email: string, isConfirmed = false, attempt = 1) => {
       if (isLoadingRole.current && currentUserId.current === userId) {
         console.log("[AuthDebug] Ya se está cargando el rol para este usuario");
         return;
@@ -111,11 +115,12 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
         const { data } = await supabaseCliente
           .from("usuarios")
-          .select("rol")
+          .select("rol, confirmed_user")
           .eq("id_usuario", userId)
           .maybeSingle();
 
         const fetchedRole = data?.rol || null;
+        const fetchedConfirmed = data?.confirmed_user ?? false;
 
         console.log(`[AuthDebug] Resultado de query - Intento ${attempt}:`, {
           fetchedRole,
@@ -126,7 +131,11 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           console.log(
             "[AuthDebug] Rol null en intento 1, asegurando que usuario existe..."
           );
-          const result = await createUserIfNotExists(userId, email);
+          const result = await createUserIfNotExists(
+            userId,
+            email,
+            isConfirmed
+          );
           if (!result) {
             // Error al crear o verificar usuario
             console.error(
@@ -142,7 +151,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
             "[AuthDebug] Usuario verificado, reintentando obtener rol..."
           );
           isLoadingRole.current = false;
-          return fetchUserRole(userId, email, attempt + 1);
+          return fetchUserRole(userId, email, isConfirmed, attempt + 1);
         }
 
         if (!fetchedRole && attempt < 2) {
@@ -152,7 +161,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           );
           isLoadingRole.current = false;
           await new Promise((resolve) => setTimeout(resolve, delayMs));
-          return fetchUserRole(userId, email, attempt + 1);
+          return fetchUserRole(userId, email, isConfirmed, attempt + 1);
         }
 
         if (!fetchedRole && attempt >= 2) {
@@ -166,11 +175,13 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         }
 
         setRole(fetchedRole);
+        setConfirmedUser(fetchedConfirmed);
         setLoading(false);
         console.log("[AuthDebug] Rol cargado exitosamente", {
           userId,
           rol: fetchedRole,
           intento: attempt,
+          confirmed_user: fetchedConfirmed,
         });
       } catch (error) {
         console.error("Error al obtener rol:", error);
@@ -194,7 +205,11 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     // Forzar la recarga ignorando el guard
     isLoadingRole.current = false;
 
-    await fetchUserRole(user.id, user.email);
+    await fetchUserRole(
+      user.id,
+      user.email,
+      !!user.email_confirmed_at || !!user.confirmed_at
+    );
   }, [user, fetchUserRole]);
 
   const logout = async () => {
@@ -241,6 +256,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       setUser(null);
       setRole(null);
       setLoading(false);
+      setConfirmedUser(false);
 
       console.log("[AuthDebug] Logout completado totalmente");
     }
@@ -283,6 +299,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     session,
     loading,
     role,
+    confirmed_user,
     logout,
     refreshUserRole,
   };
