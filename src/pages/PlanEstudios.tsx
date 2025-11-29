@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import Navbar from '@/components/Navbarpage';
 import Footer from '@/components/Footerpage';
-import LogoULS from '@/assets/icons/logo.png';
-import Sct from '@/assets/icons/sct.png';
+#import LogoULS from '@/assets/icons/logo.png';
+#import Sct from '@/assets/icons/sct.png';
 
 
 
