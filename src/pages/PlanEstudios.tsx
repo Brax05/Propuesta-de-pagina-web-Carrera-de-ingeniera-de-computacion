@@ -1,6 +1,9 @@
 import { useState } from 'react';
 import Navbar from '@/components/Navbarpage';
 import Footer from '@/components/Footerpage';
+import LogoULS from '@/assets/icons/logo.png';
+import Sct from '@/assets/icons/sct.png';
+
 
 
 export default function StudyPlan() {
@@ -349,7 +352,7 @@ export default function StudyPlan() {
                       className={`p-2 rounded text-xs text-gray-800 text-center font-medium transition-colors duration-100
                         ${course.startsWith("Ampliando la mirada") ? "bg-blue-200"
                           : isPrereq ? "bg-yellow-200"
-                          : isSiguiente ? "bg-gray-400"
+                          : isSiguiente ? "bg-yellow-200"
                           : "bg-gray-200"}
                           ${hoveredCourse === course ? 'ring-2 ring-blue-400' : ''}
                           `}
@@ -369,36 +372,9 @@ export default function StudyPlan() {
                             <div className="flex gap-6 items-center justify-start mt-4 mb-8">
                               <div className="flex items-center gap-2">
                                 <div className="w-5 h-5 rounded bg-yellow-200 border border-yellow-200"></div>
-                                <span className="text-sm font-semibold text-gray-700">Prerrequisito</span>
+                                <span className="text-sm font-semibold text-gray-700">Prerrequisito y Asignatura Dependiente</span>
                                 </div>
-                                <div className="flex items-center gap-2">
-                                  <div className="w-5 h-5 rounded bg-gray-400 border border-gray-400"></div>
-                                  <span className="text-sm font-semibold text-gray-700">Asignatura dependiente</span>
                                   </div>
-                                  </div>
-          {/* Modal */}
-          {showModal && selectedCourse && (
-            <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center" onClick={closeModal}>
-              <div className="bg-white p-6 rounded shadow-lg w-full max-w-xs md:max-w-md" onClick={e => e.stopPropagation()}>
-                <h2 className="font-bold text-lg mb-3">{selectedCourse}</h2>
-                <p className="text-sm mb-2">{cursoInfo[selectedCourse]?.descripcion || 'Sin información adicional para este curso.'}</p>
-                {cursoInfo[selectedCourse] && (
-                  <div>
-                    <span className="inline-block mb-2 px-2 py-1 bg-blue-100 text-blue-800 rounded text-xs font-semibold">
-                      {cursoInfo[selectedCourse].tipo}
-                      </span>
-                      <div className="text-xs mb-4">
-                        <span className="font-semibold text-gray-800">T.E.L:</span> {cursoInfo[selectedCourse].tel}
-                        </div>
-                        </div>
-                      )}
-                <button onClick={closeModal} className="px-4 py-2 bg-blue-600 rounded text-white hover:bg-blue-700">
-                  Cerrar
-                </button>
-              </div>
-            </div>
-          )}
-
           {/* Modal */}
           {showModal && selectedCourse && (
             <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center" onClick={closeModal}>
@@ -423,6 +399,9 @@ export default function StudyPlan() {
           )}
 
           <div className="mt-12 space-y-4 text-sm text-gray-700">
+            <p className="border-l-4 border-blue-700 pl-4">
+              * Cada número del TEL indica un crédito, 2 créditos equivalen a una clase semanal y el máximo semestral es de 32 créditos.
+            </p>
             <p className="border-l-4 border-blue-700 pl-4">
               * Elaborará el grado de Bachiller en Ciencias de la Ingeniería cuando apruebe todas las asignaturas hasta el nivel 4 inclusive.
             </p>

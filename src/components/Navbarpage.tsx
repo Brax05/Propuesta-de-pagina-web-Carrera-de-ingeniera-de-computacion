@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Menu, X } from "lucide-react";
 import { useAuth } from "@/hooks/AuthContext";
+import LogoNavbar from '@/assets/icons/logo.png';
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
@@ -31,52 +32,23 @@ export default function Navbar() {
         <div className="flex justify-between items-center h-20">
           {/* Logo */}
           <Link to="/" className="flex items-center gap-2">
-            <div className="hidden sm:block">
-              <img
-                src="/logo.png"
-                alt="Logo Cna ULS"
-                className="h-[98px] w-auto object-contain flex-shrink-0"
-              />
+            <div className="block">
+              <img 
+              src={LogoNavbar} 
+              alt="Logo ULS" 
+              className="h-[92px] w-auto object-contain flex-shrink-0" />
             </div>
           </Link>
 
           {/* Menú escritorio */}
           <div className="hidden md:flex items-center gap-8">
-            <Link
-              to="/"
-              className="text-sm text-gray-700 hover:text-gray-900 transition"
-            >
-              Inicio
-            </Link>
-            <Link
-              to="/plan-estudios"
-              className="text-sm text-gray-700 hover:text-gray-900 transition"
-            >
-              Plan de Estudios
-            </Link>
-            <Link
-              to="/noticias"
-              className="text-sm text-gray-700 hover:text-gray-900 transition"
-            >
-              Noticias
-            </Link>
-            <Link
-              to="/estudiantes"
-              className="text-sm text-gray-700 hover:text-gray-900 transition"
-            >
-              Nuestros Estudiantes
-            </Link>
-            <Link
-              to="/contacto"
-              className="text-sm text-gray-700 hover:text-gray-900 transition"
-            >
-              Contacto
-            </Link>
+            <Link to="/" className="text-sm text-gray-700 hover:text-gray-900 transition">Inicio</Link>
+            <Link to="/plan-estudios" className="text-sm text-gray-700 hover:text-gray-900 transition">Plan de Estudios</Link>
+            <Link to="/noticias" className="text-sm text-gray-700 hover:text-gray-900 transition">Noticias</Link>
+            <Link to="/estudiantes" className="text-sm text-gray-700 hover:text-gray-900 transition">Nuestros Estudiantes</Link>
+            <Link to="/contacto" className="text-sm text-gray-700 hover:text-gray-900 transition">Contacto</Link>
             {isAuthenticated && (
-              <Link
-                to="/cec"
-                className="text-sm text-gray-700 hover:text-gray-900 transition font-semibold"
-              >
+              <Link to="/cec" className="text-sm text-gray-700 hover:text-gray-900 transition font-semibold">
                 CEC
               </Link>
             )}

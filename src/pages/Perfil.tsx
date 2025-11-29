@@ -159,7 +159,7 @@ export default function Perfil() {
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-700 mx-auto mb-4"></div>
-          <p className="text-gray-600">Cargando</p>
+          <p className="text-gray-600">Cargando perfil...</p>
         </div>
       </div>
     );
@@ -215,6 +215,13 @@ export default function Perfil() {
                       {getRoleName(userData.role)}
                     </span>
                   </div>
+
+                  {userData.isCECMember && (
+                    <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3 mt-4">
+                      <p className="text-sm font-semibold text-yellow-800 mb-1">Miembro CEC</p>
+                      <p className="text-xs text-yellow-700">{userData.cecPosition}</p>
+                    </div>
+                  )}
                 </div>
 
                 <div className="border-t border-gray-200 pt-6 space-y-3">

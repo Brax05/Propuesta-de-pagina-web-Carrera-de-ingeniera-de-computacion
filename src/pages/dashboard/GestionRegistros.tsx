@@ -14,17 +14,14 @@ interface PendingUser {
   estado_registro: "pendiente" | "aprobado" | "rechazado";
 }
 
-// ========================================
-// DATOS SIMULADOS LOCALES
-// ========================================
-// Ejemplo para simular usuarios registrados pendientes
+// DATOS DE EJEMPLO PARA SIMULAR USUARIOS PENDIENTES
 const MOCK_USERS: PendingUser[] = [
   {
     id_usuario: "1",
     correo_usuario: "pedro.martinez@userena.cl",
     nombres: "Pedro",
     apellidos: "Martínez López",
-    fecha_registro: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(),
+    fecha_registro: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(), // Hace 2 horas
     estado_registro: "pendiente",
   },
   {
@@ -32,7 +29,7 @@ const MOCK_USERS: PendingUser[] = [
     correo_usuario: "ana.silva@userena.cl",
     nombres: "Ana",
     apellidos: "Silva García",
-    fecha_registro: new Date(Date.now() - 5 * 60 * 60 * 1000).toISOString(),
+    fecha_registro: new Date(Date.now() - 5 * 60 * 60 * 1000).toISOString(), // Hace 5 horas
     estado_registro: "pendiente",
   },
   {
@@ -40,7 +37,7 @@ const MOCK_USERS: PendingUser[] = [
     correo_usuario: "luis.fernandez@userena.cl",
     nombres: "Luis",
     apellidos: "Fernández Torres",
-    fecha_registro: new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString(),
+    fecha_registro: new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString(), // Hace 1 día
     estado_registro: "pendiente",
   },
   {
@@ -48,7 +45,7 @@ const MOCK_USERS: PendingUser[] = [
     correo_usuario: "carolina.rojas@userena.cl",
     nombres: "Carolina",
     apellidos: "Rojas Muñoz",
-    fecha_registro: new Date(Date.now() - 36 * 60 * 60 * 1000).toISOString(),
+    fecha_registro: new Date(Date.now() - 36 * 60 * 60 * 1000).toISOString(), // Hace 1.5 días
     estado_registro: "pendiente",
   },
   {
@@ -56,7 +53,7 @@ const MOCK_USERS: PendingUser[] = [
     correo_usuario: "diego.castro@userena.cl",
     nombres: "Diego",
     apellidos: "Castro Pérez",
-    fecha_registro: new Date(Date.now() - 48 * 60 * 60 * 1000).toISOString(),
+    fecha_registro: new Date(Date.now() - 48 * 60 * 60 * 1000).toISOString(), // Hace 2 días
     estado_registro: "aprobado",
   },
 ];
@@ -70,9 +67,15 @@ export default function GestionRegistros() {
   const [processingId, setProcessingId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
+  // Simular carga de datos
   const loadPendingUsers = useCallback(async () => {
     setLoading(true);
+    
+    // Simular delay de red
     await new Promise(resolve => setTimeout(resolve, 800));
+    
+    // Reemplazar con llamada real a Supabase
+    
     setPendingUsers(MOCK_USERS);
     setLoading(false);
   }, []);
@@ -83,8 +86,13 @@ export default function GestionRegistros() {
 
   const handleApprove = async (userId: string) => {
     setProcessingId(userId);
+
     try {
+      // Simular delay de procesamiento
       await new Promise(resolve => setTimeout(resolve, 500));
+
+      // Reemplazar con llamada real
+
       setPendingUsers((prevUsers) =>
         prevUsers.map((user) =>
           user.id_usuario === userId
@@ -102,12 +110,30 @@ export default function GestionRegistros() {
   };
 
   const handleReject = async (userId: string) => {
-    if (!window.confirm("¿Estás seguro de rechazar este registro? El usuario quedará marcado como rechazado.")) {
+    if (
+      !window.confirm(
+        "¿Estás seguro de rechazar este registro? El usuario quedará marcado como rechazado."
+      )
+    ) {
       return;
     }
+
     setProcessingId(userId);
+
     try {
+      // Simular delay de procesamiento
       await new Promise(resolve => setTimeout(resolve, 500));
+
+      // Reemplazar con llamada real
+      // Marcar como rechazado? (Por si quieren mantener historial)
+      // const { error } = await supabaseCliente
+      //   .from("usuarios")
+      //   .update({
+      //     estado_registro: "rechazado",
+      //     fecha_rechazo: new Date().toISOString(),
+      //   })
+      //   .eq("id_usuario", userId);
+
       setPendingUsers((prevUsers) =>
         prevUsers.map((user) =>
           user.id_usuario === userId
@@ -168,6 +194,7 @@ export default function GestionRegistros() {
     (u) => u.estado_registro === "pendiente"
   ).length;
   
+  // Calcular procesados en los últimos 7 días
   const oneWeekAgo = new Date();
   oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
   
@@ -185,15 +212,15 @@ export default function GestionRegistros() {
   ).length;
   const totalProcessedThisWeek = processedThisWeek.length;
 
-  if (loading) {
-    return (
-      <div className="min-h-screen flex flex-col bg-gray-50">
-        <Navbar />
-        <LoadingSpinner message="Cargando registros..." />
-        <Footer />
-      </div>
-    );
-  }
+if (loading) {
+  return (
+    <div className="min-h-screen flex flex-col bg-gray-50">
+      <Navbar />
+      <LoadingSpinner message="Cargando registros..." />
+      <Footer />
+    </div>
+  );
+}
 
   return (
     <div className="min-h-screen flex flex-col bg-gray-50">
@@ -202,7 +229,7 @@ export default function GestionRegistros() {
       <div className="bg-blue-700 text-white py-12 border-b-4 border-blue-800">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <Link
-            to="/dashboard/perfil"
+            to="/perfil"
             className="inline-flex items-center text-blue-100 hover:text-white mb-4 text-sm"
           >
             <ArrowLeft className="w-4 h-4 mr-2" />
@@ -290,7 +317,7 @@ export default function GestionRegistros() {
             </select>
           </div>
 
-          {/* Tabla de Registros */}
+          {/* Lista de Registros */}
           {filteredUsers.length === 0 ? (
             <div className="bg-white rounded-lg shadow border border-gray-200 p-12 text-center">
               <Clock className="w-16 h-16 text-gray-400 mx-auto mb-4" />
@@ -305,80 +332,83 @@ export default function GestionRegistros() {
               </p>
             </div>
           ) : (
-            <div className="bg-white rounded-lg shadow border border-gray-200 overflow-hidden">
-              <div className="overflow-x-auto">
-                <table className="w-full">
-                  <thead className="bg-gray-50 border-b border-gray-200">
-                    <tr>
-                      <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Usuario</th>
-                      <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Registro</th>
-                      <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">Estado</th>
-                      <th className="px-6 py-3 text-right text-xs font-semibold text-gray-700 uppercase tracking-wider">Acciones</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-gray-200">
-                    {filteredUsers.map((user) => (
-                      <tr key={user.id_usuario} className="hover:bg-gray-50">
-                        <td className="px-6 py-4">
-                          <div>
-                            <div className="text-sm font-semibold text-gray-900">
-                              {user.nombres} {user.apellidos}
-                            </div>
-                            <div className="text-sm text-gray-500">{user.correo_usuario}</div>
-                          </div>
-                        </td>
-                        <td className="px-6 py-4">
-                          <div>
-                            <div className="text-sm text-gray-900">
+            <div className="space-y-4">
+              {filteredUsers.map((user) => (
+                <div
+                  key={user.id_usuario}
+                  className="bg-white rounded-lg shadow border border-gray-200 p-6 hover:shadow-lg transition"
+                >
+                  <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                    <div className="flex-1">
+                      <div className="flex items-start gap-4">
+                        <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
+                          <UserCheck className="w-6 h-6 text-blue-700" />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <h3 className="text-lg font-bold text-gray-900 mb-1">
+                            {user.nombres} {user.apellidos}
+                          </h3>
+                          <p className="text-sm text-gray-600 mb-2">
+                            {user.correo_usuario}
+                          </p>
+                          <div className="flex flex-wrap gap-2 items-center">
+                            <span className="text-xs text-gray-500">
                               {formatDate(user.fecha_registro)}
-                            </div>
-                            <div className="text-xs text-blue-600 font-semibold">
+                            </span>
+                            <span className="text-xs text-gray-400">•</span>
+                            <span className="text-xs font-semibold text-blue-600">
                               {getTimeSince(user.fecha_registro)}
-                            </div>
+                            </span>
+                            {user.estado_registro !== "pendiente" && (
+                              <>
+                                <span className="text-xs text-gray-400">
+                                  •
+                                </span>
+                                <span
+                                  className={`text-xs font-semibold ${
+                                    user.estado_registro === "aprobado"
+                                      ? "text-green-600"
+                                      : "text-red-600"
+                                  }`}
+                                >
+                                  {user.estado_registro === "aprobado"
+                                    ? "Aprobado"
+                                    : "Rechazado"}
+                                </span>
+                              </>
+                            )}
                           </div>
-                        </td>
-                        <td className="px-6 py-4">
-                          {user.estado_registro === "pendiente" ? (
-                            <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
-                              Pendiente
-                            </span>
-                          ) : user.estado_registro === "aprobado" ? (
-                            <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                              Aprobado
-                            </span>
-                          ) : (
-                            <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800">
-                              Rechazado
-                            </span>
-                          )}
-                        </td>
-                        <td className="px-6 py-4 text-right">
-                          {user.estado_registro === "pendiente" && (
-                            <div className="flex gap-2 justify-end">
-                              <button
-                                onClick={() => handleApprove(user.id_usuario)}
-                                disabled={processingId === user.id_usuario}
-                                className="px-3 py-1.5 bg-green-600 hover:bg-green-700 disabled:bg-green-300 text-white text-sm rounded transition flex items-center gap-1.5"
-                              >
-                                <Check className="w-3.5 h-3.5" />
-                                {processingId === user.id_usuario ? "..." : "Aprobar"}
-                              </button>
-                              <button
-                                onClick={() => handleReject(user.id_usuario)}
-                                disabled={processingId === user.id_usuario}
-                                className="px-3 py-1.5 bg-red-600 hover:bg-red-700 disabled:bg-red-300 text-white text-sm rounded transition flex items-center gap-1.5"
-                              >
-                                <X className="w-3.5 h-3.5" />
-                                {processingId === user.id_usuario ? "..." : "Rechazar"}
-                              </button>
-                            </div>
-                          )}
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    {user.estado_registro === "pendiente" && (
+                      <div className="flex gap-3">
+                        <button
+                          onClick={() => handleApprove(user.id_usuario)}
+                          disabled={processingId === user.id_usuario}
+                          className="px-4 py-2 bg-green-600 hover:bg-green-700 disabled:bg-green-300 text-white rounded-lg transition flex items-center gap-2 font-semibold text-sm"
+                        >
+                          <Check className="w-4 h-4" />
+                          {processingId === user.id_usuario
+                            ? "Procesando..."
+                            : "Aprobar"}
+                        </button>
+                        <button
+                          onClick={() => handleReject(user.id_usuario)}
+                          disabled={processingId === user.id_usuario}
+                          className="px-4 py-2 bg-red-600 hover:bg-red-700 disabled:bg-red-300 text-white rounded-lg transition flex items-center gap-2 font-semibold text-sm"
+                        >
+                          <X className="w-4 h-4" />
+                          {processingId === user.id_usuario
+                            ? "Procesando..."
+                            : "Rechazar"}
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              ))}
             </div>
           )}
         </div>

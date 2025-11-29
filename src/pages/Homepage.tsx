@@ -1,8 +1,8 @@
 import { Link } from 'react-router-dom';
 import Navbar from '@/components/Navbarpage';
 import Footer from '@/components/Footerpage';
-
 import ingCivilComputacion from '@/assets/icons/ing_civil_computacion_.png';
+
 import NoticiasRecientesSection from "@/components/NoticiasRecientesSection";
 
 

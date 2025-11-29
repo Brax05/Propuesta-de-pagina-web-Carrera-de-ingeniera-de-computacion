@@ -2,17 +2,7 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import Navbar from "@/components/Navbarpage";
 import Footer from "@/components/Footerpage";
-import {
-  ArrowLeft,
-  Search,
-  Edit,
-  Trash2,
-  Plus,
-  Save,
-  X,
-  User,
-  Video,
-} from "lucide-react";
+import { ArrowLeft, Search, Edit, Trash2, Plus, Save, X, User, Video } from "lucide-react";
 
 interface Student {
   id: number;
@@ -31,38 +21,31 @@ export default function GestionEstudiantes() {
       firstName: "Juanito",
       lastName: "Perez",
       specialty: "Desarrollo de Software",
-      description:
-        "Trabaja en Data Analytics para empresa del sector financiero.",
-      imageUrl:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop",
+      description: "Trabaja en Data Analytics para empresa del sector financiero.",
+      imageUrl: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop"
     },
     {
       id: 2,
       firstName: "Carlita",
       lastName: "Flores",
       specialty: "Ciencia de Datos",
-      description:
-        "Lidera equipo de Data Scientists en empresa del sector financiero.",
+      description: "Lidera equipo de Data Scientists en empresa del sector financiero.",
       videoUrl: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
-      imageUrl:
-        "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=150&h=150&fit=crop",
+      imageUrl: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=150&h=150&fit=crop"
     },
     {
       id: 3,
       firstName: "Camilito",
       lastName: "Bugz",
       specialty: "Computación en la Nube",
-      description:
-        "Ingeniero de sistemas en compañía de servicios tecnológicos.",
-      imageUrl:
-        "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&h=150&fit=crop",
-    },
+      description: "Ingeniero de sistemas en compañía de servicios tecnológicos.",
+      imageUrl: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&h=150&fit=crop"
+    }
   ]);
 
   const [searchTerm, setSearchTerm] = useState("");
   const [isAdding, setIsAdding] = useState(false);
   const [editingStudent, setEditingStudent] = useState<Student | null>(null);
-
   const [newStudent, setNewStudent] = useState<Partial<Student>>({
     firstName: "",
     lastName: "",
@@ -315,111 +298,64 @@ export default function GestionEstudiantes() {
           {/* Grid de Estudiantes */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredStudents.map((student) => (
-              <div
-                key={student.id}
-                className="bg-white rounded-lg shadow border border-gray-200 overflow-hidden"
-              >
+              <div key={student.id} className="bg-white rounded-lg shadow border border-gray-200 overflow-hidden">
                 {editingStudent?.id === student.id ? (
                   // Modo Edición
                   <div className="p-6">
-                    <h3 className="text-lg font-bold text-gray-900 mb-4">
-                      Editar Estudiante
-                    </h3>
-
+                    <h3 className="text-lg font-bold text-gray-900 mb-4">Editar Estudiante</h3>
+                    
                     <div className="space-y-4">
                       <div>
-                        <label className="block text-xs font-semibold text-gray-700 mb-1">
-                          Nombre
-                        </label>
+                        <label className="block text-xs font-semibold text-gray-700 mb-1">Nombre</label>
                         <input
                           type="text"
                           value={editingStudent.firstName}
-                          onChange={(e) =>
-                            setEditingStudent({
-                              ...editingStudent,
-                              firstName: e.target.value,
-                            })
-                          }
+                          onChange={(e) => setEditingStudent({ ...editingStudent, firstName: e.target.value })}
                           className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-700"
                         />
                       </div>
                       <div>
-                        <label className="block text-xs font-semibold text-gray-700 mb-1">
-                          Apellido
-                        </label>
+                        <label className="block text-xs font-semibold text-gray-700 mb-1">Apellido</label>
                         <input
                           type="text"
                           value={editingStudent.lastName}
-                          onChange={(e) =>
-                            setEditingStudent({
-                              ...editingStudent,
-                              lastName: e.target.value,
-                            })
-                          }
+                          onChange={(e) => setEditingStudent({ ...editingStudent, lastName: e.target.value })}
                           className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-700"
                         />
                       </div>
                       <div>
-                        <label className="block text-xs font-semibold text-gray-700 mb-1">
-                          Especialización
-                        </label>
+                        <label className="block text-xs font-semibold text-gray-700 mb-1">Especialización</label>
                         <input
                           type="text"
                           value={editingStudent.specialty}
-                          onChange={(e) =>
-                            setEditingStudent({
-                              ...editingStudent,
-                              specialty: e.target.value,
-                            })
-                          }
+                          onChange={(e) => setEditingStudent({ ...editingStudent, specialty: e.target.value })}
                           className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-700"
                         />
                       </div>
                       <div>
-                        <label className="block text-xs font-semibold text-gray-700 mb-1">
-                          Descripción
-                        </label>
+                        <label className="block text-xs font-semibold text-gray-700 mb-1">Descripción</label>
                         <textarea
                           value={editingStudent.description}
-                          onChange={(e) =>
-                            setEditingStudent({
-                              ...editingStudent,
-                              description: e.target.value,
-                            })
-                          }
+                          onChange={(e) => setEditingStudent({ ...editingStudent, description: e.target.value })}
                           rows={3}
                           className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-700 resize-none"
                         />
                       </div>
                       <div>
-                        <label className="block text-xs font-semibold text-gray-700 mb-1">
-                          URL Video
-                        </label>
+                        <label className="block text-xs font-semibold text-gray-700 mb-1">URL Video</label>
                         <input
                           type="text"
                           value={editingStudent.videoUrl || ""}
-                          onChange={(e) =>
-                            setEditingStudent({
-                              ...editingStudent,
-                              videoUrl: e.target.value,
-                            })
-                          }
+                          onChange={(e) => setEditingStudent({ ...editingStudent, videoUrl: e.target.value })}
                           className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-700"
                         />
                       </div>
                       <div>
-                        <label className="block text-xs font-semibold text-gray-700 mb-1">
-                          URL Foto
-                        </label>
+                        <label className="block text-xs font-semibold text-gray-700 mb-1">URL Foto</label>
                         <input
                           type="text"
                           value={editingStudent.imageUrl || ""}
-                          onChange={(e) =>
-                            setEditingStudent({
-                              ...editingStudent,
-                              imageUrl: e.target.value,
-                            })
-                          }
+                          onChange={(e) => setEditingStudent({ ...editingStudent, imageUrl: e.target.value })}
                           className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-700"
                         />
                       </div>
@@ -461,16 +397,12 @@ export default function GestionEstudiantes() {
                         <h3 className="font-bold text-lg text-gray-900 mb-1">
                           {student.firstName} {student.lastName}
                         </h3>
-                        <p className="text-gray-600 text-sm mb-2">
-                          {student.specialty}
-                        </p>
+                        <p className="text-gray-600 text-sm mb-2">{student.specialty}</p>
                       </div>
 
                       <div className="space-y-3">
                         <div>
-                          <p className="text-sm text-gray-700">
-                            {student.description}
-                          </p>
+                          <p className="text-sm text-gray-700">{student.description}</p>
                         </div>
 
                         {student.videoUrl && (
