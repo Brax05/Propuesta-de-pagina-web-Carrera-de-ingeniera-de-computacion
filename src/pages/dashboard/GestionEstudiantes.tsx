@@ -15,33 +15,7 @@ interface Student {
 }
 
 export default function GestionEstudiantes() {
-  const [students, setStudents] = useState<Student[]>([
-    {
-      id: 1,
-      firstName: "Juanito",
-      lastName: "Perez",
-      specialty: "Desarrollo de Software",
-      description: "Trabaja en Data Analytics para empresa del sector financiero.",
-      imageUrl: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop"
-    },
-    {
-      id: 2,
-      firstName: "Carlita",
-      lastName: "Flores",
-      specialty: "Ciencia de Datos",
-      description: "Lidera equipo de Data Scientists en empresa del sector financiero.",
-      videoUrl: "https://www.youtube.com/watch?v=dQw4w9WgXcQ",
-      imageUrl: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=150&h=150&fit=crop"
-    },
-    {
-      id: 3,
-      firstName: "Camilito",
-      lastName: "Bugz",
-      specialty: "Computación en la Nube",
-      description: "Ingeniero de sistemas en compañía de servicios tecnológicos.",
-      imageUrl: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&h=150&fit=crop"
-    }
-  ]);
+  const [students, setStudents] = useState<Student[]>([]);
 
   const [searchTerm, setSearchTerm] = useState("");
   const [isAdding, setIsAdding] = useState(false);

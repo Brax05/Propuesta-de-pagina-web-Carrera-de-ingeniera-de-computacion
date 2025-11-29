@@ -3,18 +3,7 @@ import { Link } from "react-router-dom";
 import { supabaseCliente } from "@/services/supabaseCliente";
 import Navbar from "@/components/Navbarpage";
 import Footer from "@/components/Footerpage";
-import {
-  ArrowLeft,
-  Search,
-  Edit,
-  Trash2,
-  Plus,
-  Save,
-  X,
-  Star,
-  Calendar,
-  MapPin,
-} from "lucide-react";
+import {ArrowLeft,Search,Edit,Trash2,Plus,Save,X,Star,Calendar,MapPin,} from "lucide-react";
 
 interface News {
   id: number;

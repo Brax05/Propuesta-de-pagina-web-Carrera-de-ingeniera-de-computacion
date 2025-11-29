@@ -96,17 +96,7 @@ export default function GestionUsuarios() {
 
         const { data, error } = await supabaseCliente
           .from("usuarios")
-          .select(
-            `
-            id,
-            id_usuario,
-            nombres,
-            apellidos,
-            correo_usuario,
-            rol,
-            estado_estudiante,
-            miembros_cec ( cargo )
-          `
+          .select("id, id_usuario, nombres, apellidos, correo_usuario, rol, estado_estudiante, miembros_cec ( cargo )"
           )
           .order("apellidos", { ascending: true });
 
