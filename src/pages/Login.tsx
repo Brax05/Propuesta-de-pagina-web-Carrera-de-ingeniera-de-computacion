@@ -53,6 +53,7 @@ export default function Login() {
             nombres: "",
             apellidos: "",
             rol: "miembro",
+            confirmed_user: false,
             correo_usuario: usuario.email,
             estado_estudiante: "activo",
           });

@@ -7,7 +7,7 @@ export const RutaUsuariosLog = ({
 }: {
   children: React.ReactNode;
 }) => {
-  const { user, role, loading } = useAuth();
+  const { user, role, loading, confirmed_user } = useAuth();
 
   // Evitar redireccionar mientras se cargan sesión/rol
   if (loading || (user && !role)) {
@@ -16,6 +16,10 @@ export const RutaUsuariosLog = ({
 
   if (!user) {
     return <Navigate to="/login" replace />;
+  }
+
+  if (!confirmed_user) {
+    return <Navigate to="/esperando-autorizacion" replace />;
   }
 
   if (

@@ -12,6 +12,7 @@ type UserData = {
   apellidos: string;
   role: string;
   estado_estudiante: string;
+  is_cec_member: boolean;
 };
 
 const roleNames: Record<string, string> = {
@@ -37,6 +38,7 @@ export default function Perfil() {
     email: "",
     role: "",
     estado_estudiante: "",
+    is_cec_member: false,
   });
   const [minDelayDone, setMinDelayDone] = useState(false);
 
@@ -57,7 +59,9 @@ export default function Perfil() {
     try {
       const { data, error } = await supabaseCliente
         .from("usuarios")
-        .select("nombres, apellidos, correo_usuario, rol, estado_estudiante")
+        .select(
+          "nombres, apellidos, correo_usuario, rol, estado_estudiante, is_cec_member"
+        )
         .eq("id_usuario", user.id)
         .maybeSingle();
 
@@ -73,6 +77,7 @@ export default function Perfil() {
           email: data.correo_usuario ?? "",
           role: data.rol ?? "student",
           estado_estudiante: data.estado_estudiante ?? "activo",
+          is_cec_member: data.is_cec_member ?? false,
         });
       }
     } catch (error) {
@@ -125,6 +130,7 @@ export default function Perfil() {
         apellidos: data.apellidos ?? prev.apellidos,
         role: data.rol ?? prev.role,
         estado_estudiante: data.estado_estudiante ?? prev.estado_estudiante,
+        is_cec_member: data.cec ?? prev.is_cec_member,
       }));
       await refreshUserRole();
     } catch (e) {
@@ -216,10 +222,14 @@ export default function Perfil() {
                     </span>
                   </div>
 
-                  {userData.isCECMember && (
+                  {userData.is_cec_member && (
                     <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3 mt-4">
-                      <p className="text-sm font-semibold text-yellow-800 mb-1">Miembro CEC</p>
-                      <p className="text-xs text-yellow-700">{userData.cecPosition}</p>
+                      <p className="text-sm font-semibold text-yellow-800 mb-1">
+                        Miembro CEC
+                      </p>
+                      <p className="text-xs text-yellow-700">
+                        {userData.is_cec_member}
+                      </p>
                     </div>
                   )}
                 </div>
