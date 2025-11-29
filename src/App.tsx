@@ -32,7 +32,11 @@ const MemberRedirect = () => {
   if (loading) return null;
 
   // Si no está confirmado, redirige a la pantalla de espera
-  if (user && confirmed_user === false && location.pathname !== "/esperando-autorizacion") {
+  if (
+    user &&
+    confirmed_user === false &&
+    location.pathname !== "/esperando-autorizacion"
+  ) {
     return (
       <>
         <Navigate to="/esperando-autorizacion" replace />
@@ -78,6 +82,10 @@ const AppContent = () => {
         <Route path="/contacto" element={<Contacto />} />
         <Route path="/cec" element={<CEC />} />
         <Route
+          path="/esperando-autorizacion"
+          element={<EsperandoAutorizacion />}
+        />
+        <Route
           path="/dashboard/gestion-usuarios"
           element={
             <RutasAdmin>
@@ -116,10 +124,6 @@ const AppContent = () => {
               <Perfil />
             </RutaUsuariosLog>
           }
-        />
-        <Route
-          path="/esperando-autorizacion"
-          element={<EsperandoAutorizacion />}
         />
 
         <Route path="/noticias/:id" element={<NoticiaDetalle />} />
