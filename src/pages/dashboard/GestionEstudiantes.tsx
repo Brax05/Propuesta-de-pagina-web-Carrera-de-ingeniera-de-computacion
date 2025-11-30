@@ -1,91 +1,218 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import Navbar from "@/components/Navbarpage";
 import Footer from "@/components/Footerpage";
-import { ArrowLeft, Search, Edit, Trash2, Plus, Save, X, User, Video } from "lucide-react";
+import {
+  ArrowLeft,
+  Search,
+  Edit,
+  Trash2,
+  Plus,
+  Save,
+  X,
+  User,
+  Video,
+} from "lucide-react";
+import { supabaseCliente } from "@/services/supabaseCliente";
 
 interface Student {
   id: number;
-  firstName: string;
-  lastName: string;
+  fullname: string;
   specialty: string;
-  description: string;
   videoUrl?: string;
-  imageUrl?: string;
+  videoUrlEmbed?: string;
+}
+
+// Función para convertir URL normal de YouTube → embed
+function youtubeToEmbed(original: string): string {
+  try {
+    const u = new URL(original);
+
+    let id = u.searchParams.get("v");
+
+    if (!id && u.hostname === "youtu.be") {
+      id = u.pathname.replace("/", "");
+    }
+
+    if (!id) return original;
+
+    let start = 0;
+    const t = u.searchParams.get("t");
+    if (t) {
+      const clean = t.replace("s", "");
+      const n = parseInt(clean, 10);
+      if (!isNaN(n)) start = n;
+    }
+
+    return `https://www.youtube.com/embed/${id}${
+      start ? `?start=${start}` : ""
+    }`;
+  } catch {
+    return original;
+  }
 }
 
 export default function GestionEstudiantes() {
   const [students, setStudents] = useState<Student[]>([]);
 
   const [searchTerm, setSearchTerm] = useState("");
+  const [, setLoadError] = useState<string | null>(null);
+  const [, setLoadingList] = useState(true);
   const [isAdding, setIsAdding] = useState(false);
   const [editingStudent, setEditingStudent] = useState<Student | null>(null);
   const [newStudent, setNewStudent] = useState<Partial<Student>>({
-    firstName: "",
-    lastName: "",
+    fullname: "",
     specialty: "",
-    description: "",
     videoUrl: "",
-    imageUrl: "",
   });
 
-  const handleAddStudent = () => {
-    if (
-      !newStudent.firstName ||
-      !newStudent.lastName ||
-      !newStudent.specialty ||
-      !newStudent.description
-    ) {
+  useEffect(() => {
+    const fetchStudents = async () => {
+      try {
+        setLoadingList(true);
+        setLoadError(null);
+
+        const { data, error } = await supabaseCliente
+          .from("destacados")
+          .select(
+            "id, nombre_completo, nivel_estudiante, url_video, url_video_embed"
+          )
+          .order("id", { ascending: true });
+
+        if (error) throw error;
+
+        const mapped: Student[] =
+          data?.map((row: any) => ({
+            id: row.id,
+            fullname: row.nombre_completo,
+            specialty: row.nivel_estudiante,
+            videoUrl: row.url_video || "",
+            videoUrlEmbed: row.url_video_embed || "",
+          })) || [];
+
+        setStudents(mapped);
+      } catch (err) {
+        console.error("Error al cargar los estudiantes:", err);
+        setLoadError("No se pudieron cargar los estudiantes");
+      } finally {
+        setLoadingList(false);
+      }
+    };
+    fetchStudents();
+  }, []);
+
+  const handleAddStudent = async () => {
+    if (!newStudent.fullname || !newStudent.specialty) {
       alert("Por favor completa todos los campos obligatorios");
       return;
     }
 
-    const student: Student = {
-      id: Date.now(),
-      firstName: newStudent.firstName,
-      lastName: newStudent.lastName,
-      specialty: newStudent.specialty,
-      description: newStudent.description,
-      videoUrl: newStudent.videoUrl || "",
-      imageUrl: newStudent.imageUrl || "",
-    };
+    try {
+      const normalUrl = newStudent.videoUrl || null;
+      const embedUrl = normalUrl ? youtubeToEmbed(normalUrl) : null;
 
-    setStudents([...students, student]);
-    setNewStudent({
-      firstName: "",
-      lastName: "",
-      specialty: "",
-      description: "",
-      videoUrl: "",
-      imageUrl: "",
-    });
-    setIsAdding(false);
+      const { data, error } = await supabaseCliente
+        .from("destacados")
+        .insert([
+          {
+            nombre_completo: newStudent.fullname,
+            nivel_estudiante: newStudent.specialty,
+            url_video: normalUrl,
+            url_video_embed: embedUrl,
+          },
+        ])
+        .select("id, nombre_completo, nivel_estudiante, url_video, url_video_embed")
+        .single();
+
+      if (error) throw error;
+
+      const student: Student = {
+        id: data.id,
+        fullname: data.nombre_completo,
+        specialty: data.nivel_estudiante,
+        videoUrl: data.url_video || "",
+        videoUrlEmbed: data.url_video_embed || "",
+      };
+
+      setStudents((prev) => [...prev, student]);
+      setNewStudent({
+        fullname: "",
+        specialty: "",
+        videoUrl: "",
+      });
+      setIsAdding(false);
+    } catch (err) {
+      console.error("Error al agregar estudiante:", err);
+      alert("No se pudo guardar el estudiante");
+    }
   };
 
   const handleEditStudent = (student: Student) => {
     setEditingStudent({ ...student });
   };
 
-  const handleSaveEdit = () => {
+  const handleSaveEdit = async () => {
     if (!editingStudent) return;
-    setStudents(
-      students.map((s) => (s.id === editingStudent.id ? editingStudent : s))
-    );
-    setEditingStudent(null);
+
+    try {
+      const normalUrl = editingStudent.videoUrl || null;
+      const embedUrl = normalUrl ? youtubeToEmbed(normalUrl) : null;
+
+      const { data, error } = await supabaseCliente
+        .from("destacados")
+        .update({
+          nombre_completo: editingStudent.fullname,
+          nivel_estudiante: editingStudent.specialty,
+          url_video: normalUrl,
+          url_video_embed: embedUrl,
+        })
+        .eq("id", editingStudent.id)
+        .select("id, nombre_completo, nivel_estudiante, url_video, url_video_embed")
+        .single();
+
+      if (error) throw error;
+
+      const updated: Student = {
+        id: data.id,
+        fullname: data.nombre_completo,
+        specialty: data.nivel_estudiante,
+        videoUrl: data.url_video || "",
+        videoUrlEmbed: data.url_video_embed || "",
+      };
+
+      setStudents((prev) =>
+        prev.map((s) => (s.id === updated.id ? updated : s))
+      );
+      setEditingStudent(null);
+    } catch (err) {
+      console.error("Error al guardar cambios:", err);
+      alert("No se pudo actualizar el estudiante");
+    }
   };
 
-  const handleDeleteStudent = (id: number) => {
-    if (
-      window.confirm("¿Estás seguro de eliminar este estudiante destacado?")
-    ) {
-      setStudents(students.filter((s) => s.id !== id));
+  const handleDeleteStudent = async (id: number) => {
+    if (!window.confirm("¿Estás seguro de eliminar este estudiante destacado?")) {
+      return;
+    }
+
+    try {
+      const { error } = await supabaseCliente
+        .from("destacados")
+        .delete()
+        .eq("id", id);
+
+      if (error) throw error;
+
+      setStudents((prev) => prev.filter((s) => s.id !== id));
+    } catch (err) {
+      console.error("Error al eliminar estudiante:", err);
+      alert("No se pudo eliminar el estudiante");
     }
   };
 
   const filteredStudents = students.filter(
     (student) =>
-      student.firstName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      student.lastName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      student.fullname.toLowerCase().includes(searchTerm.toLowerCase()) ||
       student.specialty.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
@@ -102,9 +229,7 @@ export default function GestionEstudiantes() {
             <ArrowLeft className="w-4 h-4 mr-2" />
             Volver al Perfil
           </Link>
-          <h1 className="text-4xl font-bold mb-2">
-            Edición de Estudiantes
-          </h1>
+          <h1 className="text-4xl font-bold mb-2">Edición de Estudiantes</h1>
           <p className="text-blue-100">
             Gestiona los perfiles de estudiantes que aparecen en el sitio
           </p>
@@ -142,46 +267,27 @@ export default function GestionEstudiantes() {
               </h3>
 
               <div className="space-y-4">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-2">
-                      Nombre *
-                    </label>
-                    <input
-                      type="text"
-                      value={newStudent.firstName}
-                      onChange={(e) =>
-                        setNewStudent({
-                          ...newStudent,
-                          firstName: e.target.value,
-                        })
-                      }
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-700"
-                      placeholder="Juan"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-2">
-                      Apellido *
-                    </label>
-                    <input
-                      type="text"
-                      value={newStudent.lastName}
-                      onChange={(e) =>
-                        setNewStudent({
-                          ...newStudent,
-                          lastName: e.target.value,
-                        })
-                      }
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-700"
-                      placeholder="Pérez"
-                    />
-                  </div>
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 mb-2">
+                    Nombre Completo *
+                  </label>
+                  <input
+                    type="text"
+                    value={newStudent.fullname}
+                    onChange={(e) =>
+                      setNewStudent({
+                        ...newStudent,
+                        fullname: e.target.value,
+                      })
+                    }
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-700"
+                    placeholder="Ej: Juan Pérez"
+                  />
                 </div>
 
                 <div>
                   <label className="block text-sm font-semibold text-gray-700 mb-2">
-                    Especialización *
+                    Nivel del Estudiante *
                   </label>
                   <input
                     type="text"
@@ -193,25 +299,7 @@ export default function GestionEstudiantes() {
                       })
                     }
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-700"
-                    placeholder="Ej: Desarrollo de Software, Ciencia de Datos..."
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">
-                    Breve Descripción *
-                  </label>
-                  <textarea
-                    value={newStudent.description}
-                    onChange={(e) =>
-                      setNewStudent({
-                        ...newStudent,
-                        description: e.target.value,
-                      })
-                    }
-                    rows={3}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-700 resize-none"
-                    placeholder="Describe brevemente la trayectoria o logros del estudiante..."
+                    placeholder="Ej: 4to semestre, Egresado, etc."
                   />
                 </div>
 
@@ -224,7 +312,7 @@ export default function GestionEstudiantes() {
                     type="text"
                     value={newStudent.videoUrl}
                     onChange={(e) =>
-                      setNewStudent({ ...newStudent, videoUrl: e.target.value })
+                      setNewStudent({ ...newStudent, videoUrl: e.target.value || "" })
                     }
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-700"
                     placeholder="https://www.youtube.com/watch?v=..."
@@ -232,21 +320,6 @@ export default function GestionEstudiantes() {
                   <p className="text-xs text-gray-500 mt-1">
                     Video de presentación o testimonio del estudiante
                   </p>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">
-                    URL de Foto (opcional)
-                  </label>
-                  <input
-                    type="text"
-                    value={newStudent.imageUrl}
-                    onChange={(e) =>
-                      setNewStudent({ ...newStudent, imageUrl: e.target.value })
-                    }
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-700"
-                    placeholder="https://..."
-                  />
                 </div>
               </div>
 
@@ -272,64 +345,63 @@ export default function GestionEstudiantes() {
           {/* Grid de Estudiantes */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {filteredStudents.map((student) => (
-              <div key={student.id} className="bg-white rounded-lg shadow border border-gray-200 overflow-hidden">
+              <div
+                key={student.id}
+                className="bg-white rounded-lg shadow border border-gray-200 overflow-hidden"
+              >
                 {editingStudent?.id === student.id ? (
                   // Modo Edición
                   <div className="p-6">
-                    <h3 className="text-lg font-bold text-gray-900 mb-4">Editar Estudiante</h3>
-                    
+                    <h3 className="text-lg font-bold text-gray-900 mb-4">
+                      Editar Estudiante
+                    </h3>
+
                     <div className="space-y-4">
                       <div>
-                        <label className="block text-xs font-semibold text-gray-700 mb-1">Nombre</label>
+                        <label className="block text-xs font-semibold text-gray-700 mb-1">
+                          Nombre Completo
+                        </label>
                         <input
                           type="text"
-                          value={editingStudent.firstName}
-                          onChange={(e) => setEditingStudent({ ...editingStudent, firstName: e.target.value })}
+                          value={editingStudent.fullname}
+                          onChange={(e) =>
+                            setEditingStudent({
+                              ...editingStudent,
+                              fullname: e.target.value,
+                            })
+                          }
                           className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-700"
                         />
                       </div>
                       <div>
-                        <label className="block text-xs font-semibold text-gray-700 mb-1">Apellido</label>
-                        <input
-                          type="text"
-                          value={editingStudent.lastName}
-                          onChange={(e) => setEditingStudent({ ...editingStudent, lastName: e.target.value })}
-                          className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-700"
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-xs font-semibold text-gray-700 mb-1">Especialización</label>
+                        <label className="block text-xs font-semibold text-gray-700 mb-1">
+                          Nivel del Estudiante
+                        </label>
                         <input
                           type="text"
                           value={editingStudent.specialty}
-                          onChange={(e) => setEditingStudent({ ...editingStudent, specialty: e.target.value })}
+                          onChange={(e) =>
+                            setEditingStudent({
+                              ...editingStudent,
+                              specialty: e.target.value,
+                            })
+                          }
                           className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-700"
                         />
                       </div>
                       <div>
-                        <label className="block text-xs font-semibold text-gray-700 mb-1">Descripción</label>
-                        <textarea
-                          value={editingStudent.description}
-                          onChange={(e) => setEditingStudent({ ...editingStudent, description: e.target.value })}
-                          rows={3}
-                          className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-700 resize-none"
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-xs font-semibold text-gray-700 mb-1">URL Video</label>
+                        <label className="block text-xs font-semibold text-gray-700 mb-1">
+                          URL Video (YouTube)
+                        </label>
                         <input
                           type="text"
                           value={editingStudent.videoUrl || ""}
-                          onChange={(e) => setEditingStudent({ ...editingStudent, videoUrl: e.target.value })}
-                          className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-700"
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-xs font-semibold text-gray-700 mb-1">URL Foto</label>
-                        <input
-                          type="text"
-                          value={editingStudent.imageUrl || ""}
-                          onChange={(e) => setEditingStudent({ ...editingStudent, imageUrl: e.target.value })}
+                          onChange={(e) =>
+                            setEditingStudent({
+                              ...editingStudent,
+                              videoUrl: e.target.value,
+                            })
+                          }
                           className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-700"
                         />
                       </div>
@@ -357,35 +429,33 @@ export default function GestionEstudiantes() {
                   <>
                     <div className="p-6">
                       <div className="text-center mb-4">
-                        {student.imageUrl ? (
-                          <img
-                            src={student.imageUrl}
-                            alt={`${student.firstName} ${student.lastName}`}
-                            className="w-20 h-20 rounded-full mx-auto mb-4 object-cover"
-                          />
-                        ) : (
-                          <div className="w-20 h-20 bg-gray-200 rounded-full mx-auto mb-4 flex items-center justify-center">
-                            <User className="w-10 h-10 text-gray-400" />
-                          </div>
-                        )}
+                        <div className="w-20 h-20 bg-gray-200 rounded-full mx-auto mb-4 flex items-center justify-center">
+                          <User className="w-10 h-10 text-gray-400" />
+                        </div>
                         <h3 className="font-bold text-lg text-gray-900 mb-1">
-                          {student.firstName} {student.lastName}
+                          {student.fullname}
                         </h3>
-                        <p className="text-gray-600 text-sm mb-2">{student.specialty}</p>
+                        <p className="text-gray-600 text-sm mb-2">
+                          {student.specialty}
+                        </p>
                       </div>
 
-                      <div className="space-y-3">
-                        <div>
-                          <p className="text-sm text-gray-700">{student.description}</p>
-                        </div>
-
-                        {student.videoUrl && (
-                          <div className="flex items-center gap-2 text-xs text-blue-600 bg-blue-50 p-2 rounded">
+                      {student.videoUrl && (
+                        <div className="flex flex-col items-center gap-2 text-xs text-blue-600 bg-blue-50 p-2 rounded">
+                          <div className="flex items-center gap-2">
                             <Video className="w-4 h-4" />
                             <span>Video disponible</span>
                           </div>
-                        )}
-                      </div>
+                          <a
+                            href={student.videoUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-[11px] underline"
+                          >
+                            Ver video
+                          </a>
+                        </div>
+                      )}
                     </div>
 
                     <div className="bg-gray-50 px-6 py-3 border-t border-gray-200 flex gap-2">

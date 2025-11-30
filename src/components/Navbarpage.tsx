@@ -124,7 +124,7 @@ export default function Navbar() {
                 Noticias
               </Link>
               <Link
-                to="/egresados"
+                to="/estudiantes"
                 className="text-sm text-gray-700 hover:text-gray-900 py-2"
                 onClick={() => setIsOpen(false)}
               >
