@@ -1,65 +1,111 @@
-import Navbar from '@/components/Navbarpage';
-import Footer from '@/components/Footerpage';
+import { useEffect, useState } from "react";
+import Navbar from "@/components/Navbarpage";
+import Footer from "@/components/Footerpage";
+import { supabaseCliente } from "@/services/supabaseCliente";
 
-export default function Graduates() {
-  const graduates = [
-    { id: 1, name: 'Juanito Perez', title: 'Ingeniería Civil en Computación', specialty: 'Desarrollo de Software', description: 'Trabaja en Data Analytics para empresa del sector financiero.' },
-    { id: 2, name: 'Carlita Flores', title: 'Ingeniería Civil en Computación', specialty: 'Ciencia de Datos', description: 'Lidera equipo de Data Scientists en empresa del sector financiero.' },
-    { id: 3, name: 'Camilito Bugz', title: 'Ingeniería Civil en Computación', specialty: 'Computación en la Nube', description: 'Ingeniero de sistemas en compañía de servicios tecnológicos.' },
-  ];
+interface Student {
+  id: number;
+  fullname: string;
+  specialty: string;
+  videoUrlEmbed?: string;
+}
+
+export default function Estudiantes() {
+  const [students, setStudents] = useState<Student[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchStudents = async () => {
+      try {
+        const { data, error } = await supabaseCliente
+          .from("destacados")
+          .select(
+            "id, nombre_completo, nivel_estudiante, url_video_embed"
+          )
+          .order("id", { ascending: true });
+
+        if (error) throw error;
+
+        const mapped =
+          data?.map((row: any) => ({
+            id: row.id,
+            fullname: row.nombre_completo,
+            specialty: row.nivel_estudiante,
+            videoUrlEmbed: row.url_video_embed || "",
+          })) || [];
+
+        setStudents(mapped);
+      } catch (err) {
+        console.error("Error al cargar estudiantes:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchStudents();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex flex-col bg-gray-50">
+        <Navbar />
+        <div className="flex-1 flex items-center justify-center text-gray-600">
+          Cargando estudiantes...
+        </div>
+        <Footer />
+      </div>
+    );
+  }
 
   return (
-    <div className="min-h-screen flex flex-col bg-white">
+    <div className="min-h-screen flex flex-col bg-gray-50">
       <Navbar />
 
-      <div className="bg-blue-700 text-white py-12 border-b-4 border-blue-800">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h1 className="text-4xl font-bold mb-2">Nuestros Estudiantes</h1>
-          <p className="text-blue-100">Universidad de La Serena</p>
-        </div>
+      <div className="bg-blue-700 text-white py-14 shadow-inner border-b-4 border-blue-900 text-center">
+        <h1 className="text-4xl font-bold">Estudiantes Destacados</h1>
+        <p className="text-blue-100 mt-2">
+          Conoce a nuestros estudiantes y sus testimonios
+        </p>
       </div>
 
-      <section className="py-12 bg-gray-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <p className="text-gray-700 max-w-3xl mx-auto">
-            Nuestros estudiantes son profesionales capaces de enfrentar los desafíos tecnológicos actuales con innovación y compromiso.
-          </p>
-        </div>
-      </section>
-
-      <section className="py-16 bg-white">
+      <div className="flex-1 py-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-3xl font-bold text-gray-900 mb-12">Conoce a nuestros profesionales</h2>
+          {students.length === 0 ? (
+            <div className="text-center py-12 bg-white rounded-lg shadow border border-gray-200">
+              <p className="text-gray-500">No hay estudiantes disponibles.</p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {students.map((student) => (
+                <div
+                  key={student.id}
+                  className="bg-white shadow rounded-xl border border-gray-200 overflow-hidden"
+                >
+                  <div className="p-6 text-center">
+                    <h3 className="text-xl font-bold text-gray-900 mb-1">
+                      {student.fullname}
+                    </h3>
+                    <p className="text-gray-600 text-sm mb-4">
+                      {student.specialty}
+                    </p>
+                  </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
-            {graduates.map((grad) => (
-              <div key={grad.id} className="bg-white rounded-lg p-6 border border-gray-200 hover:shadow-lg transition flex flex-col items-center">
-                <div className="text-center mb-4">
-                  <img
-                    src={`https://images.unsplash.com/photo-${grad.id % 2 === 0 ? '1438761681033-6461ffad8d80' : '1507003211169-0a1dd7228f2d'}?w=150&h=150&fit=crop`}
-                    alt={grad.name}
-                    className="w-20 h-20 rounded-full mx-auto mb-4 object-cover"
-                  />
-                  <h3 className="font-bold text-lg text-gray-900 mb-1">{grad.name}</h3>
-                  <p className="text-gray-600 text-sm mb-2">{grad.title}</p>
+                  {student.videoUrlEmbed && (
+                    <div className="w-full aspect-video bg-black">
+                      <iframe
+                        className="w-full h-full"
+                        src={student.videoUrlEmbed}
+                        allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
+                        allowFullScreen
+                      ></iframe>
+                    </div>
+                  )}
                 </div>
-                <div className="space-y-3">
-                  <div>
-                    <p className="text-xs font-semibold text-gray-700 mb-1">Especialización:</p>
-                    <p className="text-sm text-gray-600">{grad.specialty}</p>
-                  </div>
-                  <p className="text-sm text-gray-700">{grad.description}</p>
-                  <div className="flex gap-2 justify-center">
-                   <button className="px-3 py-2 text-blue-600 hover:text-blue-700 text-sm font-semibold border border-blue-600 rounded hover:bg-blue-50 transition">
-                     Conócelo
-                    </button>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          )}
         </div>
-      </section>
+      </div>
 
       <Footer />
     </div>
