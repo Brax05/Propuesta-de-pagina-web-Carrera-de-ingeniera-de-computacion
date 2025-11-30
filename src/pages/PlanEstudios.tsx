@@ -1,8 +1,10 @@
 import { useState } from 'react';
 import Navbar from '@/components/Navbarpage';
 import Footer from '@/components/Footerpage';
+//import LogoULS from '@/assets/icons/logo.png';
+//import Sct from '@/assets/icons/sct.png';
 
-//aaaaa
+
 
 export default function StudyPlan() {
   const semestres = [
@@ -295,11 +297,17 @@ export default function StudyPlan() {
   const closeModal = () => setSelectedCourse(null);
   // Siempre devuelve un string[]
   const highlightedPrereqs: string[] = hoveredCourse && prereqs[hoveredCourse] ? prereqs[hoveredCourse] : [];
+
+  const siguientesAsignaturas: string[] = hoveredCourse 
+  ? Object.entries(prereqs)
+      .filter(([, reqs]) => reqs.includes(hoveredCourse))
+      .map(([asig]) => asig)
+  : [];
+  
   
   return (
     <div className="min-h-screen flex flex-col bg-white">
       <Navbar />
-
       <div className="bg-gray-900 text-white py-8 border-b-4 border-gray-700">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <h1 className="text-2xl font-bold">Plan de Estudios</h1>
@@ -324,44 +332,49 @@ export default function StudyPlan() {
               </div>
             </div>
           </div>
-
+          
           <div className="w-max mx-auto grid grid-cols-1 lg:grid-cols-10 gap-4 mb-8">
             {semestres.map((sem, idx) => (
               <div key={idx} className="w-[175px]">
                 <div className="bg-blue-700 text-white p-2 rounded text-center font-bold text-base mb-2">
                   {sem.numero}° Semestre
-                </div>
-                <div className="space-y-2">
-                  {sem.curso.map((course, idx2) => {
-                    const isPrereq = highlightedPrereqs.includes(course);
-                    return (
+                  </div>
+                  <div className="space-y-2">
+                    {sem.curso.map((course, idx2) => {
+                      const isPrereq = highlightedPrereqs.includes(course);
+                      const isSiguiente = siguientesAsignaturas.includes(course);
+                      return (
                       <div
-                        key={idx2}
-                        onMouseEnter={() => setHoveredCourse(course)}
-                        onMouseLeave={() => setHoveredCourse(null)}
-                        onClick={() => setSelectedCourse(course)}
-                        className={`p-2 rounded text-xs text-gray-800 text-center font-medium transition-colors duration-100 ${
-                          course.startsWith("Ampliando la mirada")
-                            ? "bg-blue-200"
-                            : isPrereq
-                              ? "bg-yellow-200"
-                              : "bg-gray-200"
-                        } ${
-                          hoveredCourse === course ? 'ring-2 ring-blue-400' : ''
-                        }`}
-                      >
-                        {course}
-                      </div>
-                    );
-                  })}
-                  {Array.from({length: maxCursos - sem.curso.length}).map((_, i) => (
-                    <div key={`vacio-${i}`} className="p-2 rounded invisible text-xs">-</div>
-                  ))}
-                </div>
-              </div>
-            ))}
-          </div>
-
+                      key={idx2}
+                      onMouseEnter={() => setHoveredCourse(course)}
+                      onMouseLeave={() => setHoveredCourse(null)}
+                      onClick={() => setSelectedCourse(course)}
+                      className={`p-2 rounded text-xs text-gray-800 text-center font-medium transition-colors duration-100
+                        ${course.startsWith("Ampliando la mirada") ? "bg-blue-200"
+                          : isPrereq ? "bg-yellow-200"
+                          : isSiguiente ? "bg-yellow-200"
+                          : "bg-gray-200"}
+                          ${hoveredCourse === course ? 'ring-2 ring-blue-400' : ''}
+                          `}
+                          >
+                            {course}
+                            </div>
+                            );
+                            })}
+                            {Array.from({length: maxCursos - sem.curso.length}).map((_, i) => (
+                              <div key={`vacio-${i}`} className="p-2 rounded invisible text-xs">-</div>
+                              ))}
+                              </div>
+                              </div>
+                            ))}
+                            </div>
+                            {/* Leyendas */}
+                            <div className="flex gap-6 items-center justify-start mt-4 mb-8">
+                              <div className="flex items-center gap-2">
+                                <div className="w-5 h-5 rounded bg-yellow-200 border border-yellow-200"></div>
+                                <span className="text-sm font-semibold text-gray-700">Prerrequisito y Asignatura Dependiente</span>
+                                </div>
+                                  </div>
           {/* Modal */}
           {showModal && selectedCourse && (
             <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center" onClick={closeModal}>
@@ -387,6 +400,9 @@ export default function StudyPlan() {
 
           <div className="mt-12 space-y-4 text-sm text-gray-700">
             <p className="border-l-4 border-blue-700 pl-4">
+              * Cada número del TEL indica un crédito, 2 créditos equivalen a una clase semanal y el máximo semestral es de 32 créditos.
+            </p>
+            <p className="border-l-4 border-blue-700 pl-4">
               * Elaborará el grado de Bachiller en Ciencias de la Ingeniería cuando apruebe todas las asignaturas hasta el nivel 4 inclusive.
             </p>
             <p className="border-l-4 border-blue-700 pl-4">
@@ -401,9 +417,7 @@ export default function StudyPlan() {
           </div>
 
           <div className="mt-8 text-center">
-            <button className="px-8 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded font-semibold transition">
-              Descargar Malla Curricular
-            </button>
+            <a href="src\assets\icons\malla.pdf" target="_blank" className="px-8 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded font-semibold transition">📄 Descargar malla (PDF)</a>
           </div>
         </div>
       </div>

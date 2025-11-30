@@ -3,6 +3,9 @@ import Navbar from '@/components/Navbarpage';
 import Footer from '@/components/Footerpage';
 import ingCivilComputacion from '@/assets/icons/ing_civil_computacion_.png';
 
+import NoticiasRecientesSection from "@/components/NoticiasRecientesSection";
+
+
 export default function Home() {
   return (
     <div className="min-h-screen flex flex-col bg-white">
@@ -34,9 +37,11 @@ export default function Home() {
                   <span>Vinculación con la industria, proyectos estudiantiles y trabajo colaborativo con el entorno regional.</span>
                 </li>
               </ul>
-              <button className="px-8 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded font-semibold transition">
-                Comunícate con nosotros
-              </button>
+              <Link to="/contacto">
+                <button className="px-8 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded font-semibold transition">
+                  Comunícate con nosotros
+                </button>
+              </Link>
             </div>
 
             {/* Columna Derecha */}
@@ -56,12 +61,11 @@ export default function Home() {
                 <p><strong>Arancel anual 2025:</strong> $4.105.000</p>
               </div>
               <div className="mt-8 space-y-3">
-                <button className="w-full px-4 py-3 bg-yellow-500 hover:bg-yellow-600 text-white font-semibold rounded transition">
-                  Ver Asignaturas
-                </button>
-                <button className="w-full px-4 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded transition">
-                  Conoce a la Facultad
-                </button>
+                <Link to="/plan-estudios">
+                  <button className="w-full px-4 py-3 bg-yellow-500 hover:bg-yellow-600 text-white font-semibold rounded transition">
+                    Ver Asignaturas
+                  </button>
+                </Link>
               </div>
             </div>
           </div>
@@ -69,48 +73,14 @@ export default function Home() {
       </section>
 
       {/* Noticias Recientes */}
-      <section className="py-16 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center mb-12">
-            <h2 className="text-3xl font-bold text-gray-900">Noticias Recientes</h2>
-            <Link to="/noticias" className="text-blue-600 hover:text-blue-700 text-sm font-semibold">
-              Ver todas →
-            </Link>
-          </div>
+      <NoticiasRecientesSection />
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {[1, 2, 3].map((i) => (
-              <div key={i} className="bg-white rounded-lg overflow-hidden shadow hover:shadow-lg transition border border-gray-200">
-                <img
-                  src={`https://images.unsplash.com/photo-1552664730-d307ca884978?w=400&h=250&fit=crop&t=${i}`}
-                  alt={`Noticia ${i}`}
-                  className="w-full h-48 object-cover"
-                />
-                <div className="p-6">
-                  <h3 className="font-bold text-lg text-gray-900 mb-2">
-                    {i === 1 ? 'Bienvenido Ing. Computación' : i === 2 ? 'Capacitación Departamento' : '¡Pronto más noticias!'}
-                  </h3>
-                  <p className="text-gray-600 text-sm">
-                    {i === 1 ? 'Conoce nuestras actividades académicas.' : i === 2 ? 'Se realizaron talleres de actualización para docentes.' : 'Mantente atento a nuestras actividades.'}
-                  </p>
-                  {i < 3 && (
-                    <Link to="#" className="text-blue-600 hover:text-blue-700 text-sm font-semibold mt-4 inline-block">
-                      Leer más
-                    </Link>
-                  )}
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Charla con Profesionales */}
+      {/* Conoce a Profesionales */}
       <section className="py-16 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center mb-12">
-            <h2 className="text-3xl font-bold text-gray-900">Charla con nuestros profesionales</h2>
-            <Link to="/academicos" className="text-blue-600 hover:text-blue-700 text-sm font-semibold">
+            <h2 className="text-3xl font-bold text-gray-900">Conoce a nuestros profesionales</h2>
+            <Link to="/estudiantes" className="text-blue-600 hover:text-blue-700 text-sm font-semibold">
               Ver todos →
             </Link>
           </div>
@@ -127,10 +97,7 @@ export default function Home() {
                 <p className="text-gray-600 text-sm mb-4">Ingeniería Civil en Computación</p>
                 <div className="flex gap-2 justify-center">
                   <button className="px-3 py-2 text-blue-600 hover:text-blue-700 text-sm font-semibold border border-blue-600 rounded hover:bg-blue-50 transition">
-                    Más Información
-                  </button>
-                  <button className="px-3 py-2 bg-blue-700 hover:bg-blue-800 text-white text-sm rounded transition">
-                    Contactar
+                    Conócelo
                   </button>
                 </div>
               </div>

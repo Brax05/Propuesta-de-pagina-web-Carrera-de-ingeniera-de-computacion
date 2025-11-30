@@ -2,12 +2,15 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { Menu, X } from "lucide-react";
 import { useAuth } from "@/hooks/AuthContext";
+import LogoNavbar from '@/assets/icons/logo.png';
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
   const { user, loading, logout } = useAuth();
-  const userLabel = user?.user_metadata?.full_name || user?.email;
+  const isAuthenticated = !!user;
+
+  const userLabel = "Mi Perfil";
 
   const toggleMenu = () => setIsOpen(!isOpen);
   const handleLogout = async () => {
@@ -29,54 +32,40 @@ export default function Navbar() {
         <div className="flex justify-between items-center h-20">
           {/* Logo */}
           <Link to="/" className="flex items-center gap-2">
-            <div className="hidden sm:block">
-              <img src="/logo.png" alt="Logo Cna ULS" className="h-[98px] w-auto object-contain flex-shrink-0" />
+            <div className="block">
+              <img 
+              src={LogoNavbar} 
+              alt="Logo ULS" 
+              className="h-[92px] w-auto object-contain flex-shrink-0" />
             </div>
           </Link>
 
-          {/* Menú */}
+          {/* Menú escritorio */}
           <div className="hidden md:flex items-center gap-8">
-            <Link
-              to="/"
-              className="text-sm text-gray-700 hover:text-gray-900 transition"
-            >
-              Inicio
-            </Link>
-            <Link
-              to="/plan-estudios"
-              className="text-sm text-gray-700 hover:text-gray-900 transition"
-            >
-              Plan de Estudios
-            </Link>
-            <Link
-              to="/noticias"
-              className="text-sm text-gray-700 hover:text-gray-900 transition"
-            >
-              Noticias
-            </Link>
-            <Link
-              to="/estudiantes"
-              className="text-sm text-gray-700 hover:text-gray-900 transition"
-            >
-              Nuestros Estudiantes
-            </Link>
-            <Link
-              to="/contacto"
-              className="text-sm text-gray-700 hover:text-gray-900 transition"
-            >
-              Contacto
-            </Link>
+            <Link to="/" className="text-sm text-gray-700 hover:text-gray-900 transition">Inicio</Link>
+            <Link to="/plan-estudios" className="text-sm text-gray-700 hover:text-gray-900 transition">Plan de Estudios</Link>
+            <Link to="/noticias" className="text-sm text-gray-700 hover:text-gray-900 transition">Noticias</Link>
+            <Link to="/estudiantes" className="text-sm text-gray-700 hover:text-gray-900 transition">Nuestros Estudiantes</Link>
+            <Link to="/contacto" className="text-sm text-gray-700 hover:text-gray-900 transition">Contacto</Link>
+            {isAuthenticated && (
+              <Link to="/cec" className="text-sm text-gray-700 hover:text-gray-900 transition font-semibold">
+                CEC
+              </Link>
+            )}
           </div>
 
           {/* Botones de autenticación */}
           <div className="hidden md:flex items-center gap-4">
             {loading ? (
               <span className="text-sm text-gray-500">Verificando sesión…</span>
-            ) : user ? (
+            ) : isAuthenticated ? (
               <>
-                <span className="text-sm text-gray-700 truncate max-w-[160px]">
+                <Link
+                  to="/dashboard/perfil"
+                  className="text-sm text-gray-700 hover:text-gray-900 truncate max-w-[160px] transition underline"
+                >
                   {userLabel}
-                </span>
+                </Link>
                 <button
                   onClick={handleLogout}
                   disabled={isLoggingOut}
@@ -103,13 +92,13 @@ export default function Navbar() {
             )}
           </div>
 
-          {/* Menú Botón Mobile */}
+          {/* Menú Botón Móvil */}
           <button onClick={toggleMenu} className="md:hidden text-gray-700">
             {isOpen ? <X size={24} /> : <Menu size={24} />}
           </button>
         </div>
 
-        {/* Menú Mobile */}
+        {/* Menú Móvil */}
         {isOpen && (
           <div className="md:hidden pb-4 border-t border-gray-200">
             <div className="flex flex-col gap-2 pt-4">
@@ -135,7 +124,7 @@ export default function Navbar() {
                 Noticias
               </Link>
               <Link
-                to="/egresados"
+                to="/estudiantes"
                 className="text-sm text-gray-700 hover:text-gray-900 py-2"
                 onClick={() => setIsOpen(false)}
               >
@@ -148,14 +137,29 @@ export default function Navbar() {
               >
                 Contacto
               </Link>
+              {isAuthenticated && (
+                <Link
+                  to="/cec"
+                  className="text-sm text-gray-700 hover:text-gray-900 py-2"
+                  onClick={() => setIsOpen(false)}
+                >
+                  CEC
+                </Link>
+              )}
               <div className="border-t border-gray-200 pt-3 mt-3">
                 {loading ? (
                   <span className="text-sm text-gray-500">
                     Verificando sesión…
                   </span>
-                ) : user ? (
+                ) : isAuthenticated ? (
                   <div className="flex flex-col gap-2">
-                    <p className="text-sm text-gray-700">{userLabel}</p>
+                    <Link
+                      to="/dashboard/perfil"
+                      className="text-sm text-gray-700 hover:text-gray-900 transition underline block mb-2"
+                      onClick={() => setIsOpen(false)}
+                    >
+                      {userLabel}
+                    </Link>
                     <button
                       onClick={handleLogout}
                       disabled={isLoggingOut}
