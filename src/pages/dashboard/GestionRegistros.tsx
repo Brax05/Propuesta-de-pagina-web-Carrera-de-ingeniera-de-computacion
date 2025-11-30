@@ -205,7 +205,7 @@ if (loading) {
       <div className="bg-blue-700 text-white py-12 border-b-4 border-blue-800">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <Link
-            to="/perfil"
+            to="/dashboard/perfil"
             className="inline-flex items-center text-blue-100 hover:text-white mb-4 text-sm"
           >
             <ArrowLeft className="w-4 h-4 mr-2" />
