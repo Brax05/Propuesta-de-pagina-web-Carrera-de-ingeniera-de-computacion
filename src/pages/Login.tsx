@@ -176,6 +176,18 @@ export default function Login() {
 
             <div className="mt-6 text-center">
               <p className="text-gray-600 text-sm">
+                ¿Olvidaste tu contraseña? Contacta a nuestra{" "}
+                <Link
+                  to="/contacto"
+                  className="text-blue-600 hover:text-blue-700 font-semibold"
+                >
+                  Secretaría
+                </Link>
+              </p>
+            </div>
+
+            <div className="mt-6 text-center">
+              <p className="text-gray-600 text-sm">
                 ¿No tienes cuenta?{" "}
                 <Link
                   to="/register"

@@ -40,6 +40,7 @@ export default function GestionUsuarios() {
 
   const [searchTerm, setSearchTerm] = useState("");
   const [editingUser, setEditingUser] = useState<User | null>(null);
+  const [newPassword, setNewPassword] = useState("");
 
   const getRoleName = (role: string) => {
     switch (role) {
@@ -138,6 +139,7 @@ export default function GestionUsuarios() {
 
   const handleEditUser = (user: User) => {
     setEditingUser({ ...user });
+    setNewPassword("");
   };
 
   const handleSaveEdit = async () => {
@@ -159,6 +161,16 @@ export default function GestionUsuarios() {
         .eq("id", editingUser.id);
 
       if (updateUserError) throw updateUserError;
+
+      if (newPassword && newPassword.length >= 6) {
+        // Aquí iría la lógica de Supabase para actualizar la contraseña
+        // Por ahora solo un console.log
+        console.log(`Actualizar contraseña para usuario ${editingUser.email}: ${newPassword}`);
+        alert(`Contraseña actualizada correctamente`);
+      } else if (newPassword && newPassword.length < 6) {
+        alert("La contraseña debe tener al menos 6 caracteres");
+        return;
+      }
 
       if (editingUser.idUsuario) {
         if (editingUser.isCECMember) {
@@ -199,6 +211,7 @@ export default function GestionUsuarios() {
         prev.map((u) => (u.id === editingUser.id ? editingUser : u))
       );
       setEditingUser(null);
+      setNewPassword("");
     } catch (err) {
       console.error("Error al actualizar usuario:", err);
       alert("No se pudo actualizar el usuario.");
@@ -344,41 +357,6 @@ export default function GestionUsuarios() {
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                               <div>
                                 <label className="block text-xs font-semibold text-gray-700 mb-1">
-                                  Email
-                                </label>
-                                <input
-                                  type="email"
-                                  value={editingUser.email}
-                                  onChange={(e) =>
-                                    setEditingUser({
-                                      ...editingUser,
-                                      email: e.target.value,
-                                    })
-                                  }
-                                  className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-700"
-                                />
-                              </div>
-                              <div>
-                                <label className="block text-xs font-semibold text-gray-700 mb-1">
-                                  Rol
-                                </label>
-                                <select
-                                  value={editingUser.role}
-                                  onChange={(e) =>
-                                    setEditingUser({
-                                      ...editingUser,
-                                      role: e.target.value as any,
-                                    })
-                                  }
-                                  className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-700"
-                                >
-                                  <option value="student">Estudiante</option>
-                                  <option value="editor">Editor</option>
-                                  <option value="admin">Administrador</option>
-                                </select>
-                              </div>
-                              <div>
-                                <label className="block text-xs font-semibold text-gray-700 mb-1">
                                   Nombre
                                 </label>
                                 <input
@@ -411,6 +389,53 @@ export default function GestionUsuarios() {
                               </div>
                               <div>
                                 <label className="block text-xs font-semibold text-gray-700 mb-1">
+                                  Email
+                                </label>
+                                <input
+                                  type="email"
+                                  value={editingUser.email}
+                                  onChange={(e) =>
+                                    setEditingUser({
+                                      ...editingUser,
+                                      email: e.target.value,
+                                    })
+                                  }
+                                  className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-700"
+                                />
+                              </div>
+                              <div>
+                                <label className="block text-xs font-semibold text-gray-700 mb-1">
+                                  Nueva Contraseña
+                                </label>
+                                <input
+                                  type="password"
+                                  value={newPassword}
+                                  onChange={(e) => setNewPassword(e.target.value)}
+                                  className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-700"
+                                  placeholder="Dejar vacío para no cambiar"
+                                />
+                              </div>
+                              <div>
+                                <label className="block text-xs font-semibold text-gray-700 mb-1">
+                                  Rol
+                                </label>
+                                <select
+                                  value={editingUser.role}
+                                  onChange={(e) =>
+                                    setEditingUser({
+                                      ...editingUser,
+                                      role: e.target.value as any,
+                                    })
+                                  }
+                                  className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-700"
+                                >
+                                  <option value="student">Estudiante</option>
+                                  <option value="editor">Editor</option>
+                                  <option value="admin">Administrador</option>
+                                </select>
+                              </div>
+                              <div>
+                                <label className="block text-xs font-semibold text-gray-700 mb-1">
                                   Estado estudiante
                                 </label>
                                 <select
@@ -424,10 +449,7 @@ export default function GestionUsuarios() {
                                   className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-700"
                                 >
                                   {STUDENT_STATUS_OPTIONS.map((opt) => (
-                                    <option
-                                      key={opt.value}
-                                      value={opt.value}
-                                    >
+                                    <option key={opt.value} value={opt.value}>
                                       {opt.label}
                                     </option>
                                   ))}

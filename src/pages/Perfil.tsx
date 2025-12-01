@@ -401,10 +401,10 @@ export default function Perfil() {
                         </div>
                       </div>
                       <h3 className="text-lg font-bold text-gray-900 mb-2">
-                        Edición de Estudiantes
+                        Edición de Testimonios
                       </h3>
                       <p className="text-sm text-gray-600 mb-4">
-                        Gestiona perfiles de estudiantes
+                        Gestiona testimonios públicos de estudiantes
                       </p>
                       <span className="text-sm text-blue-600 font-semibold group-hover:text-blue-700">
                         Ir al módulo →
