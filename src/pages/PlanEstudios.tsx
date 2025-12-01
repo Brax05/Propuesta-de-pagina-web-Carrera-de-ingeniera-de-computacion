@@ -417,7 +417,10 @@ export default function StudyPlan() {
           </div>
 
           <div className="mt-8 text-center">
-            <a href="src\assets\icons\malla.pdf" target="_blank" className="px-8 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded font-semibold transition">📄 Descargar malla (PDF)</a>
+            <a href="src\assets\icons\malla_ingenieria_computacion_nueva.pdf" target="_blank" className="px-8 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded font-semibold transition">📄 Descargar malla Ing. Civil(PDF)</a>
+          </div>
+          <div className="mt-8 text-center">
+            <a href="src\assets\icons\malla_ingenieria_computacion_antigua.pdf" target="_blank" className="px-8 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded font-semibold transition">📄 Descargar malla Ing.(PDF)</a>
           </div>
         </div>
       </div>
