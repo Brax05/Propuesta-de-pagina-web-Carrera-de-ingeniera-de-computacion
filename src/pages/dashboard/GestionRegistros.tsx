@@ -15,8 +15,6 @@ interface PendingUser {
   estado_registro: "pendiente" | "aprobado" | "rechazado";
 }
 
-
-
 export default function GestionRegistros() {
   const [pendingUsers, setPendingUsers] = useState<PendingUser[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
@@ -44,8 +42,6 @@ export default function GestionRegistros() {
           correo_usuario: row.correo_usuario,
           nombres: row.nombres ?? "",
           apellidos: row.apellidos ?? "",
-          // Como no tenemos created_at, usamos “ahora” como fecha de registro
-          // (si luego agregas una columna timestamp, la pones aquí).
           fecha_registro: new Date().toISOString(),
           estado_registro: "pendiente" as const,
         })) ?? [];
@@ -74,7 +70,6 @@ export default function GestionRegistros() {
 
       if (error) throw error;
 
-      // Actualizamos sólo el estado de UI (para estadísticas / filtros)
       setPendingUsers((prevUsers) =>
         prevUsers.map((user) =>
           user.id_usuario === userId
@@ -91,7 +86,6 @@ export default function GestionRegistros() {
       setProcessingId(null);
     }
   };
-
 
   const handleReject = async (userId: string) => {
     if (
@@ -124,7 +118,6 @@ export default function GestionRegistros() {
       setProcessingId(null);
     }
   };
-
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
@@ -170,7 +163,6 @@ export default function GestionRegistros() {
     (u) => u.estado_registro === "pendiente"
   ).length;
   
-  // Calcular procesados en los últimos 7 días
   const oneWeekAgo = new Date();
   oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
   
@@ -188,15 +180,32 @@ export default function GestionRegistros() {
   ).length;
   const totalProcessedThisWeek = processedThisWeek.length;
 
-if (loading) {
-  return (
-    <div className="min-h-screen flex flex-col bg-gray-50">
-      <Navbar />
-      <LoadingSpinner message="Cargando registros..." />
-      <Footer />
-    </div>
-  );
-}
+  if (loading) {
+    return (
+      <div className="min-h-screen flex flex-col bg-gray-50">
+        <Navbar />
+        <div className="bg-blue-700 text-white py-12 border-b-4 border-blue-800">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <Link
+              to="/dashboard/perfil"
+              className="inline-flex items-center text-blue-100 hover:text-white mb-4 text-sm"
+            >
+              <ArrowLeft className="w-4 h-4 mr-2" />
+              Volver al Perfil
+            </Link>
+            <h1 className="text-4xl font-bold mb-2">Gestión de Registros</h1>
+            <p className="text-blue-100">
+              Revisa y aprueba nuevas solicitudes de registro
+            </p>
+          </div>
+        </div>
+        <div className="flex-1 flex items-center justify-center">
+          <LoadingSpinner message="Cargando registros..." fullScreen={false} />
+        </div>
+        <Footer />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen flex flex-col bg-gray-50">

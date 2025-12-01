@@ -2,8 +2,9 @@ import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import Navbar from "@/components/Navbarpage";
 import Footer from "@/components/Footerpage";
+import LoadingSpinner from "@/components/LoadingSpinner";
 import { supabaseCliente } from "@/services/supabaseCliente";
-import { ArrowLeft, Calendar, MapPin, Loader2, Star } from "lucide-react";
+import { ArrowLeft, Calendar, MapPin, Star } from "lucide-react";
 import { useAuth } from "@/hooks/AuthContext"; 
 
 interface NewsDetail {
@@ -72,7 +73,6 @@ export default function NoticiaDetalle() {
     fetchNewsById();
   }, [authLoading, session, id]);
 
-
   return (
     <div className="min-h-screen flex flex-col bg-white">
       <Navbar />
@@ -95,10 +95,7 @@ export default function NoticiaDetalle() {
       <main className="flex-1 py-10">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           {loadingNews && (
-            <div className="flex items-center justify-center py-16 text-gray-500 gap-2">
-              <Loader2 className="w-5 h-5 animate-spin" />
-              <span>Cargando noticia…</span>
-            </div>
+            <LoadingSpinner message="Cargando noticia..." size="md" fullScreen={false} />
           )}
 
           {error && (
@@ -146,7 +143,6 @@ export default function NoticiaDetalle() {
                 )}
 
                 <div className="prose max-w-none text-gray-800">
-                  {/* si en el futuro guardan HTML, acá se puede usar dangerouslySetInnerHTML */}
                   {news.content.split("\n").map((p, i) => (
                     <p key={i} className="mb-4">
                       {p}

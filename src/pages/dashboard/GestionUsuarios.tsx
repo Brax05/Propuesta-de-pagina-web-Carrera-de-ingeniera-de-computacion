@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import Navbar from "@/components/Navbarpage";
 import Footer from "@/components/Footerpage";
+import LoadingSpinner from "@/components/LoadingSpinner";
 import {
   ArrowLeft,
   Search,
@@ -87,7 +88,6 @@ export default function GestionUsuarios() {
     }
   };
 
-  // 1) Leer usuarios desde Supabase (usuarios + miembros_cec)
   useEffect(() => {
     const fetchUsers = async () => {
       try {
@@ -140,7 +140,6 @@ export default function GestionUsuarios() {
     setEditingUser({ ...user });
   };
 
-  // 2) Guardar cambios -> UPDATE en usuarios + INSERT/UPDATE/DELETE en miembros_cec
   const handleSaveEdit = async () => {
     if (!editingUser) return;
 
@@ -161,7 +160,6 @@ export default function GestionUsuarios() {
 
       if (updateUserError) throw updateUserError;
 
-      // membresía CEC
       if (editingUser.idUsuario) {
         if (editingUser.isCECMember) {
           if (!hadCECBefore) {
@@ -207,7 +205,6 @@ export default function GestionUsuarios() {
     }
   };
 
-  // 3) Eliminar usuario -> DELETE en miembros_cec y usuarios
   const handleDeleteUser = async (id: number) => {
     if (!window.confirm("¿Estás seguro de eliminar este usuario?")) return;
 
@@ -241,6 +238,35 @@ export default function GestionUsuarios() {
       user.firstName.toLowerCase().includes(searchTerm.toLowerCase()) ||
       user.lastName.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
+  if (loadingList) {
+    return (
+      <div className="min-h-screen flex flex-col bg-gray-50">
+        <Navbar />
+        <div className="bg-blue-700 text-white py-12 border-b-4 border-blue-800">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <Link
+              to="/dashboard/perfil"
+              className="inline-flex items-center text-blue-100 hover:text-white mb-4 text-sm"
+            >
+              <ArrowLeft className="w-4 h-4 mr-2" />
+              Volver al Perfil
+            </Link>
+            <h1 className="text-4xl font-bold mb-2">
+              Gestión de Usuarios y Roles
+            </h1>
+            <p className="text-blue-100">
+              Edita roles, estado de estudiante y membresías CEC
+            </p>
+          </div>
+        </div>
+        <div className="flex-1 flex items-center justify-center">
+          <LoadingSpinner message="Cargando usuarios..." fullScreen={false} />
+        </div>
+        <Footer />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen flex flex-col bg-gray-50">
@@ -280,11 +306,6 @@ export default function GestionUsuarios() {
             </div>
           </div>
 
-          {loadingList && (
-            <div className="mb-4 text-sm text-gray-500">
-              Cargando usuarios…
-            </div>
-          )}
           {loadError && (
             <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded text-sm text-red-700">
               {loadError}
@@ -543,7 +564,7 @@ export default function GestionUsuarios() {
             </div>
           </div>
 
-          {filteredUsers.length === 0 && !loadingList && (
+          {filteredUsers.length === 0 && (
             <div className="text-center py-12">
               <UsersIcon className="w-12 h-12 text-gray-400 mx-auto mb-4" />
               <p className="text-gray-500">No se encontraron usuarios</p>
@@ -555,4 +576,4 @@ export default function GestionUsuarios() {
       <Footer />
     </div>
   );
-}     
+}

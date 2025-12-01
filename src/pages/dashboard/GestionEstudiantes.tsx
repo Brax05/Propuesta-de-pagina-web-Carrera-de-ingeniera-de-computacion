@@ -2,17 +2,7 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import Navbar from "@/components/Navbarpage";
 import Footer from "@/components/Footerpage";
-import {
-  ArrowLeft,
-  Search,
-  Edit,
-  Trash2,
-  Plus,
-  Save,
-  X,
-  User,
-  Video,
-} from "lucide-react";
+import { ArrowLeft, Search, Edit, Trash2, Plus, Save, X, User, Video } from "lucide-react";
 import { supabaseCliente } from "@/services/supabaseCliente";
 
 interface Student {

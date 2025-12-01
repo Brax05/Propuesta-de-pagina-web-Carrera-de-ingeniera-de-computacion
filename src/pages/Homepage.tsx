@@ -94,7 +94,7 @@ export default function Home() {
                   className="w-24 h-24 rounded-full mx-auto mb-4 object-cover"
                 />
                 <h3 className="font-bold text-gray-900 mb-1">{name}</h3>
-                <p className="text-gray-600 text-sm mb-4">Ingeniería Civil en Computación</p>
+                <p className="text-gray-600 text-sm mb-4">Egresado 2023</p>
                 <div className="flex gap-2 justify-center">
                   <button className="px-3 py-2 text-blue-600 hover:text-blue-700 text-sm font-semibold border border-blue-600 rounded hover:bg-blue-50 transition">
                     Conócelo

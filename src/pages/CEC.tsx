@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import Navbar from "@/components/Navbarpage";
 import Footer from "@/components/Footerpage";
+import LoadingSpinner from "@/components/LoadingSpinner";
 import { supabaseCliente } from "@/services/supabaseCliente";
 
 type CECMember = {
@@ -57,6 +58,18 @@ export default function CEC() {
     fetchCEC();
   }, []);
 
+  if (loading) {
+    return (
+      <div className="min-h-screen flex flex-col bg-gray-50">
+        <Navbar />
+        <div className="flex-1">
+          <LoadingSpinner message="Cargando miembros del CEC..." fullScreen={false} />
+        </div>
+        <Footer />
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen flex flex-col bg-gray-50">
       <Navbar />
@@ -72,17 +85,13 @@ export default function CEC() {
 
       <main className="flex-1 py-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          {loading && (
-            <p className="text-sm text-gray-500 mb-6">Cargando miembros…</p>
-          )}
-
           {loadError && (
             <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded text-sm text-red-700">
               {loadError}
             </div>
           )}
 
-          {!loading && cecMembers.length === 0 && !loadError && (
+          {cecMembers.length === 0 && !loadError && (
             <p className="text-center text-gray-500">
               Aún no hay miembros registrados en el CEC.
             </p>

@@ -3,7 +3,8 @@ import { Link } from "react-router-dom";
 import { supabaseCliente } from "@/services/supabaseCliente";
 import Navbar from "@/components/Navbarpage";
 import Footer from "@/components/Footerpage";
-import {ArrowLeft,Search,Edit,Trash2,Plus,Save,X,Star,Calendar,MapPin,} from "lucide-react";
+import LoadingSpinner from "@/components/LoadingSpinner";
+import { ArrowLeft, Search, Edit, Trash2, Plus, Save, X, Star, Calendar, MapPin,} from "lucide-react";
 
 interface News {
   id: number;
@@ -315,6 +316,32 @@ export default function GestionNoticias() {
       news.previewDescription.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
+  if (loadingList) {
+    return (
+      <div className="min-h-screen flex flex-col bg-gray-50">
+        <Navbar />
+        <div className="bg-blue-700 text-white py-12 border-b-4 border-blue-800">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <Link
+              to="/dashboard/perfil"
+              className="inline-flex items-center text-blue-100 hover:text-white mb-4 text-sm"
+            >
+              <ArrowLeft className="w-4 h-4 mr-2" />
+              Volver al Perfil
+            </Link>
+            <h1 className="text-4xl font-bold mb-2">Edición de Noticias</h1>
+            <p className="text-blue-100">
+              Crea, edita y gestiona las noticias de la escuela
+            </p>
+          </div>
+        </div>
+        <div className="flex-1 flex items-center justify-center">
+          <LoadingSpinner message="Cargando noticias..." fullScreen={false} />
+        </div>
+        <Footer />
+      </div>
+    );
+  }
   return (
     <div className="min-h-screen flex flex-col bg-gray-50">
       <Navbar />
@@ -357,7 +384,7 @@ export default function GestionNoticias() {
             </button>
           </div>
 
-          {/* Mensajes de carga / error */}
+          {/* Mensajes de error */}
           {loadingList && (
             <div className="mb-6 text-gray-500 text-sm">Cargando noticias…</div>
           )}
