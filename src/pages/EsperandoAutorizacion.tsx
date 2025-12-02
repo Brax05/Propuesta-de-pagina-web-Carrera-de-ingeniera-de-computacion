@@ -26,7 +26,7 @@ export default function EsperandoAutorizacion() {
       <main className="flex-1 flex items-center justify-center px-4 py-16">
         <div className="bg-white border border-gray-200 shadow-lg rounded-xl p-8 max-w-lg w-full text-center">
           <p className="text-lg font-semibold text-gray-900 mb-4">
-            esperando autorizacion del administrador
+            Esperando autorización del administrador
           </p>
           <p className="text-gray-600 mb-8">
             Tu registro fue recibido. Cuando un administrador lo apruebe podrás
@@ -36,7 +36,7 @@ export default function EsperandoAutorizacion() {
             className="inline-block px-4 py-2 rounded-lg bg-blue-700 text-white font-semibold hover:bg-blue-800 transition"
             onClick={handleLogout}
           >
-            Cerrar Sesion
+            Cerrar Sesión
           </button>
         </div>
       </main>

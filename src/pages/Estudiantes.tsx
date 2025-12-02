@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import Navbar from "@/components/Navbarpage";
 import Footer from "@/components/Footerpage";
+import LoadingSpinner from "@/components/LoadingSpinner";
 import { supabaseCliente } from "@/services/supabaseCliente";
 
 interface Student {
@@ -49,8 +50,8 @@ export default function Estudiantes() {
     return (
       <div className="min-h-screen flex flex-col bg-gray-50">
         <Navbar />
-        <div className="flex-1 flex items-center justify-center text-gray-600">
-          Cargando estudiantes...
+        <div className="flex-1">
+          <LoadingSpinner message="Cargando estudiantes..." fullScreen={false} />
         </div>
         <Footer />
       </div>
@@ -62,7 +63,7 @@ export default function Estudiantes() {
       <Navbar />
 
       <div className="bg-blue-700 text-white py-14 shadow-inner border-b-4 border-blue-900 text-center">
-        <h1 className="text-4xl font-bold">Estudiantes Destacados</h1>
+        <h1 className="text-4xl font-bold">Nuestros Estudiantes</h1>
         <p className="text-blue-100 mt-2">
           Conoce a nuestros estudiantes y sus testimonios
         </p>

@@ -2,17 +2,7 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import Navbar from "@/components/Navbarpage";
 import Footer from "@/components/Footerpage";
-import {
-  ArrowLeft,
-  Search,
-  Edit,
-  Trash2,
-  Plus,
-  Save,
-  X,
-  User,
-  Video,
-} from "lucide-react";
+import { ArrowLeft, Search, Edit, Trash2, Plus, Save, X, User, Video } from "lucide-react";
 import { supabaseCliente } from "@/services/supabaseCliente";
 
 interface Student {
@@ -229,9 +219,9 @@ export default function GestionEstudiantes() {
             <ArrowLeft className="w-4 h-4 mr-2" />
             Volver al Perfil
           </Link>
-          <h1 className="text-4xl font-bold mb-2">Edición de Estudiantes</h1>
+          <h1 className="text-4xl font-bold mb-2">Edición de Testimonios</h1>
           <p className="text-blue-100">
-            Gestiona los perfiles de estudiantes que aparecen en el sitio
+            Gestiona los perfiles y testimonios en video que serán publicados en "Nuestros Estudiantes"
           </p>
         </div>
       </div>

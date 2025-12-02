@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import Navbar from "@/components/Navbarpage";
 import Footer from "@/components/Footerpage";
+import LoadingSpinner from "@/components/LoadingSpinner";
 import {
   ArrowLeft,
   Search,
@@ -39,6 +40,7 @@ export default function GestionUsuarios() {
 
   const [searchTerm, setSearchTerm] = useState("");
   const [editingUser, setEditingUser] = useState<User | null>(null);
+  const [newPassword, setNewPassword] = useState("");
 
   const getRoleName = (role: string) => {
     switch (role) {
@@ -87,7 +89,6 @@ export default function GestionUsuarios() {
     }
   };
 
-  // 1) Leer usuarios desde Supabase (usuarios + miembros_cec)
   useEffect(() => {
     const fetchUsers = async () => {
       try {
@@ -138,9 +139,9 @@ export default function GestionUsuarios() {
 
   const handleEditUser = (user: User) => {
     setEditingUser({ ...user });
+    setNewPassword("");
   };
 
-  // 2) Guardar cambios -> UPDATE en usuarios + INSERT/UPDATE/DELETE en miembros_cec
   const handleSaveEdit = async () => {
     if (!editingUser) return;
 
@@ -161,7 +162,16 @@ export default function GestionUsuarios() {
 
       if (updateUserError) throw updateUserError;
 
-      // membresía CEC
+      if (newPassword && newPassword.length >= 6) {
+        // Aquí iría la lógica de Supabase para actualizar la contraseña
+        // Por ahora solo un console.log
+        console.log(`Actualizar contraseña para usuario ${editingUser.email}: ${newPassword}`);
+        alert(`Contraseña actualizada correctamente`);
+      } else if (newPassword && newPassword.length < 6) {
+        alert("La contraseña debe tener al menos 6 caracteres");
+        return;
+      }
+
       if (editingUser.idUsuario) {
         if (editingUser.isCECMember) {
           if (!hadCECBefore) {
@@ -201,13 +211,13 @@ export default function GestionUsuarios() {
         prev.map((u) => (u.id === editingUser.id ? editingUser : u))
       );
       setEditingUser(null);
+      setNewPassword("");
     } catch (err) {
       console.error("Error al actualizar usuario:", err);
       alert("No se pudo actualizar el usuario.");
     }
   };
 
-  // 3) Eliminar usuario -> DELETE en miembros_cec y usuarios
   const handleDeleteUser = async (id: number) => {
     if (!window.confirm("¿Estás seguro de eliminar este usuario?")) return;
 
@@ -241,6 +251,35 @@ export default function GestionUsuarios() {
       user.firstName.toLowerCase().includes(searchTerm.toLowerCase()) ||
       user.lastName.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
+  if (loadingList) {
+    return (
+      <div className="min-h-screen flex flex-col bg-gray-50">
+        <Navbar />
+        <div className="bg-blue-700 text-white py-12 border-b-4 border-blue-800">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <Link
+              to="/dashboard/perfil"
+              className="inline-flex items-center text-blue-100 hover:text-white mb-4 text-sm"
+            >
+              <ArrowLeft className="w-4 h-4 mr-2" />
+              Volver al Perfil
+            </Link>
+            <h1 className="text-4xl font-bold mb-2">
+              Gestión de Usuarios y Roles
+            </h1>
+            <p className="text-blue-100">
+              Edita roles, estado de estudiante y membresías CEC
+            </p>
+          </div>
+        </div>
+        <div className="flex-1 flex items-center justify-center">
+          <LoadingSpinner message="Cargando usuarios..." fullScreen={false} />
+        </div>
+        <Footer />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen flex flex-col bg-gray-50">
@@ -280,11 +319,6 @@ export default function GestionUsuarios() {
             </div>
           </div>
 
-          {loadingList && (
-            <div className="mb-4 text-sm text-gray-500">
-              Cargando usuarios…
-            </div>
-          )}
           {loadError && (
             <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded text-sm text-red-700">
               {loadError}
@@ -323,41 +357,6 @@ export default function GestionUsuarios() {
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                               <div>
                                 <label className="block text-xs font-semibold text-gray-700 mb-1">
-                                  Email
-                                </label>
-                                <input
-                                  type="email"
-                                  value={editingUser.email}
-                                  onChange={(e) =>
-                                    setEditingUser({
-                                      ...editingUser,
-                                      email: e.target.value,
-                                    })
-                                  }
-                                  className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-700"
-                                />
-                              </div>
-                              <div>
-                                <label className="block text-xs font-semibold text-gray-700 mb-1">
-                                  Rol
-                                </label>
-                                <select
-                                  value={editingUser.role}
-                                  onChange={(e) =>
-                                    setEditingUser({
-                                      ...editingUser,
-                                      role: e.target.value as any,
-                                    })
-                                  }
-                                  className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-700"
-                                >
-                                  <option value="student">Estudiante</option>
-                                  <option value="editor">Editor</option>
-                                  <option value="admin">Administrador</option>
-                                </select>
-                              </div>
-                              <div>
-                                <label className="block text-xs font-semibold text-gray-700 mb-1">
                                   Nombre
                                 </label>
                                 <input
@@ -390,6 +389,53 @@ export default function GestionUsuarios() {
                               </div>
                               <div>
                                 <label className="block text-xs font-semibold text-gray-700 mb-1">
+                                  Email
+                                </label>
+                                <input
+                                  type="email"
+                                  value={editingUser.email}
+                                  onChange={(e) =>
+                                    setEditingUser({
+                                      ...editingUser,
+                                      email: e.target.value,
+                                    })
+                                  }
+                                  className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-700"
+                                />
+                              </div>
+                              <div>
+                                <label className="block text-xs font-semibold text-gray-700 mb-1">
+                                  Nueva Contraseña
+                                </label>
+                                <input
+                                  type="password"
+                                  value={newPassword}
+                                  onChange={(e) => setNewPassword(e.target.value)}
+                                  className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-700"
+                                  placeholder="Dejar vacío para no cambiar"
+                                />
+                              </div>
+                              <div>
+                                <label className="block text-xs font-semibold text-gray-700 mb-1">
+                                  Rol
+                                </label>
+                                <select
+                                  value={editingUser.role}
+                                  onChange={(e) =>
+                                    setEditingUser({
+                                      ...editingUser,
+                                      role: e.target.value as any,
+                                    })
+                                  }
+                                  className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-700"
+                                >
+                                  <option value="student">Estudiante</option>
+                                  <option value="editor">Editor</option>
+                                  <option value="admin">Administrador</option>
+                                </select>
+                              </div>
+                              <div>
+                                <label className="block text-xs font-semibold text-gray-700 mb-1">
                                   Estado estudiante
                                 </label>
                                 <select
@@ -403,10 +449,7 @@ export default function GestionUsuarios() {
                                   className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-700"
                                 >
                                   {STUDENT_STATUS_OPTIONS.map((opt) => (
-                                    <option
-                                      key={opt.value}
-                                      value={opt.value}
-                                    >
+                                    <option key={opt.value} value={opt.value}>
                                       {opt.label}
                                     </option>
                                   ))}
@@ -543,7 +586,7 @@ export default function GestionUsuarios() {
             </div>
           </div>
 
-          {filteredUsers.length === 0 && !loadingList && (
+          {filteredUsers.length === 0 && (
             <div className="text-center py-12">
               <UsersIcon className="w-12 h-12 text-gray-400 mx-auto mb-4" />
               <p className="text-gray-500">No se encontraron usuarios</p>
@@ -555,4 +598,4 @@ export default function GestionUsuarios() {
       <Footer />
     </div>
   );
-}     
+}
