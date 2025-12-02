@@ -5,12 +5,14 @@ import { supabaseCliente } from "@/services/supabaseCliente";
 
 import Navbar from "@/components/Navbarpage";
 import Footer from "@/components/Footerpage";
+import ForgotPasswordModal from "@/components/ForgotPasswordModal";
 import { User } from "@supabase/supabase-js";
 
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [isForgotPasswordOpen, setIsForgotPasswordOpen] = useState(false);
   const navigate = useNavigate();
   const { user, role, loading, refreshUserRole } = useAuth();
 
@@ -177,12 +179,12 @@ export default function Login() {
             <div className="mt-6 text-center">
               <p className="text-gray-600 text-sm">
                 ¿Olvidaste tu contraseña? Puedes hacerlo{" "}
-                <Link
-                  to="/forgot-password"
-                  className="text-blue-600 hover:text-blue-700 font-semibold"
+                <button
+                  onClick={() => setIsForgotPasswordOpen(true)}
+                  className="text-blue-600 hover:text-blue-700 font-semibold bg-none border-none cursor-pointer"
                 >
                   aquí
-                </Link>
+                </button>
               </p>
             </div>
 
@@ -202,6 +204,12 @@ export default function Login() {
       </div>
 
       <Footer />
+
+      {/* Modal de Recuperación de Contraseña */}
+      <ForgotPasswordModal
+        isOpen={isForgotPasswordOpen}
+        onClose={() => setIsForgotPasswordOpen(false)}
+      />
     </div>
   );
 }
