@@ -1,85 +1,79 @@
 import { useEffect, useState } from "react";
 import { supabaseCliente } from "../services/supabaseCliente";
 import { useNavigate } from "react-router-dom";
-
 export default function ResetPasswordPage() {
   const [newPassword, setNewPassword] = useState("");
   const [isSessionReady, setIsSessionReady] = useState(false);
   const [message, setMessage] = useState("");
   const navigate = useNavigate();
 
+  // Si la página se recarga manualmente, redirige al login para forzar flujo limpio
   useEffect(() => {
-    // FIX: Se eliminó el segundo argumento 'session' porque no se usaba
-    // y causaba error de compilación. Solo necesitamos 'event'.
-    const { data: authListener } = supabaseCliente.auth.onAuthStateChange(
-      async (event) => {
-        console.log("Evento Auth detectado:", event);
+    const navigationEntry = performance.getEntriesByType("navigation")[0] as
+      | PerformanceNavigationTiming
+      | undefined;
 
-        // PASSWORD_RECOVERY: El usuario acaba de entrar con el link mágico
-        // SIGNED_IN: El usuario ya tiene una sesión válida (por si recarga la página)
-        if (event === "PASSWORD_RECOVERY" || event === "SIGNED_IN") {
-          setIsSessionReady(true);
-        }
-      }
-    );
+    if (navigationEntry?.type === "reload") {
+      navigate("/login", { replace: true });
+    }
+  }, [navigate]);
 
-    // Limpieza al desmontar el componente
-    return () => {
-      authListener.subscription.unsubscribe();
-    };
+  // Supabase enviará un access_token en la URL.
+  // Necesitamos dejar que Supabase lo capture.
+  useEffect(() => {
+    const hash = window.location.hash;
+
+    if (hash.includes("access_token")) {
+      // Supabase automáticamente toma el token de la URL.
+      setIsSessionReady(true);
+    }
   }, []);
 
   const handleUpdate = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    if (!newPassword) return;
 
     const { error } = await supabaseCliente.auth.updateUser({
       password: newPassword,
     });
 
     if (error) {
-      console.error(error);
-      setMessage("Error: " + error.message);
+      setMessage(
+        "Hubo un error al actualizar la contraseña, contactar con secretaria."
+      );
+      setTimeout(() => {
+        navigate("/login");
+      }, 3000);
       return;
     }
 
-    setMessage("Contraseña cambiada con éxito. Redirigiendo...");
-
-    // Redirigir al login después de 3 segundos
+    setMessage("Contraseña cambiada con éxito. Ya puedes iniciar sesión.");
+    // Timer para que rediriga dsp de que salga con exito
     setTimeout(() => {
-      navigate("/login"); 
+      navigate("/");
     }, 3000);
   };
 
   if (!isSessionReady) {
-    return <div style={{ padding: 20, textAlign: 'center' }}>Verificando enlace de seguridad...</div>;
+    return <p>Cargando información de seguridad...</p>;
   }
 
   return (
-    <div style={{ minWidth: 400, margin: "50px auto", textAlign: 'center' }}>
+    <div style={{ minWidth: 400, margin: "auto" }}>
       <h2>Crear nueva contraseña</h2>
 
-      <form onSubmit={handleUpdate} style={{ display: 'flex', flexDirection: 'column', gap: 15 }}>
+      <form onSubmit={handleUpdate}>
         <input
           type="password"
-          placeholder="Escribe tu nueva contraseña"
+          placeholder="Nueva contraseña"
           value={newPassword}
           onChange={(e) => setNewPassword(e.target.value)}
           required
-          style={{ padding: 10 }}
         />
 
-        <button type="submit" style={{ padding: 10, cursor: 'pointer' }}>
-          Actualizar contraseña
-        </button>
+        <button type="submit">Actualizar contraseña</button>
       </form>
 
-      {message && (
-        <p style={{ marginTop: 20, color: message.includes("Error") ? "red" : "green" }}>
-          {message}
-        </p>
-      )}
+      {message && <p>{message}</p>}
     </div>
   );
 }
