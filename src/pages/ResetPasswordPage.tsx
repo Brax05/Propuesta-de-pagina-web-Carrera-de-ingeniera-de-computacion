@@ -9,20 +9,21 @@ export default function ResetPasswordPage() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Escuchamos los cambios de estado de autenticación
+    // FIX: Se eliminó el segundo argumento 'session' porque no se usaba
+    // y causaba error de compilación. Solo necesitamos 'event'.
     const { data: authListener } = supabaseCliente.auth.onAuthStateChange(
-      async (event, session) => {
-        console.log("Evento Auth:", event);
+      async (event) => {
+        console.log("Evento Auth detectado:", event);
 
-        // El evento PASSWORD_RECOVERY se dispara cuando el usuario entra con el link
-        // O si ya hay una sesión válida (SIGNED_IN) también nos sirve para actualizar
+        // PASSWORD_RECOVERY: El usuario acaba de entrar con el link mágico
+        // SIGNED_IN: El usuario ya tiene una sesión válida (por si recarga la página)
         if (event === "PASSWORD_RECOVERY" || event === "SIGNED_IN") {
           setIsSessionReady(true);
         }
       }
     );
 
-    // Cleanup al desmontar
+    // Limpieza al desmontar el componente
     return () => {
       authListener.subscription.unsubscribe();
     };
@@ -31,7 +32,6 @@ export default function ResetPasswordPage() {
   const handleUpdate = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Validar contraseña vacía por si acaso
     if (!newPassword) return;
 
     const { error } = await supabaseCliente.auth.updateUser({
@@ -45,18 +45,15 @@ export default function ResetPasswordPage() {
     }
 
     setMessage("Contraseña cambiada con éxito. Redirigiendo...");
-    
-    // Opcional: Cerrar sesión después de cambiarla para forzar login limpio
-    // await supabaseCliente.auth.signOut(); 
 
+    // Redirigir al login después de 3 segundos
     setTimeout(() => {
-      navigate("/login"); // O al home '/' dependiendo de tu flujo
+      navigate("/login"); 
     }, 3000);
   };
 
   if (!isSessionReady) {
-    // Puedes poner un spinner bonito aquí
-    return <div style={{ padding: 20 }}>Verificando enlace de seguridad...</div>;
+    return <div style={{ padding: 20, textAlign: 'center' }}>Verificando enlace de seguridad...</div>;
   }
 
   return (
@@ -78,7 +75,11 @@ export default function ResetPasswordPage() {
         </button>
       </form>
 
-      {message && <p style={{ marginTop: 20, color: message.includes("Error") ? "red" : "green" }}>{message}</p>}
+      {message && (
+        <p style={{ marginTop: 20, color: message.includes("Error") ? "red" : "green" }}>
+          {message}
+        </p>
+      )}
     </div>
   );
 }
