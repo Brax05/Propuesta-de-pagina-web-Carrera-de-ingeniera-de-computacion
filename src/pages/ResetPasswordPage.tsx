@@ -7,6 +7,17 @@ export default function ResetPasswordPage() {
   const [message, setMessage] = useState("");
   const navigate = useNavigate();
 
+  // Si la página se recarga manualmente, redirige al login para forzar flujo limpio
+  useEffect(() => {
+    const navigationEntry = performance.getEntriesByType("navigation")[0] as
+      | PerformanceNavigationTiming
+      | undefined;
+
+    if (navigationEntry?.type === "reload") {
+      navigate("/login", { replace: true });
+    }
+  }, [navigate]);
+
   // Supabase enviará un access_token en la URL.
   // Necesitamos dejar que Supabase lo capture.
   useEffect(() => {
@@ -26,7 +37,12 @@ export default function ResetPasswordPage() {
     });
 
     if (error) {
-      setMessage("Hubo un error al actualizar la contraseña.");
+      setMessage(
+        "Hubo un error al actualizar la contraseña, contactar con secretaria."
+      );
+      setTimeout(() => {
+        navigate("/login");
+      }, 3000);
       return;
     }
 
@@ -42,7 +58,7 @@ export default function ResetPasswordPage() {
   }
 
   return (
-    <div style={{ maxWidth: 400, margin: "auto" }}>
+    <div style={{ minWidth: 400, margin: "auto" }}>
       <h2>Crear nueva contraseña</h2>
 
       <form onSubmit={handleUpdate}>

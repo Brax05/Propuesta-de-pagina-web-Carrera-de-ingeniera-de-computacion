@@ -1,9 +1,11 @@
 import { useState } from "react";
 import { supabaseCliente } from "../services/supabaseCliente";
+import { useNavigate } from "react-router-dom";
 
 export default function ResetPage() {
   const [email, setEmail] = useState("");
   const [message, setMessage] = useState("");
+  const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -12,7 +14,9 @@ export default function ResetPage() {
     });
     if (error) {
       setMessage("Hubo un error. Intenta nuevamente.");
-      return;
+      setTimeout(() => {
+        navigate("/login");
+      }, 2000);
     }
     setMessage("Revisa tu correo para continuar con la recuperación.");
   };
