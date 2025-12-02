@@ -7,7 +7,7 @@ export default function ResetPasswordPage() {
   const [message, setMessage] = useState("");
   const navigate = useNavigate();
 
-  // Si la página se recarga manualmente, redirige al login para forzar flujo limpio
+  // Si la página se recarga manualmente, redirige al login para forzar flujo limpio v
   useEffect(() => {
     const navigationEntry = performance.getEntriesByType("navigation")[0] as
       | PerformanceNavigationTiming
