@@ -274,6 +274,15 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         userId: session?.user?.id,
       });
 
+      // Si está en la página de reset de contraseña, ignora la sesión
+      const isOnResetPage = window.location.pathname === "/reset-password";
+      if (isOnResetPage && event === "SIGNED_IN") {
+        console.log(
+          "[AuthDebug] En página de reset, ignorando sesión automática"
+        );
+        return;
+      }
+
       setSession(session);
       setUser(session?.user ?? null);
 

@@ -31,9 +31,15 @@ export default function ResetPasswordPage() {
 
     if (hash.includes("access_token")) {
       // Supabase automáticamente toma el token de la URL.
-      setIsSessionReady(true);
+      // Espera un poco para que Supabase procese el token
+      setTimeout(() => {
+        setIsSessionReady(true);
+      }, 100);
+    } else {
+      // Si no hay access_token en la URL, redirige a login
+      navigate("/login", { replace: true });
     }
-  }, []);
+  }, [navigate]);
 
   const handleUpdate = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -66,12 +72,20 @@ export default function ResetPasswordPage() {
       });
 
       if (error) {
-        setError("Hubo un error al actualizar la contraseña. Por favor intenta nuevamente.");
+        setError(
+          "Hubo un error al actualizar la contraseña. Por favor intenta nuevamente."
+        );
         console.error("Error:", error);
       } else {
-        setMessage("Contraseña actualizada exitosamente. Serás redirigido en breve.");
+        setMessage(
+          "Contraseña actualizada exitosamente. Serás redirigido en breve."
+        );
         setNewPassword("");
         setConfirmPassword("");
+        // Hacer logout para limpiar la sesión temporal de reset
+        await supabaseCliente.auth.signOut({ scope: "global" }).catch(() => {
+          // Ignorar errores de logout
+        });
         // Timer para que redirija después de que salga con éxito
         setTimeout(() => {
           navigate("/login");
@@ -91,7 +105,9 @@ export default function ResetPasswordPage() {
         <Navbar />
         <div className="flex-1 flex items-center justify-center py-12 px-4">
           <div className="text-center">
-            <p className="text-gray-600">Cargando información de seguridad...</p>
+            <p className="text-gray-600">
+              Cargando información de seguridad...
+            </p>
           </div>
         </div>
         <Footer />
