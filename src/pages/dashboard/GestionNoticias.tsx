@@ -18,18 +18,14 @@ interface News {
   imageUrl?: string;
 }
 
-export default function GestionNoticias() {
-  const [newsList, setNewsList] = useState<News[]>([]);
-  const [loadingList, setLoadingList] = useState(true);
-  const [loadError, setLoadError] = useState<string | null>(null);
-  const [imageFileName, setImageFileName] = useState<string>("");
+// Función para extraer solo la fecha (YYYY-MM-DD) de un string de fecha
+const extractDateForInput = (dateString: string): string => {
+  if (!dateString) return "";
+  // Si viene con hora, extraer solo la fecha
+  return dateString.split("T")[0];
+};
 
-  const [searchTerm, setSearchTerm] = useState("");
-  const [isAdding, setIsAdding] = useState(false);
-  const [editingNews, setEditingNews] = useState<News | null>(null);
-  const [imageFile, setImageFile] = useState<File | null>(null);
-
-  const getStoragePathFromUrl = (url: string | undefined | null): string | null => {
+const getStoragePathFromUrl = (url: string | undefined | null): string | null => {
   if (!url) return null;
 
   // Ajusta el nombre del bucket si es distinto
@@ -41,7 +37,17 @@ export default function GestionNoticias() {
   return url.substring(idx + marker.length);
 };
 
-  
+export default function GestionNoticias() {
+  const [newsList, setNewsList] = useState<News[]>([]);
+  const [loadingList, setLoadingList] = useState(true);
+  const [loadError, setLoadError] = useState<string | null>(null);
+  const [imageFileName, setImageFileName] = useState<string>("");
+
+  const [searchTerm, setSearchTerm] = useState("");
+  const [isAdding, setIsAdding] = useState(false);
+  const [editingNews, setEditingNews] = useState<News | null>(null);
+  const [imageFile, setImageFile] = useState<File | null>(null);
+
   const [newNews, setNewNews] = useState<Partial<News>>({
     title: "",
     previewDescription: "",
@@ -74,7 +80,7 @@ export default function GestionNoticias() {
             title: row.titular,
             previewDescription: row.descripcion_previa,
             content: row.descripcion,
-            date: row.fecha,
+            date: extractDateForInput(row.fecha), // Extraer solo YYYY-MM-DD
             location: row.ubicacion,
             isFeatured: row.es_destacada,
             isPublic: row.es_publica,
@@ -140,7 +146,7 @@ export default function GestionNoticias() {
             autor: "Escuela de Ingenieria en Computacion",
             descripcion_previa: newNews.previewDescription,
             descripcion: newNews.content,
-            fecha: newNews.date,
+            fecha: newNews.date, // Enviar directamente YYYY-MM-DD
             ubicacion: newNews.location,
             imagen_url: uploadImageUrl || null,
             es_destacada: newNews.isFeatured || false,
@@ -159,7 +165,7 @@ export default function GestionNoticias() {
         title: data.titular,
         previewDescription: data.descripcion_previa,
         content: data.descripcion,
-        date: data.fecha,
+        date: extractDateForInput(data.fecha),
         location: data.ubicacion,
         isFeatured: data.es_destacada,
         isPublic: data.es_publica,
@@ -241,7 +247,7 @@ export default function GestionNoticias() {
           titular: editingNews.title,
           descripcion_previa: editingNews.previewDescription,
           descripcion: editingNews.content,
-          fecha: editingNews.date,
+          fecha: editingNews.date, // Enviar directamente YYYY-MM-DD
           ubicacion: editingNews.location,
           imagen_url: newImageUrl || null,
           es_destacada: editingNews.isFeatured,
@@ -255,6 +261,8 @@ export default function GestionNoticias() {
         prev.map((n) => (n.id === editingNews.id ? editingNews : n))
       );
       setEditingNews(null);
+      setImageFile(null);
+      setImageFileName("");
     } catch (err) {
       console.error("Error al guardar cambios:", err);
       alert("No se pudo guardar la noticia");
@@ -453,7 +461,7 @@ export default function GestionNoticias() {
                   <div>
                     <label className="block text-sm font-semibold text-gray-700 mb-2">
                       <Calendar className="w-4 h-4 inline mr-1" />
-                      Fecha *
+                      Fecha * (dd/mm/aaaa)
                     </label>
                     <input
                       type="date"
@@ -462,7 +470,17 @@ export default function GestionNoticias() {
                         setNewNews({ ...newNews, date: e.target.value })
                       }
                       className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-700"
+                      lang="es-CL"
                     />
+                    {newNews.date && (
+                      <p className="text-xs text-gray-500 mt-1">
+                        Fecha seleccionada: {new Date(newNews.date + "T12:00:00").toLocaleDateString("es-CL", {
+                          day: "2-digit",
+                          month: "2-digit",
+                          year: "numeric"
+                        })}
+                      </p>
+                    )}
                   </div>
                   <div>
                     <label className="block text-sm font-semibold text-gray-700 mb-2">
@@ -636,7 +654,7 @@ export default function GestionNoticias() {
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
                           <label className="block text-sm font-semibold text-gray-700 mb-2">
-                            Fecha
+                            Fecha (dd/mm/aaaa)
                           </label>
                           <input
                             type="date"
@@ -648,7 +666,17 @@ export default function GestionNoticias() {
                               })
                             }
                             className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-700"
+                            lang="es-CL"
                           />
+                          {editingNews.date && (
+                            <p className="text-xs text-gray-500 mt-1">
+                              Fecha seleccionada: {new Date(editingNews.date + "T12:00:00").toLocaleDateString("es-CL", {
+                                day: "2-digit",
+                                month: "2-digit",
+                                year: "numeric"
+                              })}
+                            </p>
+                          )}
                         </div>
                         <div>
                           <label className="block text-sm font-semibold text-gray-700 mb-2">
@@ -748,7 +776,11 @@ export default function GestionNoticias() {
                         Guardar Cambios
                       </button>
                       <button
-                        onClick={() => setEditingNews(null)}
+                        onClick={() => {
+                          setEditingNews(null);
+                          setImageFile(null);
+                          setImageFileName("");
+                        }}
                         className="px-6 py-2 bg-gray-200 hover:bg-gray-300 text-gray-700 rounded-lg transition flex items-center gap-2"
                       >
                         <X className="w-5 h-5" />
@@ -793,7 +825,7 @@ export default function GestionNoticias() {
                           <div className="flex flex-wrap gap-3 text-xs text-gray-500">
                             <span className="flex items-center gap-1">
                               <Calendar className="w-4 h-4" />
-                              {new Date(news.date).toLocaleDateString("es-CL", {
+                              {new Date(news.date + "T12:00:00").toLocaleDateString("es-CL", {
                                 year: "numeric",
                                 month: "long",
                                 day: "numeric",
