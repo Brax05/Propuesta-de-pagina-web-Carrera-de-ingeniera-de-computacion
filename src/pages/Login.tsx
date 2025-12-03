@@ -6,6 +6,7 @@ import { supabaseCliente } from "@/services/supabaseCliente";
 import Navbar from "@/components/Navbarpage";
 import Footer from "@/components/Footerpage";
 import ForgotPasswordModal from "@/components/ForgotPasswordModal";
+import CreateNewPasswordModal from "@/components/CreateNewPasswordModal";
 import { User } from "@supabase/supabase-js";
 
 export default function Login() {
@@ -13,6 +14,7 @@ export default function Login() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [isForgotPasswordOpen, setIsForgotPasswordOpen] = useState(false);
+  const [isCreatePasswordOpen, setIsCreatePasswordOpen] = useState(false);
   const navigate = useNavigate();
   const { user, role, loading, refreshUserRole } = useAuth();
 
@@ -188,6 +190,18 @@ export default function Login() {
               </p>
             </div>
 
+            <div className="mt-4 text-center">
+              <p className="text-gray-600 text-sm">
+                ¿Quieres crear una nueva contraseña? Hazlo{" "}
+                <button
+                  onClick={() => setIsCreatePasswordOpen(true)}
+                  className="text-blue-600 hover:text-blue-700 font-semibold bg-none border-none cursor-pointer"
+                >
+                  aquí
+                </button>
+              </p>
+            </div>
+
             <div className="mt-6 text-center">
               <p className="text-gray-600 text-sm">
                 ¿No tienes cuenta?{" "}
@@ -209,6 +223,12 @@ export default function Login() {
       <ForgotPasswordModal
         isOpen={isForgotPasswordOpen}
         onClose={() => setIsForgotPasswordOpen(false)}
+      />
+
+      {/* Modal de Crear Nueva Contraseña */}
+      <CreateNewPasswordModal
+        isOpen={isCreatePasswordOpen}
+        onClose={() => setIsCreatePasswordOpen(false)}
       />
     </div>
   );
