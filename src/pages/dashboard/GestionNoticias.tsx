@@ -18,22 +18,18 @@ interface News {
   imageUrl?: string;
 }
 
-// Función para extraer solo la fecha (YYYY-MM-DD) de un string de fecha
 const extractDateForInput = (dateString: string): string => {
   if (!dateString) return "";
-  // Si viene con hora, extraer solo la fecha
   return dateString.split("T")[0];
 };
 
 const getStoragePathFromUrl = (url: string | undefined | null): string | null => {
   if (!url) return null;
 
-  // Ajusta el nombre del bucket si es distinto
   const marker = "/storage/v1/object/public/ImagenesNoticias/";
   const idx = url.indexOf(marker);
   if (idx === -1) return null;
 
-  // Devuelve solo "noticias/archivo.jpg"
   return url.substring(idx + marker.length);
 };
 
@@ -80,7 +76,7 @@ export default function GestionNoticias() {
             title: row.titular,
             previewDescription: row.descripcion_previa,
             content: row.descripcion,
-            date: extractDateForInput(row.fecha), // Extraer solo YYYY-MM-DD
+            date: extractDateForInput(row.fecha),
             location: row.ubicacion,
             isFeatured: row.es_destacada,
             isPublic: row.es_publica,
@@ -146,7 +142,7 @@ export default function GestionNoticias() {
             autor: "Escuela de Ingenieria en Computacion",
             descripcion_previa: newNews.previewDescription,
             descripcion: newNews.content,
-            fecha: newNews.date, // Enviar directamente YYYY-MM-DD
+            fecha: newNews.date,
             ubicacion: newNews.location,
             imagen_url: uploadImageUrl || null,
             es_destacada: newNews.isFeatured || false,
@@ -203,9 +199,8 @@ export default function GestionNoticias() {
     if (!editingNews) return;
 
     try {
-      // Imagen actual antes de guardar
       const oldImageUrl = newsList.find(n => n.id === editingNews.id)?.imageUrl || null;
-      let newImageUrl = oldImageUrl; // por defecto, mantenemos la anterior
+      let newImageUrl = oldImageUrl;
 
       if(imageFile){
         const fileExt = imageFile.name.split(".").pop();
