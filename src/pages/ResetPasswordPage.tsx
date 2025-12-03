@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { supabaseCliente } from "../services/supabaseCliente";
+import { createClient } from "@supabase/supabase-js";
 import { useNavigate } from "react-router-dom";
 import Navbar from "@/components/Navbarpage";
 import Footer from "@/components/Footerpage";
@@ -12,6 +12,11 @@ export default function ResetPasswordPage() {
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
+  const [supabase] = useState(() => {
+    const url = import.meta.env.VITE_SUPABASE_URL;
+    const key = import.meta.env.VITE_SUPABASE_ANON_KEY;
+    return createClient(url, key);
+  });
 
   // Si la página se recarga manualmente, redirige al login para forzar flujo limpio
   useEffect(() => {
@@ -24,22 +29,32 @@ export default function ResetPasswordPage() {
     }
   }, [navigate]);
 
-  // Supabase enviará un access_token en la URL.
-  // Necesitamos dejar que Supabase lo capture.
+  // Verificar que hay un token válido de reset
   useEffect(() => {
-    const hash = window.location.hash;
+    const checkResetToken = async () => {
+      try {
+        // Obtener la sesión actual (que debería tener el token de reset)
+        const {
+          data: { session },
+        } = await supabase.auth.getSession();
 
-    if (hash.includes("access_token")) {
-      // Supabase automáticamente toma el token de la URL.
-      // Espera un poco para que Supabase procese el token
-      setTimeout(() => {
-        setIsSessionReady(true);
-      }, 100);
-    } else {
-      // Si no hay access_token en la URL, redirige a login
-      navigate("/login", { replace: true });
-    }
-  }, [navigate]);
+        if (session && session.user) {
+          console.log("[Reset] Sesión válida para reset encontrada");
+          setIsSessionReady(true);
+        } else {
+          console.log("[Reset] No se encontró sesión de reset válida");
+          navigate("/login", { replace: true });
+        }
+      } catch (err) {
+        console.error("[Reset] Error verificando sesión:", err);
+        navigate("/login", { replace: true });
+      }
+    };
+
+    // Pequeño delay para que Supabase procese el URL
+    const timer = setTimeout(checkResetToken, 300);
+    return () => clearTimeout(timer);
+  }, [navigate, supabase]);
 
   const handleUpdate = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -67,7 +82,7 @@ export default function ResetPasswordPage() {
     }
 
     try {
-      const { error } = await supabaseCliente.auth.updateUser({
+      const { error } = await supabase.auth.updateUser({
         password: newPassword,
       });
 
@@ -82,14 +97,20 @@ export default function ResetPasswordPage() {
         );
         setNewPassword("");
         setConfirmPassword("");
+
         // Hacer logout para limpiar la sesión temporal de reset
-        await supabaseCliente.auth.signOut({ scope: "global" }).catch(() => {
-          // Ignorar errores de logout
-        });
+        // y eliminar el token de reset de la URL
+        try {
+          await supabase.auth.signOut({ scope: "global" });
+        } catch (signOutErr) {
+          console.warn("[Reset] Error en signOut:", signOutErr);
+        }
+
         // Timer para que redirija después de que salga con éxito
         setTimeout(() => {
-          navigate("/login");
-        }, 3000);
+          // Limpiar el hash de la URL que contiene el token
+          window.location.replace("/login");
+        }, 2000);
       }
     } catch (err) {
       setError("Error inesperado. Por favor intenta más tarde.");
