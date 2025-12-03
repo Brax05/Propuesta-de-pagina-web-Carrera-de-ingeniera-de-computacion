@@ -24,7 +24,6 @@ import { RutaUsuariosLog } from "./rutasProtected/RutaUsuariosLog";
 import { RutasAdmin } from "./rutasProtected/RutasAdmin";
 import { AuthProvider, useAuth } from "./hooks/AuthContext";
 import ScrollToTop from "./components/ScrollToTop";
-import AuthDebug from "./components/AuthDebug";
 
 // Redirige a miembros a /perfil para impedir que naveguen a otras rutas
 const MemberRedirect = () => {
@@ -73,7 +72,6 @@ const AppContent = () => {
     <>
       <MemberRedirect />
       <ScrollToTop />
-      <AuthDebug />
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />

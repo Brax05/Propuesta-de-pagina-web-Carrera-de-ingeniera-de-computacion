@@ -97,42 +97,40 @@ export default function Navbar() {
             {isOpen ? <X size={24} /> : <Menu size={24} />}
           </button>
         </div>
-
-        {/* Menú Móvil */}
         {isOpen && (
           <div className="md:hidden pb-4 border-t border-gray-200">
-            <div className="flex flex-col gap-2 pt-4">
+            <div className="flex flex-col items-end pt-4">
               <Link
                 to="/"
-                className="text-sm text-gray-700 hover:text-gray-900 py-2"
+                className="text-sm text-gray-700 hover:text-gray-900 py-2 text-right"
                 onClick={() => setIsOpen(false)}
               >
                 Inicio
               </Link>
               <Link
                 to="/plan-estudios"
-                className="text-sm text-gray-700 hover:text-gray-900 py-2"
+                className="text-sm text-gray-700 hover:text-gray-900 py-2 text-right"
                 onClick={() => setIsOpen(false)}
               >
                 Plan de Estudios
               </Link>
               <Link
                 to="/noticias"
-                className="text-sm text-gray-700 hover:text-gray-900 py-2"
+                className="text-sm text-gray-700 hover:text-gray-900 py-2 text-right"
                 onClick={() => setIsOpen(false)}
               >
                 Noticias
               </Link>
               <Link
                 to="/estudiantes"
-                className="text-sm text-gray-700 hover:text-gray-900 py-2"
+                className="text-sm text-gray-700 hover:text-gray-900 py-2 text-right"
                 onClick={() => setIsOpen(false)}
               >
                 Nuestros Estudiantes
               </Link>
               <Link
                 to="/contacto"
-                className="text-sm text-gray-700 hover:text-gray-900 py-2"
+                className="text-sm text-gray-700 hover:text-gray-900 py-2 text-right"
                 onClick={() => setIsOpen(false)}
               >
                 Contacto
@@ -140,22 +138,22 @@ export default function Navbar() {
               {isAuthenticated && (
                 <Link
                   to="/cec"
-                  className="text-sm text-gray-700 hover:text-gray-900 py-2"
+                  className="text-sm text-gray-700 hover:text-gray-900 py-2 text-right font-semibold"
                   onClick={() => setIsOpen(false)}
                 >
                   CEC
                 </Link>
               )}
-              <div className="border-t border-gray-200 pt-3 mt-3">
+              <div className="border-t border-gray-200 pt-3 mt-3 w-full flex flex-col items-end">
                 {loading ? (
                   <span className="text-sm text-gray-500">
                     Verificando sesión…
                   </span>
                 ) : isAuthenticated ? (
-                  <div className="flex flex-col gap-2">
+                  <div className="flex flex-col items-end gap-2">
                     <Link
                       to="/dashboard/perfil"
-                      className="text-sm text-gray-700 hover:text-gray-900 transition underline block mb-2"
+                      className="text-sm text-gray-700 hover:text-gray-900 transition underline block mb-2 text-right"
                       onClick={() => setIsOpen(false)}
                     >
                       {userLabel}
@@ -163,23 +161,23 @@ export default function Navbar() {
                     <button
                       onClick={handleLogout}
                       disabled={isLoggingOut}
-                      className="w-full px-4 py-2 text-sm border border-gray-400 text-gray-700 rounded hover:bg-gray-50 transition disabled:opacity-60 disabled:cursor-not-allowed"
+                      className="px-4 py-2 text-sm border border-gray-400 text-gray-700 rounded hover:bg-gray-50 transition disabled:opacity-60 disabled:cursor-not-allowed"
                     >
                       {isLoggingOut ? "Cerrando…" : "Cerrar Sesión"}
                     </button>
                   </div>
                 ) : (
-                  <div className="space-y-2">
+                  <div className="flex flex-col items-end gap-2">
                     <Link
                       to="/login"
-                      className="block w-full px-4 py-2 text-sm border border-gray-400 text-gray-700 rounded hover:bg-gray-50 transition text-center"
+                      className="px-4 py-2 text-sm border border-gray-400 text-gray-700 rounded hover:bg-gray-50 transition text-center"
                       onClick={() => setIsOpen(false)}
                     >
                       Iniciar sesión
                     </Link>
                     <Link
                       to="/register"
-                      className="block w-full px-4 py-2 text-sm bg-blue-700 text-white rounded hover:bg-blue-800 transition text-center"
+                      className="px-4 py-2 text-sm bg-blue-700 text-white rounded hover:bg-blue-800 transition text-center"
                       onClick={() => setIsOpen(false)}
                     >
                       Registro

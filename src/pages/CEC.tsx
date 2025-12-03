@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react";
+import { Navigate } from "react-router-dom";
 import Navbar from "@/components/Navbarpage";
 import Footer from "@/components/Footerpage";
 import LoadingSpinner from "@/components/LoadingSpinner";
 import { supabaseCliente } from "@/services/supabaseCliente";
+import { useAuth } from "@/hooks/AuthContext";
 
 type CECMember = {
   id: number;
@@ -14,11 +16,14 @@ type CECMember = {
 };
 
 export default function CEC() {
+  const { user, loading: authLoading } = useAuth();
   const [cecMembers, setCecMembers] = useState<CECMember[]>([]);
   const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState<string | null>(null);
 
   useEffect(() => {
+    if (authLoading || !user) return;
+
     const fetchCEC = async () => {
       try {
         setLoading(true);
@@ -56,8 +61,22 @@ export default function CEC() {
     };
 
     fetchCEC();
-  }, []);
+  }, [authLoading, user]);
 
+  if (authLoading) {
+    return (
+      <div className="min-h-screen flex flex-col bg-gray-50">
+        <Navbar />
+        <div className="flex-1">
+          <LoadingSpinner message="Verificando sesión..." fullScreen={false} />
+        </div>
+        <Footer />
+      </div>
+    );
+  }
+  if (!user) {
+    return <Navigate to="/login" replace />;
+  }
   if (loading) {
     return (
       <div className="min-h-screen flex flex-col bg-gray-50">
