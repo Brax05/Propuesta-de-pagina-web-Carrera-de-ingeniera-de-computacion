@@ -16,6 +16,8 @@ import GestionUsuarios from "@/pages/dashboard/GestionUsuarios";
 import GestionRegistros from "@/pages/dashboard/GestionRegistros";
 import GestionNoticias from "@/pages/dashboard/GestionNoticias";
 import GestionEstudiantes from "@/pages/dashboard/GestionEstudiantes";
+import ResetPage from "./pages/ResetPage";
+import ResetPasswordPage from "./pages/ResetPasswordPage";
 
 import { RutaProtected } from "./rutasProtected/RutaProtected";
 import { RutaUsuariosLog } from "./rutasProtected/RutaUsuariosLog";
@@ -81,6 +83,8 @@ const AppContent = () => {
         <Route path="/plan-estudios" element={<PlanEstudios />} />
         <Route path="/contacto" element={<Contacto />} />
         <Route path="/cec" element={<CEC />} />
+        <Route path="/reset-password" element={<ResetPasswordPage />} />
+        <Route path="/forgot-password" element={<ResetPage />} />
         <Route
           path="/esperando-autorizacion"
           element={<EsperandoAutorizacion />}

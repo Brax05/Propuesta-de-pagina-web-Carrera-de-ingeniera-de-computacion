@@ -265,6 +265,15 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   useEffect(() => {
     console.log("[AuthDebug] Montando AuthProvider");
 
+    // No registrar listener en la página de reset
+    const isOnResetPage = window.location.pathname === "/reset-password";
+    if (isOnResetPage) {
+      console.log(
+        "[AuthDebug] En página de reset, no se registra listener de autenticación"
+      );
+      return;
+    }
+
     const {
       data: { subscription },
     } = supabaseCliente.auth.onAuthStateChange((event, session) => {

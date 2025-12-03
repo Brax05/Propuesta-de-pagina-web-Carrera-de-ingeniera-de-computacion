@@ -17,8 +17,14 @@ export default function Register() {
     e.preventDefault();
     setError("");
 
+    const emailRegex = /^[^@\s]+@userena\.cl$/i;
+
     if (!email || !password || !confirmPassword) {
       setError("Por favor completa todos los campos");
+      return;
+    }
+    if (!emailRegex.test(email)) {
+      setError("Usa tu correo institucional terminado en @userena.cl");
       return;
     }
     if (password !== confirmPassword) {
@@ -97,6 +103,8 @@ export default function Register() {
                   id="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
+                  pattern="^[^@\s]+@userena\.cl$"
+                  title="Usa tu correo institucional terminado en @userena.cl"
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-700"
                   placeholder="tu@userena.cl"
                 />
