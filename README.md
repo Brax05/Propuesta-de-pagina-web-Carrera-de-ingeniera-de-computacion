@@ -127,6 +127,6 @@ npm run lint
 ## Autor
 
 Desarrollado por estudiantes de Ingeniería en Computación de la Universidad de La Serena.
-
+![equipo](equipo.png)
 
 **Última actualización**: 11 Noviembre 2025
